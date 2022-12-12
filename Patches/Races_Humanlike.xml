@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+	<Operation Class="PatchOperationInsert">
+		<xpath>Defs/ThingDef[defName="Human"]/race/lifeStageAges/li[1]</xpath>
+		<order>Append</order>
+		<value>
+			<li>
+				<def>HumanlikeToddler</def>
+				<minAge>1</minAge>
+			</li>
+		</value>
+	</Operation>
+	
+	<Operation Class="PatchOperationReplace">
+		<xpath>Defs/ThingDef[defName="Human"]/race/lifeStageWorkSettings/Childcare</xpath>
+		<value>
+			<Childcare>3</Childcare>
+		</value>
+	</Operation>
+
+</Patch>
+
+

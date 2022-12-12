@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<MentalStateDef ParentName="BaseMentalState">
+    <defName>RemoveClothes</defName>
+    <label>removing clothes</label>
+    <requiredCapacities>
+        <li>Manipulation</li>
+    </requiredCapacities>
+    <stateClass>Toddlers.MentalState_RemoveClothes</stateClass>
+	<workerClass>Toddlers.MentalStateWorker_RemoveClothes</workerClass>
+    <category>Misc</category>
+    <blockNormalThoughts>false</blockNormalThoughts>
+    <!--<nameColor>(0.65, 0.9, 0.93)</nameColor>-->
+	<!--<baseInspectLine>Mental state: Confused and wandering</baseInspectLine>-->
+    <inCaravanCanDo>false</inCaravanCanDo>
+  </MentalStateDef>
+</Defs>

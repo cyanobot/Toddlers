@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<JobDef>
+		<defName>LeaveCrib</defName>
+		<driverClass>Toddlers.JobDriver_LeaveCrib</driverClass>
+		<reportString>climbing out of crib.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>ToddlerFloordrawing</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerFloordrawing</driverClass>
+		<reportString>floordrawing.</reportString>
+	</JobDef>
+
+	<JobDef>
+		<defName>ToddlerSkydreaming</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerSkydreaming</driverClass>
+		<reportString>skydreaming.</reportString>
+	</JobDef>
+
+	<JobDef>
+		<defName>ToddlerBugwatching</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerBugwatching</driverClass>
+		<reportString>bugwatching.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>ToddlerPlayToys</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerPlayToys</driverClass>
+		<reportString>playing with toys.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>ToddlerWatchTelevision</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerWatchTelevision</driverClass>
+		<reportString>watching television.</reportString>
+	</JobDef>
+
+	<JobDef>
+		<defName>ToddlerFiregazing</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerFiregazing</driverClass>
+		<reportString>firegazing.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>ToddlerPlayDecor</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerPlayDecor</driverClass>
+		<reportString>playing with toy.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>RestIdleInCrib</defName>
+		<driverClass>Toddlers.JobDriver_RestIdleInCrib</driverClass>
+		<reportString>resting.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>WiggleInCrib</defName>
+		<driverClass>Toddlers.JobDriver_WiggleInCrib</driverClass>
+		<reportString>wiggling.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>LayAngleInCrib</defName>
+		<driverClass>Toddlers.JobDriver_LayAngleInCrib</driverClass>
+		<reportString>lying down.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>PutInCrib</defName>
+		<driverClass>JobDriver_TakeToBed</driverClass>
+		<reportString>putting TargetA in crib.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+	
+	<JobDef>
+		<defName>DressBaby</defName>
+		<driverClass>Toddlers.JobDriver_DressBaby</driverClass>
+		<reportString>dressing TargetA.</reportString>
+		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+	</JobDef>
+	
+	<JobDef>
+		<defName>UndressBaby</defName>
+		<driverClass>Toddlers.JobDriver_UndressBaby</driverClass>
+		<reportString>undressing TargetA.</reportString>
+		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+	</JobDef>
+	
+</Defs>

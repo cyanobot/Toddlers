@@ -1,0 +1,40 @@
+
+Medium Priority
+	Growth vat
+	
+	AI
+	
+	Play
+
+	Rendering
+
+	Baby clothes
+
+
+Low Priority
+	Misc
+	enable right click menu while crying/giggling
+	revisit climbing in and out of crib
+	
+	Capabilities	
+	should manipulation come with an actual manipulation penalty?
+	randomised walking vs manipulation rates per toddler
+
+	Play
+	play with unsafe objects?
+	add mood boost for playing with toys/adults?
+
+	Rendering
+	finetune wobble
+
+	Baby clothes
+	watch for a fix to the body type bug
+
+
+
+
+Extra
+	crib objects that shelter from elements
+	social interactions for toddlers
+	firegazing for children
+	baby bjorn

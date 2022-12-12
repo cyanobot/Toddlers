@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <ThoughtDef>
+    <defName>BabyNoExpectations</defName>
+    <workerClass>ThoughtWorker_AlwaysActive</workerClass>
+    <validWhileDespawned>true</validWhileDespawned>
+    <developmentalStageFilter>Baby</developmentalStageFilter>
+    <stages>
+      <li>
+        <label>no expectations</label>
+        <description>Babies don't know what to expect from the world, so they can't be disappointed.</description>
+        <baseMoodEffect>25</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>ToddlerLonely</defName>
+    <workerClass>ThoughtWorker_Hediff</workerClass>
+    <hediff>ToddlerLonely</hediff>
+    <validWhileDespawned>true</validWhileDespawned>
+    <developmentalStageFilter>Baby</developmentalStageFilter>
+    <stages>
+      <li>
+        <visible>false</visible>
+      </li>
+	  <li>
+		<label>lonely</label>
+		<description>I'm so lonely. I need attention and I need it now.</description>
+		<baseMoodEffect>-8</baseMoodEffect>
+	  </li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>

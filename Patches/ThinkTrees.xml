@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+	<Operation Class="PatchOperationAdd">
+		<xpath>Defs/ThinkTreeDef[defName="Humanlike"]/thinkRoot/subNodes/li[@Class="ThinkNode_ConditionalColonist"]/subNodes/li[tagToGive="ChangingApparel"]/subNodes</xpath>
+		<value>
+			<li Class="Toddlers.JobGiver_OptimizeBabyApparel">
+                <leaveJoinableLordIfIssuesJob>true</leaveJoinableLordIfIssuesJob>
+            </li>
+		</value>
+	</Operation>
+	
+	<Operation Class="PatchOperationAdd">
+		<xpath>Defs/ThinkTreeDef[defName="MainColonistBehaviorCore"]/thinkRoot/subNodes/li[@Class="ThinkNode_PrioritySorter"]/subNodes</xpath>
+		<value>
+			<li Class="Toddlers.JobGiver_PlayWithSadBaby"/>
+		</value>
+	</Operation>
+	
+</Patch>
