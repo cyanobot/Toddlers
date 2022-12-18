@@ -11,6 +11,20 @@ using System.Threading.Tasks;
 
 namespace Toddlers
 {
+    /*
+    //allows crying/giggling toddlers to be given orders
+    [HarmonyPatch(typeof(FloatMenuMakerMap), "CanTakeOrder")]
+    class CanTakeOrder_Patch
+    {
+        static bool Postfix(bool result, Pawn pawn)
+        {
+            if (result == false && ToddlerUtility.IsLiveToddler(pawn) && pawn.Spawned
+                && (pawn.IsColonist || pawn.IsSlaveOfColony))
+                result = true;
+            return result;
+        }
+    }
+    */
 
     [HarmonyPatch(typeof(FloatMenuMakerMap), "AddHumanlikeOrders")]
     class FloatMenu_Patch
@@ -88,10 +102,25 @@ namespace Toddlers
                 //have to be able to manipulate to do anything to a baby
                 if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
                 {
-                    //option to pick up toddlers and take them to their bed
                     foreach (LocalTargetInfo localTargetInfo1 in GenUI.TargetsAt(clickPos, ForToddler(pawn), thingsOnly: true))
                     {
                         Pawn toddler = (Pawn)localTargetInfo1.Thing;
+
+                        //option to let crawlers out of their cribs
+                        if (ToddlerUtility.InCrib(toddler) && ToddlerUtility.IsCrawler(toddler))
+                        {
+                            FloatMenuOption letOutOfCrib = new FloatMenuOption("Let " + toddler.Label + " out of crib", delegate 
+                            {
+                                Building_Bed crib = ToddlerUtility.GetCurrentCrib(toddler);
+                                if (crib == null) return;
+                                Job job = JobMaker.MakeJob(DefDatabase<JobDef>.GetNamed("LetOutOfCrib"), toddler, crib);
+                                job.count = 1;
+                                pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                            },MenuOptionPriority.Default);
+                            opts.Add(FloatMenuUtility.DecoratePrioritizedTask(letOutOfCrib, pawn, toddler));
+                        }
+
+                        //option to pick up toddlers and take them to their bed
 
                         //patch for Injured Carry to avoid duplicate menu options
                         //checks the same logic as Injured Carry
@@ -110,7 +139,7 @@ namespace Toddlers
                             && !toddler.mindState.WillJoinColonyIfRescued
                         )
                         {
-                            FloatMenuOption putInCrib = new FloatMenuOption("Put " + toddler.NameShortColored + " in crib", delegate
+                            FloatMenuOption putInCrib = new FloatMenuOption("Put " + toddler.Label + " in crib", delegate
                             {
                                 Building_Bed building_Bed = RestUtility.FindBedFor(toddler, pawn, checkSocialProperness: false);
                                 if (building_Bed == null)
@@ -137,7 +166,7 @@ namespace Toddlers
                             opts.Add(FloatMenuUtility.DecoratePrioritizedTask(putInCrib, pawn, toddler));
                         }
                     }
-                    //option to put clothes on babies and toddlers
+                    //options for dressing and undressing babies and toddlers
                     foreach (LocalTargetInfo localTargetInfo1 in GenUI.TargetsAt(clickPos, ForBaby(pawn), thingsOnly: true))
                     {
                         Pawn baby = (Pawn)localTargetInfo1.Thing;
@@ -155,13 +184,15 @@ namespace Toddlers
 
                         if (!pawn.CanReserveAndReach(baby, PathEndMode.ClosestTouch, Danger.Deadly, 1, -1, null, ignoreOtherReservations: true))
                             continue;
-                        FloatMenuOption dressBaby = new FloatMenuOption("Dress " + baby.NameShortColored, delegate ()
+
+                        //option to dress baby
+                        FloatMenuOption dressBaby = new FloatMenuOption("Dress " + baby.Label, delegate ()
                         {
                             Find.Targeter.BeginTargeting(ForApparel(baby), (LocalTargetInfo targetApparel) =>
                             {
-                                Log.Message("pawn : " + pawn.Name);
-                                Log.Message("baby : " + baby.Name);
-                                Log.Message("apparel : " + targetApparel.Label);
+                                //Log.Message("pawn : " + pawn.Name);
+                                //Log.Message("baby : " + baby.Name);
+                                //Log.Message("apparel : " + targetApparel.Label);
                                 Job job = JobMaker.MakeJob(DefDatabase<JobDef>.GetNamed("DressBaby"), baby, targetApparel);
                                 targetApparel.Thing.SetForbidden(false);
                                 pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
@@ -188,7 +219,7 @@ namespace Toddlers
                             key = "ForceEquipApparel";
                         }
                         string text = key.Translate(t.Label, t);
-                        Log.Message("text = " + text);
+                        //Log.Message("text = " + text);
 
                         //disable the float menu option and tell the player why
                         foreach (FloatMenuOption wear in opts.FindAll(x => x.Label.Contains(text)))
@@ -204,7 +235,7 @@ namespace Toddlers
                     if (t.def.ingestible != null && !ToddlerUtility.CanFeedSelf(pawn))
                     {
                         //copied directly from source
-                        //this will allow us to identify the menu options related to wearing this object
+                        //this will allow us to identify the menu options related to consuming this object
                         string text;
                         if (t.def.ingestible.ingestCommandString.NullOrEmpty())
                         {

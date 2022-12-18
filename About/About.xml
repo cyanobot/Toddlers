@@ -6,7 +6,20 @@
     <supportedVersions>
         <li>1.4</li>
     </supportedVersions>
-    <description>nope</description>
+    <description>New life stage: Toddler
+- 1- and 2-year-old pawns are no longer completely passive objects
+- toddlers cannot work, but can move around and interact with the world
+- toddlers gain capabilities over time – configurable
+- young toddlers are blocked by doors and can be confined to their cribs, but older toddlers are more mobile
+- toddlers can fill their play need on their own for a while, but still need regular adult interaction
+- older toddlers can feed themselves if baby food is left where they can reach it
+
+Improved babies
+- no expectations
+- configurable rate of fall for Play need
+- babies are no longer made of antifreeze – configurable
+- make baby clothes to protect your babies and toddlers from the elements
+</description>
 	<modDependencies>
 		<li>
 			<packageId>brrainz.harmony</packageId>

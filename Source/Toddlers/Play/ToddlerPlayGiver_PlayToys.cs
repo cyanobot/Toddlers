@@ -37,7 +37,10 @@ namespace Toddlers
 
         private bool IsValidToyBox(Thing toybox, Pawn pawn)
         {
-            return toybox.def == ThingDefOf.ToyBox && !toybox.IsForbidden(pawn) && !toybox.IsBurning() && pawn.CanReserveAndReach(toybox, PathEndMode.Touch, Danger.None, 1, -1, null, false) && pawn.Position.DistanceTo(toybox.Position) <= MaxToyBoxDistance;
+            if (toybox == null) return false;
+            return toybox.def == ThingDefOf.ToyBox && !toybox.IsForbidden(pawn) && !toybox.IsBurning() 
+                && pawn.CanReserveAndReach(toybox, PathEndMode.Touch, Danger.None, 1, -1, null, false) 
+                && pawn.Position.DistanceTo(toybox.Position) <= MaxToyBoxDistance;
         }
 
         private Thing FindNearbyUseableToyBox(Pawn pawn)
@@ -53,7 +56,9 @@ namespace Toddlers
                     }
                 }
             }
-            return GenClosest.ClosestThingReachable(pawn.Position, pawn.Map, ThingRequest.ForDef(ThingDefOf.ToyBox), PathEndMode.OnCell, TraverseParms.For(pawn, Danger.Deadly, TraverseMode.ByPawn, false, false, false), 15.9f, (Thing t) => this.IsValidToyBox(t, pawn), null, 0, -1, false, RegionType.Set_Passable, false);
+            return GenClosest.ClosestThingReachable(pawn.Position, pawn.Map, ThingRequest.ForDef(ThingDefOf.ToyBox), PathEndMode.OnCell, 
+                TraverseParms.For(pawn, Danger.Deadly, TraverseMode.ByPawn, false, false, false), 15.9f, 
+                (Thing t) => this.IsValidToyBox(t, pawn), null, 0, -1, false, RegionType.Set_Passable, false);
         }
 
         private const float MaxToyBoxDistance = 15.9f;

@@ -17,11 +17,6 @@ namespace Toddlers
         public static bool dressPatientsLoaded;
         public static bool injuredCarryLoaded;
 
-        public const float BaseLonelinessRate = 0.001f;
-
-        public static List<ThingDef> televisionDefs = new List<ThingDef>();
-        public static int televisionMaxParticipants = 0;
-
         public Toddlers_Mod(ModContentPack mcp) : base(mcp)
         {
             GetSettings<Toddlers_Settings>();
@@ -40,21 +35,16 @@ namespace Toddlers
     {
         static Toddlers_Init()
         {
-            //Toddlers_Mod.extinguishRefuelablesLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Extinguish Refuelables");
             Toddlers_Mod.dressPatientsLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Dress Patients (1.4)");
             Toddlers_Mod.injuredCarryLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Injured Carry");
-            //Log.Message("Extinguish Refuelables : " + Toddlers_Mod.extinguishRefuelablesLoaded);
-            Log.Message("Dress Patients : " + Toddlers_Mod.dressPatientsLoaded);
-            Log.Message("Injured Carry : " + Toddlers_Mod.injuredCarryLoaded);
-
 
             var harmony = new Harmony("cyanobot.toddlers");
             harmony.PatchAll();
 
             ApplySettings();
 
-            Toddlers_Mod.televisionDefs = DefDatabase<JoyGiverDef>.GetNamed("WatchTelevision").thingDefs;
-            Toddlers_Mod.televisionMaxParticipants = DefDatabase<JobDef>.GetNamed("WatchTelevision").joyMaxParticipants;
+            //Toddlers_Mod.televisionDefs = DefDatabase<JoyGiverDef>.GetNamed("WatchTelevision").thingDefs;
+            //Toddlers_Mod.televisionMaxParticipants = DefDatabase<JobDef>.GetNamed("WatchTelevision").joyMaxParticipants;
         }
 
         public static void ApplySettings()

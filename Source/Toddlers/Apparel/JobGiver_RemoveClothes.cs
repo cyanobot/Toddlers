@@ -18,8 +18,8 @@ namespace Toddlers
 			{
 				return null;
 			}
-			Job job = JobMaker.MakeJob(JobDefOf.RemoveApparel, mentalState_RemoveClothes.target);
-			job.haulDroppedApparel = true;
+			Job job = JobMaker.MakeJob(Toddlers_DefOf.ToddlerRemoveApparel, mentalState_RemoveClothes.target);
+			job.haulDroppedApparel = false;
 			return job;
 		}
 	}

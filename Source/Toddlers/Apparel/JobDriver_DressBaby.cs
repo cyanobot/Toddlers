@@ -20,7 +20,7 @@ namespace Toddlers
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            Log.Message("Fired DressBaby.PreToilReservations");
+            //Log.Message("Fired DressBaby.PreToilReservations");
             return pawn.Reserve(TargetA, job, 1, -1, null, errorOnFailed) && pawn.Reserve(TargetB, job, 1, -1, null, errorOnFailed);
         }
         public override void Notify_Starting()
@@ -47,10 +47,10 @@ namespace Toddlers
             AddFailCondition(() => Baby.DestroyedOrNull() || !Baby.Spawned || Baby.DevelopmentalStage != DevelopmentalStage.Baby || !ChildcareUtility.CanSuckle(Baby, out var _));
             AddFailCondition(() => Apparel.DestroyedOrNull() || Apparel.IsBurning());
 
-            //copied from Dress Patient
             yield return Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.ClosestTouch).FailOnForbidden(TargetIndex.B);
             yield return Toils_Haul.StartCarryThing(TargetIndex.B);
-            yield return Toils_Haul.CarryHauledThingToCell(TargetIndex.A);
+            //yield return Toils_Haul.CarryHauledThingToCell(TargetIndex.A);
+            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch);
             yield return Toils_Haul.PlaceCarriedThingInCellFacing(TargetIndex.A);
 
             // Wait duration, strip conflicting clothes periodically.
@@ -64,6 +64,26 @@ namespace Toddlers
                     TryUnequipSomething();
                 }
             };
+            stripAndDress.AddPreInitAction(delegate
+            {
+                Pawn baby = (Pawn)stripAndDress.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
+                if (baby.Awake() && ToddlerUtility.IsLiveToddler(baby) && !ToddlerUtility.InCrib(baby))
+                {
+                    Job beDressedJob = JobMaker.MakeJob(Toddlers_DefOf.BeDressed, stripAndDress.actor);
+                    job.count = 1;
+                    baby.jobs.StartJob(beDressedJob, JobCondition.InterruptForced);
+                }
+                
+            });
+            stripAndDress.AddFinishAction(delegate
+            {
+                Pawn pawn = (Pawn)stripAndDress.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
+                if (pawn.CurJobDef == Toddlers_DefOf.BeDressed)
+                {
+                    pawn.jobs.EndCurrentJob(JobCondition.Succeeded);
+                }
+            });
+
             stripAndDress.WithProgressBarToilDelay(TargetIndex.A);
             stripAndDress.FailOnDespawnedOrNull(TargetIndex.A);
             yield return stripAndDress;

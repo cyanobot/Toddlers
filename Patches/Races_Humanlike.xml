@@ -12,12 +12,14 @@
 		</value>
 	</Operation>
 	
+	<!--
 	<Operation Class="PatchOperationReplace">
 		<xpath>Defs/ThingDef[defName="Human"]/race/lifeStageWorkSettings/Childcare</xpath>
 		<value>
 			<Childcare>3</Childcare>
 		</value>
 	</Operation>
+	-->
 
 </Patch>
 

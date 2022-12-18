@@ -8,121 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+//code that did not work or was otherwise removed
+//here so that I can reuse parts of it in future
 
-
-class JobDriver_CarryToddler : JobDriver
-{
-	private const TargetIndex BabyInd = TargetIndex.A;
-
-	private Pawn Baby => (Pawn)base.TargetThingA;
-
-	public override bool TryMakePreToilReservations(bool errorOnFailed)
-	{
-		return pawn.Reserve(Baby, job, 1, -1, null, errorOnFailed);
-	}
-
-	protected override IEnumerable<Toil> MakeNewToils()
-	{
-		AddFailCondition(() => !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation));
-		this.FailOnDestroyedNullOrForbidden(TargetIndex.A);
-		//AddFailCondition(() => !ChildcareUtility.CanSuckle(Baby, out var _));
-		foreach (Toil item in JobDriver_PickupToHold.Toils(this))
-		{
-			yield return item;
-		}
-		/*
-		yield return Toils_Goto.Goto(TargetIndex.B, PathEndMode.OnCell).FailOnInvalidOrDestroyed(TargetIndex.B).FailOnForbidden(TargetIndex.B)
-			.FailOnSomeonePhysicallyInteracting(TargetIndex.B)
-			.FailOnDestroyedNullOrForbidden(TargetIndex.A)
-			.FailOn(() => !pawn.IsCarryingPawn(Baby) || pawn.Downed || pawn.Drafted);
-		yield return Toils_Reserve.ReleaseDestinationOrThing(TargetIndex.B);
-		yield return Toils_Bed.TuckIntoBed(TargetIndex.B, TargetIndex.A);
-		*/
-	}
-}
-
-
-class JobGiver_ToddlerGetRest : ThinkNode_JobGiver
-{
-
-	private RestCategory minCategory;
-
-	private float maxLevelPercentage = 1f;
-
-	public override ThinkNode DeepCopy(bool resolve = true)
-	{
-		JobGiver_ToddlerGetRest obj = (JobGiver_ToddlerGetRest)base.DeepCopy(resolve);
-		obj.minCategory = minCategory;
-		obj.maxLevelPercentage = maxLevelPercentage;
-		return obj;
-	}
-
-	public override float GetPriority(Pawn pawn)
-	{
-		Need_Rest rest = pawn.needs.rest;
-		if (rest == null) return 0f;
-		if ((int)rest.CurCategory < (int)minCategory) return 0f;
-		if (rest.CurLevelPercentage > maxLevelPercentage) return 0f;
-		if (Find.TickManager.TicksGame < pawn.mindState.canSleepTick) return 0f;
-		Lord lord = pawn.GetLord();
-		if (lord != null && !lord.CurLordToil.AllowSatisfyLongNeeds) return 0f;
-		if (!RestUtility.CanFallAsleep(pawn)) return 0f;
-
-		float curLevel = rest.CurLevel;
-		if (curLevel < 0.3f) return 8f;
-		return 0f;
-	}
-
-	protected override Job TryGiveJob(Pawn pawn)
-	{
-		Need_Rest rest = pawn.needs.rest;
-		if (rest == null || (int)rest.CurCategory < (int)minCategory || rest.CurLevelPercentage > maxLevelPercentage)
-		{
-			return null;
-		}
-		if (RestUtility.DisturbancePreventsLyingDown(pawn))
-		{
-			return null;
-		}
-		Lord lord = pawn.GetLord();
-
-		Building_Bed building_Bed = pawn.CurrentBed();
-		if (building_Bed != null) return JobMaker.MakeJob(JobDefOf.LayDown, building_Bed);
-
-		if (ToddlerUtility.IsCrawler(pawn)) return JobMaker.MakeJob(JobDefOf.LayDown, FindGroundSleepSpotFor(pawn));
-
-		if ((lord == null || lord.CurLordToil == null || lord.CurLordToil.AllowRestingInBed) && !pawn.IsWildMan() && (!pawn.InMentalState || pawn.MentalState.AllowRestingInBed))
-		{
-			Pawn_RopeTracker roping = pawn.roping;
-			if (roping == null || !roping.IsRoped)
-			{
-				building_Bed = RestUtility.FindBedFor(pawn);
-			}
-		}
-
-		if (building_Bed != null)
-		{
-			if (ToddlerUtility.IsCrib(building_Bed) && building_Bed.Position != pawn.Position) return JobMaker.MakeJob(Toddlers_DefOf.GetIntoCrib, building_Bed);
-			return JobMaker.MakeJob(JobDefOf.LayDown, building_Bed);
-		}
-		return JobMaker.MakeJob(JobDefOf.LayDown, FindGroundSleepSpotFor(pawn));
-	}
-
-	private IntVec3 FindGroundSleepSpotFor(Pawn pawn)
-	{
-		Map map = pawn.Map;
-		IntVec3 position = pawn.Position;
-		for (int i = 0; i < 2; i++)
-		{
-			int radius = ((i == 0) ? 4 : 12);
-			if (CellFinder.TryRandomClosewalkCellNear(position, map, radius, out var result, (IntVec3 x) => !x.IsForbidden(pawn) && !x.GetTerrain(map).avoidWander))
-			{
-				return result;
-			}
-		}
-		return CellFinder.RandomClosewalkCellNearNotForbidden(pawn, 4);
-	}
-}
 
 
 class JobGiver_LeaveCrib : ThinkNode_JobGiver
@@ -267,7 +155,7 @@ class JobDriver_LeaveCrib : JobDriver
 
 	protected override IEnumerable<Toil> MakeNewToils()
 	{
-		Log.Message("Fired LeaveCrib MakeNewToils");
+		//Log.Message("Fired LeaveCrib MakeNewToils");
 
 		Building_Bed crib = TargetA.Thing as Building_Bed;
 		IntVec3 exitCell = TargetB.Cell;
@@ -275,7 +163,7 @@ class JobDriver_LeaveCrib : JobDriver
 		AddFailCondition(() => crib.DestroyedOrNull() || !crib.Spawned);
 		AddFailCondition(() => !pawn.CanReach(exitCell, PathEndMode.OnCell, Danger.Deadly));
 
-		Log.Message("crib : " + crib.ToString());
+		//Log.Message("crib : " + crib.ToString());
 
 		fullVector = exitCell.ToVector3() - crib.Position.ToVector3();
 
@@ -353,4 +241,183 @@ class JobDriver_LeaveCrib : JobDriver
 
 				   }
 			   }
-			  
+
+
+
+class JobDriver_UndressBaby : JobDriver
+{
+	private Pawn Baby => TargetA.Pawn;
+
+	public override bool TryMakePreToilReservations(bool errorOnFailed)
+	{
+		//Log.Message("Fired UndressBaby.PreToilReservations");
+		return pawn.Reserve(TargetA, job, 1, -1, null, errorOnFailed);
+	}
+	public override void Notify_Starting()
+	{
+		base.Notify_Starting();
+		job.count = 1;
+	}
+
+	protected override IEnumerable<Toil> MakeNewToils()
+	{
+		AddFailCondition(() => !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation));
+		AddFailCondition(() => Baby.DestroyedOrNull() || !Baby.Spawned || Baby.DevelopmentalStage != DevelopmentalStage.Baby || !ChildcareUtility.CanSuckle(Baby, out var _));
+		AddFailCondition(() => Baby.apparel == null);
+
+		//Go to baby
+		Toil goToBaby = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch);
+		goToBaby.AddFinishAction(delegate
+		{
+			Pawn baby = (Pawn)goToBaby.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
+			if (baby.Awake() && ToddlerUtility.IsLiveToddler(baby) && !ToddlerUtility.InCrib(baby))
+			{
+				Job beDressedJob = JobMaker.MakeJob(Toddlers_DefOf.BeDressed, goToBaby.actor);
+				job.count = 1;
+				baby.jobs.StartJob(beDressedJob, JobCondition.InterruptForced);
+			}
+		});
+		yield return goToBaby;
+
+		foreach (Apparel apparel in Baby.apparel.WornApparel)
+		{
+			Toil wait = new Toil()
+			{
+				defaultCompleteMode = ToilCompleteMode.Delay,
+				defaultDuration = (int)(apparel.GetStatValue(StatDefOf.EquipDelay) * 60f),
+			};
+			wait.WithProgressBarToilDelay(TargetIndex.A);
+			wait.FailOnDespawnedOrNull(TargetIndex.A);
+			yield return wait;
+
+			yield return Toils_General.Do(delegate
+			{
+				if (Baby.apparel.WornApparel.Contains(apparel))
+				{
+					if (Baby.apparel.TryDrop(apparel, out var resultingAp))
+					{
+					}
+					else
+					{
+						EndJobWith(JobCondition.Incompletable);
+					}
+				}
+				else
+				{
+					EndJobWith(JobCondition.Incompletable);
+				}
+			});
+
+		}
+
+		Toil finish = new Toil();
+		finish.defaultCompleteMode = ToilCompleteMode.Instant;
+		finish.AddFinishAction(delegate
+		{
+			Pawn baby = (Pawn)finish.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
+			if (baby.CurJobDef == Toddlers_DefOf.BeDressed)
+			{
+				baby.jobs.EndCurrentJob(JobCondition.Succeeded);
+			}
+		});
+		yield return finish;
+
+	}
+}
+
+
+/*
+//for logging purposes
+[HarmonyPatch(typeof(SkillDef), nameof(SkillDef.IsDisabled))]
+class IsDisabled_Patch
+{
+	static bool Prefix(ref bool __result, SkillDef __instance, WorkTags combinedDisabledWorkTags, IEnumerable<WorkTypeDef> disabledWorkTypes, WorkTags ___disablingWorkTags, bool ___neverDisabledBasedOnWorkTypes)
+	{
+		bool logFlag = false;
+
+		if (__instance == SkillDefOf.Social)
+		{
+			Log.Message("Fired IsDisabled for Social");
+			logFlag = true;
+		}
+
+		if (logFlag) Log.Message("combinedDisabledWorkTags: " + combinedDisabledWorkTags.ToString());
+		if (logFlag) Log.Message("disablingWorkTags: " + ___disablingWorkTags.ToString());
+
+		if ((combinedDisabledWorkTags & ___disablingWorkTags) != 0)
+		{
+			__result = true;
+			return false;
+		}
+
+		if (logFlag) Log.Message("neverDisabledBasedOnWorkTypes: " + ___neverDisabledBasedOnWorkTypes.ToString());
+		if (___neverDisabledBasedOnWorkTypes)
+		{
+			__result = false;
+			return false;
+		}
+
+		if (logFlag) Log.Message("disabledWorkTypes: " + String.Concat(disabledWorkTypes.ToList()));
+		List<WorkTypeDef> allDefsListForReading = DefDatabase<WorkTypeDef>.AllDefsListForReading;
+		bool flag = false;
+		for (int i = 0; i < allDefsListForReading.Count; i++)
+		{
+			WorkTypeDef workTypeDef = allDefsListForReading[i];
+			for (int j = 0; j < workTypeDef.relevantSkills.Count; j++)
+			{
+				if (workTypeDef.relevantSkills[j] == __instance)
+				{
+					if (logFlag) Log.Message("relevant workType: " + workTypeDef.defName);
+					if (!disabledWorkTypes.Contains(workTypeDef))
+					{
+						__result = false;
+						return false;
+					}
+					flag = true;
+				}
+			}
+		}
+		if (!flag)
+		{
+			__result = false;
+			return false;
+		}
+		__result = true;
+		return false;
+	}
+}
+
+//for logging purposes
+[HarmonyPatch(typeof(SkillRecord))]
+class TotallyDisabled_Patch
+{
+	public static MethodBase TargetMethod()
+	{
+		return typeof(SkillRecord).GetProperty(nameof(SkillRecord.TotallyDisabled), BindingFlags.Public | BindingFlags.Instance).GetGetMethod(false);
+	}
+
+	static void Postfix(SkillRecord __instance, Pawn ___pawn, SkillDef ___def, BoolUnknown ___cachedTotallyDisabled)
+	{
+		if (___def == SkillDefOf.Social && ToddlerUtility.IsToddler(___pawn))
+		{
+			Log.Message("Fired TotallyDisabled for Social for toddler: " + ___pawn);
+			Log.Message("cachedTotallyDisabled: " + ___cachedTotallyDisabled);
+		}
+	}
+}
+
+
+//for logging purposes
+[HarmonyPatch(typeof(SkillRecord), "CalculateTotallyDisabled")]
+class CalculateTotallyDisabled_Patch
+{
+	static void Postfix(SkillRecord __instance, Pawn ___pawn, SkillDef ___def, bool __result)
+	{
+		if (___def == SkillDefOf.Social && ToddlerUtility.IsToddler(___pawn))
+		{
+			Log.Message("Fired CalculateTotallyDisabled for Social for toddler: " + ___pawn);
+			Log.Message("result: " + __result);
+		}
+	}
+}
+*/

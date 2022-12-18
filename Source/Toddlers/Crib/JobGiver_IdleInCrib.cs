@@ -21,7 +21,7 @@ namespace Toddlers
 
         protected override Job TryGiveJob(Pawn pawn)
         {
-            Log.Message("Fired JobGiver_IdleInCrib");
+            //Log.Message("Fired JobGiver_IdleInCrib");
             if (pawn.CurJob != null && !(pawn.CurJob.def == JobDefOf.LayDown)) return pawn.CurJob;
 
             Thing crib = ToddlerUtility.GetCurrentCrib(pawn);
@@ -34,7 +34,7 @@ namespace Toddlers
                     Toddlers_DefOf.WiggleInCrib
                 };
             JobDef jobDef = Activities.RandomElement<JobDef>();
-            Log.Message("drew activity : " + jobDef.defName);
+            //Log.Message("drew activity : " + jobDef.defName);
             return JobMaker.MakeJob(jobDef, crib);
         }
     }

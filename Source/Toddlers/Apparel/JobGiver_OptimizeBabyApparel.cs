@@ -93,19 +93,6 @@ namespace Toddlers
 			//Log.Message("currentOutfit: " + baby.outfits.CurrentOutfit.ToString());
 			//Log.Message("wornApparel: " + wornApparel.ToString());
 			
-			//removed this as part of excluding babies from outfit rule checking
-			/*
-			for (int num = wornApparel.Count - 1; num >= 0; num--)
-			{
-				if (!currentOutfit.filter.Allows(wornApparel[num]) && baby.outfits.forcedHandler.AllowedToAutomaticallyDrop(wornApparel[num]) 
-					&& !baby.apparel.IsLocked(wornApparel[num]) && hauler.CanReserveAndReach(baby, PathEndMode.OnCell, hauler.NormalMaxDanger()))
-				{
-					Job job2 = JobMaker.MakeJob(Toddlers_DefOf.UndressBaby, baby, wornApparel[num]);
-					job2.haulDroppedApparel = true;
-					return job2;
-				}
-			}
-			*/
 			Thing thing = null;
 			float num2 = 0f;
 			List<Thing> list = hauler.Map.listerThings.ThingsInGroup(ThingRequestGroup.Apparel);

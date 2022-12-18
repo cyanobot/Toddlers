@@ -1,20 +1,23 @@
 ﻿using HarmonyLib;
 using RimWorld;
+using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using Verse.AI.Group;
 
 namespace Toddlers
 {
-    [HarmonyPatch(typeof(Need),nameof(Need.GetTipString))]
+    [HarmonyPatch(typeof(Need), nameof(Need.GetTipString))]
     class NeedTipString_Patch
     {
-        static string Postfix(string result,  ref Need __instance)
+        static string Postfix(string result, ref Need __instance)
         {
             //not interested in needs other than Play
             if (!(__instance is Need_Play)) return result;
@@ -58,7 +61,7 @@ namespace Toddlers
         static bool Postfix(bool result, ITab_Pawn_Gear __instance)
         {
             if (result == true) return true;
-            
+
             Pawn selPawnForGear = (Pawn)typeof(ITab_Pawn_Gear).GetProperty("SelPawnForGear", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance);
             if (selPawnForGear.ageTracker.CurLifeStage == LifeStageDefOf.HumanlikeBaby)
             {
@@ -86,6 +89,25 @@ namespace Toddlers
                 float factor = ToddlerUtility.IsToddler(pawn) ? Toddlers_Settings.playFallFactor_Toddler : Toddlers_Settings.playFallFactor_Baby;
                 __instance.CurLevel -= Need_Play.BaseFallPerInterval * factor;
             }
+            return false;
+        }
+    }
+
+    //raises the threshold at which pawns will do childcare work: play with baby
+    [HarmonyPatch(typeof(Need_Play))]
+    class Play_IsLow_Patch
+    {
+        public static MethodBase TargetMethod()
+        {
+            return typeof(Need_Play).GetProperty(nameof(Need_Play.IsLow), BindingFlags.Public | BindingFlags.Instance).GetGetMethod(false);
+        }
+
+        static bool Prefix(ref bool __result, Need_Play __instance, Pawn ___pawn)
+        {
+            if (__instance.CurLevelPercentage <= 0.4f) __result = true;
+            else if (ToddlerUtility.IsLiveToddler(___pawn) && ToddlerUtility.GetLoneliness(___pawn) >= 0.4f && __instance.CurLevelPercentage <= 0.8f)
+                __result = true;
+            else __result = false;
             return false;
         }
     }
@@ -138,20 +160,52 @@ namespace Toddlers
         }
     }
 
-    [HarmonyPatch(typeof(Pawn))]
+    [HarmonyPatch(typeof(Pawn_StoryTracker))]
     class WorkTags_Patch
     {
         public static MethodBase TargetMethod()
         {
-            return typeof(Pawn).GetProperty(nameof(Pawn.CombinedDisabledWorkTags), BindingFlags.Public | BindingFlags.Instance).GetGetMethod(false);
+            return typeof(Pawn_StoryTracker).GetProperty(nameof(Pawn_StoryTracker.DisabledWorkTagsBackstoryTraitsAndGenes), BindingFlags.Public | BindingFlags.Instance).GetGetMethod(false);
         }
 
-        static WorkTags Postfix(WorkTags worktags, Pawn __instance)
+        static WorkTags Postfix(WorkTags worktags, Pawn ___pawn)
         {
-            if (ToddlerUtility.IsToddler(__instance)) worktags |= WorkTags.Violent;
+            //AllWork catches most things, and should catch most modded worktypes as well
+            //violent stops eg equipping weapons, manning mortars
+            if (ToddlerUtility.IsToddler(___pawn))
+            {
+                worktags |= WorkTags.AllWork | WorkTags.Violent;
+                //Log.Message("Fired DisabledWorkTagsBackstoryTraitsAndGenes for pawn: " + ___pawn + ", worktags: " + worktags.ToString());
+            }               
             return worktags;
         }
     }
+
+    
+    [HarmonyPatch(typeof(Pawn),nameof(Pawn.GetDisabledWorkTypes))]
+    class DisabledWorkTypes_Patch
+    {
+        static List<WorkTypeDef> Postfix(List<WorkTypeDef> result, Pawn __instance)
+        {
+            if (ToddlerUtility.IsToddler(__instance))
+            {
+                return DefDatabase<WorkTypeDef>.AllDefsListForReading;
+            }
+            else return result;
+        }
+    }
+
+    [HarmonyPatch(typeof(StrippableUtility),nameof(StrippableUtility.CanBeStrippedByColony))]
+    class CanBeStrippedByColony_Patch
+    {
+        static bool Postfix(bool result, Thing th)
+        {
+            if (th is Pawn pawn && ToddlerUtility.IsToddler(pawn)) return true;
+            else return result;
+        }
+    }
+
+
 
     [HarmonyPatch(typeof(JobGiver_GetRest), "TryGiveJob")]
     class GetRest_Patch
@@ -167,7 +221,7 @@ namespace Toddlers
         }
     }
 
-    [HarmonyPatch(typeof(TargetingParameters),nameof(TargetingParameters.ForCarry))]
+    [HarmonyPatch(typeof(TargetingParameters), nameof(TargetingParameters.ForCarry))]
     class ForCarry_Patch
     {
         static TargetingParameters Postfix(TargetingParameters result)
@@ -186,7 +240,7 @@ namespace Toddlers
         }
     }
 
-    [HarmonyPatch(typeof(JobDriver_CarryDownedPawn),"MakeNewToils")]
+    [HarmonyPatch(typeof(JobDriver_CarryDownedPawn), "MakeNewToils")]
     class CarryDownedPawn_Patch
     {
         static IEnumerable<Toil> Postfix(IEnumerable<Toil> result, JobDriver_CarryDownedPawn __instance)
@@ -207,7 +261,7 @@ namespace Toddlers
 
 
     //without this toddlers won't eat baby food because it's desperateonly
-    [HarmonyPatch(typeof(FoodUtility),nameof(FoodUtility.TryFindBestFoodSourceFor_NewTemp))]
+    [HarmonyPatch(typeof(FoodUtility), nameof(FoodUtility.TryFindBestFoodSourceFor_NewTemp))]
     class BestFoodSource_Patch
     {
         static void Prefix(Pawn eater, ref FoodPreferability minPrefOverride)
@@ -240,7 +294,7 @@ namespace Toddlers
     }
 
     //stops (Disliked food) from showing for toddlers considering baby food
-    [HarmonyPatch(typeof(FoodUtility),nameof(FoodUtility.MoodFromIngesting))]
+    [HarmonyPatch(typeof(FoodUtility), nameof(FoodUtility.MoodFromIngesting))]
     class MoodFromIngesting_Patch
     {
         static bool Prefix(ref float __result, Pawn ingester)
@@ -272,7 +326,8 @@ namespace Toddlers
         }
     }
 
-    [HarmonyPatch(typeof(NeedsCardUtility),"DrawThoughtGroup")]
+    //don't show baby talk for toddlers
+    [HarmonyPatch(typeof(NeedsCardUtility), "DrawThoughtGroup")]
     class NeedsCardUtility_Patch
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
@@ -290,7 +345,7 @@ namespace Toddlers
 
             foreach (var instruction in instructions)
             {
-                    
+
                 if (done)
                 {
                     yield return instruction;
@@ -314,12 +369,12 @@ namespace Toddlers
                         yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Pawn), nameof(Pawn.ageTracker)));
                         yield return new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(Pawn_AgeTracker), nameof(Pawn_AgeTracker.CurLifeStageIndex)));
                         yield return new CodeInstruction(OpCodes.Ldc_I4_0);
-                        yield return new CodeInstruction(OpCodes.Bne_Un,targetLabel);
+                        yield return new CodeInstruction(OpCodes.Bne_Un, targetLabel);
                     }
 
                     continue;
                 }
-                    
+
                 //look for the target that will let us identify where we want to put the label
                 if (foundEnd && !foundTarget)
                 {
@@ -367,7 +422,7 @@ namespace Toddlers
         }
     }
 
-    [HarmonyPatch(typeof(Hediff_VatLearning),nameof(Hediff_VatLearning.PostTick))]
+    [HarmonyPatch(typeof(Hediff_VatLearning), nameof(Hediff_VatLearning.PostTick))]
     class VatLearning_Patch
     {
         static void Postfix(Pawn ___pawn)
@@ -391,5 +446,100 @@ namespace Toddlers
         }
     }
 
+    //Can take toddlers on caravans even if they are in a mental state
+    [HarmonyPatch(typeof(CaravanFormingUtility), nameof(CaravanFormingUtility.AllSendablePawns))]
+    class AllSendablePawns_Patch
+    {
+        static List<Pawn> Postfix(List<Pawn> result, Map map, bool allowEvenIfInMentalState)
+        {
+            //if allowEvenIfInMentalState was true, we don't need to meddle
+            if (allowEvenIfInMentalState) return result;
 
+            List<Pawn> allPawnsSpawned = map.mapPawns.AllPawnsSpawned;
+            foreach (Pawn pawn in allPawnsSpawned)
+            {
+                if (pawn.InMentalState && ToddlerUtility.IsLiveToddler(pawn))
+                    result.Add(pawn);
+            }
+            return result;
+        }
+    }
+
+    //toddlers should be carried on caravans if possible
+    [HarmonyPatch(typeof(CaravanCarryUtility), nameof(CaravanCarryUtility.WouldBenefitFromBeingCarried))]
+    class WouldBenefitFromBeingCarried_Patch
+    {
+        static bool Postfix(bool result, Pawn p)
+        {
+            if (!result && ToddlerUtility.IsLiveToddler(p)) return true;
+            else return result;
+        }
+    }
+
+    //babies crying or giggling should not interrupt lord jobs like rituals or caravan formation
+    [HarmonyPatch(typeof(Trigger_MentalState), nameof(Trigger_MentalState.ActivateOn))]
+    class Trigger_MentalState_Patch
+    {
+        static bool Prefix(ref bool __result, Lord lord, TriggerSignal signal)
+        {
+            if (signal.type == TriggerSignalType.Tick)
+            {
+                for (int i = 0; i < lord.ownedPawns.Count; i++)
+                {
+                    if (lord.ownedPawns[i].InMentalState && lord.ownedPawns[i].DevelopmentalStage != DevelopmentalStage.Baby)
+                    {
+                        __result = true;
+                        return false;
+                    }
+                }
+            }
+            __result = false;
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(Trigger_NoMentalState), nameof(Trigger_NoMentalState.ActivateOn))]
+    class Trigger_NoMentalState_Patch
+    {
+        static bool Prefix(ref bool __result, Lord lord, TriggerSignal signal)
+        {
+            if (signal.type == TriggerSignalType.Tick)
+            {
+                for (int i = 0; i < lord.ownedPawns.Count; i++)
+                {
+                    if (lord.ownedPawns[i].InMentalState && lord.ownedPawns[i].DevelopmentalStage != DevelopmentalStage.Baby)
+                    {
+                        __result = false;
+                        return false;
+                    }
+                }
+                __result = true;
+                return false;
+            }
+            __result = false;
+            return false;
+        }
+    }
+
+    //crying/giggling toddlers still count as PlayerControlled
+    //which allows them to eg be given orders, drafted
+    [HarmonyPatch(typeof(Pawn))]
+    class IsColonistPlayerControlled_Patch
+    {
+        public static MethodBase TargetMethod()
+        {
+            return typeof(Pawn).GetProperty(nameof(Pawn.IsColonistPlayerControlled), BindingFlags.Public | BindingFlags.Instance).GetGetMethod(false);
+        }
+
+        static bool Postfix(bool result, Pawn __instance)
+        {
+            if (result == false && __instance.Spawned && __instance.IsColonist
+                && (__instance.HostFaction == null || __instance.IsSlave)
+                && ToddlerUtility.IsLiveToddler(__instance))
+            {
+                result = true;
+            }
+            return result;
+        }
+    }
 }

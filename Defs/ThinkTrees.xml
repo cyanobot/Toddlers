@@ -191,6 +191,13 @@
 							</li>
 						</subNodes>
 					</li>
+				
+					<li Class="ThinkNode_Tagger">
+						<tagToGive>RestingForMedicalReasons</tagToGive>
+						<subNodes>
+							<li Class="JobGiver_PatientGoToBed" />
+						</subNodes>
+					</li>
 					
 					<!-- Lord directives (medium priority) -->
 					<li Class="ThinkNode_JoinVoluntarilyJoinableLord">
@@ -244,7 +251,7 @@
 											<li Class="Toddlers.JobGiver_ToddlerPlay"/>
 											
 											<!-- I think this is needed for things like rest in bed-->
-											<li Class="JobGiver_Work"/>											
+											<!-- <li Class="JobGiver_Work"/>-->											
 										</subNodes>
 									</li>
 								</subNodes>

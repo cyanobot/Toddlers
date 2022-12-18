@@ -26,7 +26,7 @@ namespace Toddlers
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            if (!pawn.Reserve(job.targetA, job, Toddlers_Mod.televisionMaxParticipants, 0, null, errorOnFailed))
+            if (!pawn.Reserve(job.targetA, job, ToddlerPlayUtility.TelevisionMaxParticipants, 0, null, errorOnFailed))
             {
                 return false;
             }
@@ -52,7 +52,7 @@ namespace Toddlers
             });
             if (TargetB.Cell.GetThingList(pawn.Map).Find(t => t as Building_Bed != null) != null)
                 {
-                Log.Message("Got into has building_bed");
+                //Log.Message("Got into has building_bed");
                 watch.AddPreInitAction(delegate ()
                 {
                     watch.actor.jobs.posture = PawnPosture.LayingInBed;

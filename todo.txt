@@ -1,20 +1,18 @@
 
 Medium Priority
-	Growth vat
+	-nullexception toybox while off map
+	toddlers ignore forbidden doors?
 	
-	AI
-	
-	Play
-
-	Rendering
-
-	Baby clothes
-
-
 Low Priority
 	Misc
-	enable right click menu while crying/giggling
 	revisit climbing in and out of crib
+	crib objects that shelter from elements
+	carry toddlers to caravans
+	play builds relationships
+	comfort crying baby interaction
+	learn to Translate
+	simple floordrawings only
+	hold toddlers still while being stripped
 	
 	Capabilities	
 	should manipulation come with an actual manipulation penalty?
@@ -22,19 +20,13 @@ Low Priority
 
 	Play
 	play with unsafe objects?
-	add mood boost for playing with toys/adults?
 
 	Rendering
 	finetune wobble
-
-	Baby clothes
-	watch for a fix to the body type bug
 
 
 
 
 Extra
-	crib objects that shelter from elements
-	social interactions for toddlers
 	firegazing for children
 	baby bjorn

@@ -75,6 +75,12 @@
 	</JobDef>
 	
 	<JobDef>
+		<defName>LetOutOfCrib</defName>
+		<driverClass>Toddlers.JobDriver_LetOutOfCrib</driverClass>
+		<reportString>letting TargetA out of crib.</reportString>
+	</JobDef>
+	
+	<JobDef>
 		<defName>DressBaby</defName>
 		<driverClass>Toddlers.JobDriver_DressBaby</driverClass>
 		<reportString>dressing TargetA.</reportString>
@@ -82,10 +88,15 @@
 	</JobDef>
 	
 	<JobDef>
-		<defName>UndressBaby</defName>
-		<driverClass>Toddlers.JobDriver_UndressBaby</driverClass>
-		<reportString>undressing TargetA.</reportString>
-		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+		<defName>BeDressed</defName>
+		<driverClass>Toddlers.JobDriver_BeDressed</driverClass>
+		<reportString>be dressed by TargetA.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>ToddlerRemoveApparel</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerRemoveApparel</driverClass>
+		<reportString>removing TargetA.</reportString>
 	</JobDef>
 	
 </Defs>

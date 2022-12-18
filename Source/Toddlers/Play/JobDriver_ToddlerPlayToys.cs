@@ -19,7 +19,7 @@ namespace Toddlers
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            this.FailOnForbidden(TargetIndex.A);
+            this.FailOnDestroyedNullOrForbidden(TargetIndex.A);
 
             //contains checks that are equally applicable to toddlers
             this.FailOnChildLearningConditions<JobDriver_ToddlerPlayToys>();

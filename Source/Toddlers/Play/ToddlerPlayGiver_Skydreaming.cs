@@ -18,7 +18,8 @@ namespace Toddlers
 			IntVec3 intVec;
 			//using TryFindSkygazeCell instead of TryFindSkydreamingSpotOutsideColony
 			//because toddlers should be more inclined to want to stick close to people
-			return base.CanDo(pawn) && RCellFinder.TryFindSkygazeCell(pawn.Position, pawn, out intVec);
+			return base.CanDo(pawn) && JoyUtility.EnjoyableOutsideNow(pawn.Map)
+				&& RCellFinder.TryFindSkygazeCell(pawn.Position, pawn, out intVec);
 		}
 
 		public override Job TryGiveJob(Pawn pawn)

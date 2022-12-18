@@ -259,7 +259,7 @@ namespace Toddlers
 				}
 				if (pawnRenderer.graphics.headGraphic != null)
 				{
-					DrawHeadHair(pawnRenderer, bodyLoc, headOffset, headAngle, bodyFacing, bodyFacing, bodyDrawType, flags, renderBody);
+					DrawHeadHair(pawnRenderer, headLoc, Vector3.zero, headAngle, bodyFacing, bodyFacing, bodyDrawType, flags, renderBody);
 				}
 				if (bodyDrawType == RotDrawMode.Fresh && pawnRenderer.FirefoamOverlays.IsCoveredInFoam && headMesh != null)
 				{
@@ -335,9 +335,11 @@ namespace Toddlers
 			//Log.Message("parentHolder: " + ___pawn.ParentHolder.ToString());
 			IThingHolder parentHolder = ___pawn.ParentHolder;
 
-			if (!(parentHolder is Map) || parentHolder is Pawn_CarryTracker) return true;
+			if (!(parentHolder is Map || parentHolder is Pawn_CarryTracker)) return true;
 
-			bool isBugWatching = parentHolder is Map && ___pawn.CurJobDef == Toddlers_DefOf.ToddlerBugwatching && ___pawn.jobs.curJob.targetA.Cell == ___pawn.Position;
+			bool isBugWatching = parentHolder is Map 
+				&& ___pawn.jobs != null && ___pawn.jobs.curJob != null
+				&& ___pawn.CurJobDef == Toddlers_DefOf.ToddlerBugwatching && ___pawn.jobs.curJob.targetA.Cell == ___pawn.Position;
 			if (isBugWatching)
 			{
 				if (bodyFacing == Rot4.East)
@@ -354,7 +356,7 @@ namespace Toddlers
 
 			//baby carry angle relies on them being downed therefore not in the standing posture
 			//therefore this is a copy of the same logic to draw toddlers at the right angle when held
-			bool isCarried = ___pawn.GetPosture() == PawnPosture.Standing && parentHolder is Pawn_CarryTracker;
+			bool isCarried = parentHolder is Pawn_CarryTracker && ___pawn.GetPosture() == PawnPosture.Standing;
 			if (isCarried)
 			{
 				angle = (((parentHolder as Pawn_CarryTracker).pawn.Rotation == Rot4.West) ? 290f : 70f) + (parentHolder as Pawn_CarryTracker).pawn.Drawer.renderer.BodyAngle();
@@ -377,8 +379,8 @@ namespace Toddlers
 			}
 
 			bool isWigglingInCrib = parentHolder is Map && ___pawn.CurJob != null 
-				&& ___pawn.CurJobDef.reportString.Contains("wiggling")
-				|| (___pawn.CurJob.reportStringOverride != null && ___pawn.CurJob.reportStringOverride.Contains("wiggling"));
+				&& ((___pawn.CurJobDef.reportString != null && ___pawn.CurJobDef.reportString.Contains("wiggling"))
+				|| (___pawn.CurJob.reportStringOverride != null && ___pawn.CurJob.reportStringOverride.Contains("wiggling")));
 			if (isWigglingInCrib)
 			{
 				ToddlerRenderer.RenderToddlerInternal(__instance, ToddlerRenderer.ToddlerRenderMode.WigglingInCrib, ___pawn, rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags);

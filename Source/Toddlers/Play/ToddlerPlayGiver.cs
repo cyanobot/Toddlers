@@ -27,10 +27,6 @@ namespace Toddlers
 			return JobMaker.MakeJob(this.def.jobDef);
 		}
 
-		public const float NeedThresholdOffsetStart = 0.1f;
-
-		public const float NeedThresholdOffsetStop = -0.05f;
-
 		public ToddlerPlayDef def;
 	}
 }

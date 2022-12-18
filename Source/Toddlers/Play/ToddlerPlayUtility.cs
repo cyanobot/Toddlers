@@ -14,8 +14,30 @@ namespace Toddlers
     public static class ToddlerPlayUtility
     {
         public const float PlayNeedSatisfiedPerTick = 1.2E-05f;
-        public const float LonelinessCuredPerTick = 1.2E-04f;
+        public const float LonelinessCuredPerTick = 1.2E-03f;
         public const int PlayDuration = 2000;
+        public const float BaseLonelinessRate = 0.0005f;
+
+        public static List<ThingDef> cachedTelevisionDefs = new List<ThingDef>();
+        public static int cachedTelevisionMaxParticipants = -1;
+
+        public static List<ThingDef> TelevisionDefs
+        {
+            get
+            {
+                if (cachedTelevisionDefs.NullOrEmpty()) cachedTelevisionDefs = DefDatabase<JoyGiverDef>.GetNamed("WatchTelevision").thingDefs;
+                return cachedTelevisionDefs;
+            }
+        }
+
+        public static int TelevisionMaxParticipants
+        {
+            get
+            {
+                if (cachedTelevisionMaxParticipants== -1) cachedTelevisionMaxParticipants = DefDatabase<JobDef>.GetNamed("WatchTelevision").joyMaxParticipants;
+                return cachedTelevisionMaxParticipants;
+            }
+        }
 
         public static float GetLoneliness(Pawn pawn)
         {
@@ -34,8 +56,11 @@ namespace Toddlers
 
         public static bool ToddlerPlayTickCheckEnd(Pawn pawn)
         {
-            pawn.needs.play.Play(PlayNeedSatisfiedPerTick * BabyPlayUtility.GetRoomPlayGainFactors(pawn));
-            if (pawn.needs.play.CurLevel >= GetMaxPlay(pawn))
+            if (pawn.needs.play.CurLevel <= GetMaxPlay(pawn))
+            {
+                pawn.needs.play.Play(PlayNeedSatisfiedPerTick * BabyPlayUtility.GetRoomPlayGainFactors(pawn));
+            }
+            if (pawn.needs.play.CurLevel >= 0.95f)
             {
                 pawn.jobs.curDriver.EndJobWith(JobCondition.Succeeded);
                 return true;

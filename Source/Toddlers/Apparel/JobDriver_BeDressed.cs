@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Toddlers
 {
-    class JobDriver_ToddlerBePlayedWith : JobDriver
+    class JobDriver_BeDressed : JobDriver
     {
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
@@ -19,11 +19,10 @@ namespace Toddlers
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            Toil toil = ToilMaker.MakeToil("MakeNewToils");
-            toil.tickAction = delegate ()
-            {
-                ToddlerPlayUtility.ToddlerPlayedWithTickCheckEnd(this.pawn);
-            };
+            //Log.Message("Started BeDressed job");
+            this.FailOnDestroyedNullOrForbidden(TargetIndex.A);
+            AddFailCondition(() => TargetA.Pawn == null || TargetA.Pawn.jobs.curJob.targetA.Pawn != this.pawn);
+            Toil toil = Toils_General.Wait(0);
             toil.defaultCompleteMode = ToilCompleteMode.Never;
             yield return toil;
             yield break;

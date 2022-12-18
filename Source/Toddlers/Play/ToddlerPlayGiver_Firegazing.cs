@@ -61,7 +61,7 @@ namespace Toddlers
 
         private Thing FindNearbyUseableFire(Pawn pawn)
         {
-            Log.Message("Fired FindNearbyUseableFire");
+            //Log.Message("Fired FindNearbyUseableFire");
             Room room = pawn.GetRoom(RegionType.Set_All);
             if (room != null)
             {

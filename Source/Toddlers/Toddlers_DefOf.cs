@@ -24,7 +24,8 @@ namespace Toddlers
         public static JobDef WiggleInCrib;
         public static JobDef PutInCrib;
         public static JobDef DressBaby;
-        public static JobDef UndressBaby;
+        public static JobDef BeDressed;
+        public static JobDef ToddlerRemoveApparel;
 
         public static LifeStageDef HumanlikeToddler;
 

@@ -31,7 +31,7 @@
     <canInitiateSocialInteraction>false</canInitiateSocialInteraction>
     <customMoodTipString>Mood represents how happy or stressed someone is. Babies with low mood are more likely to cry, while babies with a high mood are more likely to giggle.</customMoodTipString>
     <statFactors>
-      <MoveSpeed>0.6</MoveSpeed>
+      <MoveSpeed>0.4</MoveSpeed>
     </statFactors>
     <statOffsets>
       <ComfyTemperatureMin>-46</ComfyTemperatureMin><!--should map to -30C-->

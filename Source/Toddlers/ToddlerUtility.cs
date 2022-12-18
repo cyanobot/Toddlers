@@ -40,14 +40,6 @@ namespace Toddlers
             return 1 / ticksAsToddler;
         }
 
-        public static float GetLearningPerTickFromFactor(float factor, Storyteller storyteller = null)
-        {
-            //2 years * 60 days per year * 60000 ticks per day
-            if (storyteller == null) storyteller = Find.Storyteller;
-            float ticksAsToddler = 2 * 60 * 60000 / Find.Storyteller.difficulty.childAgingRate;
-            return 1 / (ticksAsToddler * factor);
-        }
-
         public static float GetLoneliness(Pawn pawn)
         {
             Hediff hediff = pawn.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.ToddlerLonely) as Hediff_ToddlerLonely;

@@ -23,8 +23,8 @@ namespace Toddlers
         public static float minComfortableTemperature_Baby = 20f;
         public static float minComfortableTemperature_Toddler = 18f;
 
-        public static float learningFactor_Walk = 0.5f;
-        public static float learningFactor_Manipulation = 0.7f;
+        public static float learningFactor_Walk = 0.8f;
+        public static float learningFactor_Manipulation = 0.8f;
 
 
         public override void ExposeData()

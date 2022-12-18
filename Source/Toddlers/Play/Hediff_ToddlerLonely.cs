@@ -44,7 +44,7 @@ namespace Toddlers
                 //at 1yo, rateFromAge = 1, at 3yo = 0.4
                 float rateFromAge = 1f - (0.6f * ToddlerUtility.PercentGrowth(pawn));
                 
-                Severity += Toddlers_Mod.BaseLonelinessRate * rateFromAge * Toddlers_Settings.lonelinessGainFactor;
+                Severity += ToddlerPlayUtility.BaseLonelinessRate * rateFromAge * Toddlers_Settings.lonelinessGainFactor;
             }
         }
     }

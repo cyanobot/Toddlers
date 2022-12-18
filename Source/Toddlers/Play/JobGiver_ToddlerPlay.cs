@@ -16,7 +16,7 @@ namespace Toddlers
 
         protected override Job TryGiveJob(Pawn pawn)
         {
-            if (pawn.needs.play.CurLevelPercentage >= ToddlerPlayUtility.GetMaxPlay(pawn))
+            if (pawn.needs.play.CurLevelPercentage >= 0.95f)
             {
                 return null;
             }

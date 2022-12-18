@@ -40,7 +40,7 @@ namespace Toddlers
 
         public Job TryGiveJobWhileDowned(Pawn pawn)
         {
-            Log.Message("Fired TryGiveJobWhileDowned");
+            //Log.Message("Fired TryGiveJobWhileDowned");
 
             Thing tv = FindTelevisionWhileDowned(pawn);
             if (tv == null) return null;
@@ -55,12 +55,12 @@ namespace Toddlers
             Room room = pawn.GetRoom(RegionType.Set_All);
             if (room != null)
             {
-                Log.Message("Found room");
+                //Log.Message("Found room");
                 foreach (Thing thing in room.ContainedAndAdjacentThings)
                 {
-                    if (Toddlers_Mod.televisionDefs.Contains(thing.def) && CanInteractWith(pawn, thing))
+                    if (ToddlerPlayUtility.TelevisionDefs.Contains(thing.def) && CanInteractWith(pawn, thing))
                     {
-                        Log.Message("Found television");
+                        //Log.Message("Found television");
 
                         object[] prms = { pawn.Position, thing.Position, pawn.Map, true, thing.def };
                         if ((bool)typeof(WatchBuildingUtility).GetMethod("EverPossibleToWatchFrom", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).Invoke(null, prms))
@@ -80,11 +80,11 @@ namespace Toddlers
             {
                 foreach (Thing thing in room.ContainedAndAdjacentThings)
                 {
-                    if (Toddlers_Mod.televisionDefs.Contains(thing.def) && CanInteractWith(pawn, thing)) return thing;
+                    if (ToddlerPlayUtility.TelevisionDefs.Contains(thing.def) && CanInteractWith(pawn, thing)) return thing;
                 }
             }
             List<Thing> candidates = new List<Thing>();
-            foreach (ThingDef televisionDef in Toddlers_Mod.televisionDefs)
+            foreach (ThingDef televisionDef in ToddlerPlayUtility.TelevisionDefs)
             {
                 candidates.AddRange(pawn.Map.listerThings.ThingsOfDef(televisionDef));
             }
@@ -97,7 +97,7 @@ namespace Toddlers
         protected virtual bool CanInteractWith(Pawn pawn, Thing t)
         {
             if (t.IsForbidden(pawn) || t.IsBurning()) return false;
-            if (!pawn.CanReserve(t, Toddlers_Mod.televisionMaxParticipants))
+            if (!pawn.CanReserve(t, ToddlerPlayUtility.TelevisionMaxParticipants))
             {
                 return false;
             }

@@ -15,7 +15,8 @@ namespace Toddlers
         public override bool CanDo(Pawn pawn)
         {
             IntVec3 intVec;
-            return base.CanDo(pawn) && TryFindBugwatchCell(pawn.Position, pawn, out intVec); ;
+            return base.CanDo(pawn) && JoyUtility.EnjoyableOutsideNow(pawn.Map)
+                && TryFindBugwatchCell(pawn.Position, pawn, out intVec); ;
         }
 
         public override bool CanDoWhileDowned(Pawn pawn)
