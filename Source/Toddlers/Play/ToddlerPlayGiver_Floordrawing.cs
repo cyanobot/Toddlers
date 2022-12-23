@@ -39,7 +39,7 @@ namespace Toddlers
 						return false;
 					}
 					IntVec3 result;
-					return r.DangerFor(pawn) != Danger.Deadly && r.TryFindRandomCellInRegion(CellValidator, out result);
+					return r.DangerFor(pawn) != Danger.None && r.TryFindRandomCellInRegionUnforbidden(pawn, CellValidator, out result);
 				}, desperate ? 200 : 40);
 				bool CellValidator(IntVec3 c)
 				{

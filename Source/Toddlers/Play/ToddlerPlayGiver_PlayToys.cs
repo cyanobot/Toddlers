@@ -15,7 +15,7 @@ namespace Toddlers
         public override bool CanDo(Pawn pawn)
         {
             Thing t;
-            return base.CanDo(pawn) && (t = this.FindNearbyUseableToyBox(pawn)) != null && pawn.CanReserveAndReach(t, PathEndMode.Touch, Danger.Some, 1, -1, null, false);
+            return base.CanDo(pawn) && (t = this.FindNearbyUseableToyBox(pawn)) != null && pawn.CanReserveAndReach(t, PathEndMode.Touch, Danger.None, 1, -1, null, false);
         }
 
         public override bool CanDoWhileDowned(Pawn pawn)
@@ -57,7 +57,7 @@ namespace Toddlers
                 }
             }
             return GenClosest.ClosestThingReachable(pawn.Position, pawn.Map, ThingRequest.ForDef(ThingDefOf.ToyBox), PathEndMode.OnCell, 
-                TraverseParms.For(pawn, Danger.Deadly, TraverseMode.ByPawn, false, false, false), 15.9f, 
+                TraverseParms.For(pawn, Danger.None, TraverseMode.ByPawn, false, false, false), 15.9f, 
                 (Thing t) => this.IsValidToyBox(t, pawn), null, 0, -1, false, RegionType.Set_Passable, false);
         }
 

@@ -224,13 +224,14 @@ namespace Toddlers
     [HarmonyPatch(typeof(TargetingParameters), nameof(TargetingParameters.ForCarry))]
     class ForCarry_Patch
     {
-        static TargetingParameters Postfix(TargetingParameters result)
+        static TargetingParameters Postfix(TargetingParameters result, Pawn p)
         {
             result.onlyTargetIncapacitatedPawns = false;
             result.validator = delegate (TargetInfo targ)
             {
                 if (!targ.HasThing) return false;
                 Pawn toCarry = targ.Thing as Pawn;
+                if (toCarry == p) return false;
                 if (toCarry == null) return false;
                 if (ToddlerUtility.IsLiveToddler(toCarry)) return true;
                 if (!toCarry.Downed) return false;

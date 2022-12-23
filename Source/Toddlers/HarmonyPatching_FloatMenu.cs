@@ -26,7 +26,8 @@ namespace Toddlers
     }
     */
 
-    [HarmonyPatch(typeof(FloatMenuMakerMap), "AddHumanlikeOrders")]
+
+    [HarmonyPatch(typeof(FloatMenuMakerMap), "ChoicesAtFor")]
     class FloatMenu_Patch
     {
         //copied from Injured Carry with modifications
@@ -93,8 +94,9 @@ namespace Toddlers
             };
         }
 
-        static void Postfix(ref List<FloatMenuOption> opts, Pawn pawn, Vector3 clickPos)
+        static List<FloatMenuOption> Postfix(List<FloatMenuOption> opts, Pawn pawn, Vector3 clickPos)
         {
+            //Log.Message("opts.Count = " + opts.Count);
             IntVec3 c = IntVec3.FromVector3(clickPos);
             //for non-toddlers
             if (!ToddlerUtility.IsLiveToddler(pawn))
@@ -135,7 +137,7 @@ namespace Toddlers
                         }
 
                         if (!toddler.InBed()
-                            && pawn.CanReserveAndReach(toddler, PathEndMode.OnCell, Danger.Deadly, 1, -1, null, ignoreOtherReservations: true)
+                            && pawn.CanReserveAndReach(toddler, PathEndMode.OnCell, Danger.None, 1, -1, null, ignoreOtherReservations: true)
                             && !toddler.mindState.WillJoinColonyIfRescued
                         )
                         {
@@ -182,7 +184,7 @@ namespace Toddlers
                                 continue;
                         }
 
-                        if (!pawn.CanReserveAndReach(baby, PathEndMode.ClosestTouch, Danger.Deadly, 1, -1, null, ignoreOtherReservations: true))
+                        if (!pawn.CanReserveAndReach(baby, PathEndMode.ClosestTouch, Danger.None, 1, -1, null, ignoreOtherReservations: true))
                             continue;
 
                         //option to dress baby
@@ -204,11 +206,14 @@ namespace Toddlers
 
             }
 
-            //for toddlers
-            else if (!ToddlerUtility.CanDressSelf(pawn) || !ToddlerUtility.CanFeedSelf(pawn))
+            //for toddlers, mostly disabling/removing options for things they can't do
+            else
             {
+                //int n = opts.RemoveAll(x => x.Label.Contains(pawn.LabelShort));
+                opts.RemoveAll(x => x.revalidateClickTarget == pawn || x.Label.Contains(pawn.LabelShort) || x.Label.Contains(pawn.LabelShortCap));
+
                 foreach (Thing t in c.GetThingList(pawn.Map))
-                {
+                {                                  
                     if (t.def.IsApparel && !ToddlerUtility.CanDressSelf(pawn))
                     {
                         //copied directly from source
@@ -258,6 +263,7 @@ namespace Toddlers
                     }
                 }
             }
+            return opts;
         }
     }
 }

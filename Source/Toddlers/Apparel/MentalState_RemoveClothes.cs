@@ -17,7 +17,7 @@ namespace Toddlers
 
         public override void MentalStateTick()
         {
-            if (pawn.apparel.WornApparelCount == 0) 
+            if (pawn.apparel.WornApparelCount == 0 || HealthAIUtility.ShouldSeekMedicalRest(pawn)) 
             { 
                 RecoverFromState();
                 return;

@@ -11,6 +11,7 @@ namespace Toddlers
 {
     class Toddlers_Settings : ModSettings
     {
+        public static bool customRenderer = true;
         public static bool canDraftToddlers = false;
 
         public static float playFallFactor_Baby = 5f;
@@ -31,6 +32,7 @@ namespace Toddlers
         {
             base.ExposeData();
 
+            Scribe_Values.Look(ref customRenderer, "customRenderer", customRenderer, true);
             Scribe_Values.Look(ref canDraftToddlers, "canDraftToddlers", canDraftToddlers, true);
             Scribe_Values.Look(ref playFallFactor_Baby, "playFallFactor_Baby", playFallFactor_Baby, true);
             Scribe_Values.Look(ref playFallFactor_Toddler, "playFallFactor_Toddler", playFallFactor_Toddler, true);
@@ -51,6 +53,8 @@ namespace Toddlers
             };
 
             l.Begin(rect);
+
+            l.CheckboxLabeled("Custom renderer :", ref customRenderer, "Custom (minor) animations for crawling babies, wiggling, wobbling, etc. Turn off if you are having a compatibility issue with other mods that affect rendering.");
 
             l.CheckboxLabeled("Can draft toddlers :", ref canDraftToddlers,"Toddlers remain incapable of violence, but with this setting on they can be drafted and given orders.");
 

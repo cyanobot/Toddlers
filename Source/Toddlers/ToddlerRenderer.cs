@@ -365,14 +365,14 @@ namespace Toddlers
 			}
 
 			bool isCrawling = parentHolder is Map && ToddlerUtility.IsCrawler(___pawn) && ___pawn.GetPosture() == PawnPosture.Standing && ___pawn.pather.Moving;
-			if (isCrawling)
+			if (isCrawling && Toddlers_Settings.customRenderer)
 			{
 				ToddlerRenderer.RenderToddlerInternal(__instance, ToddlerRenderer.ToddlerRenderMode.Crawling, ___pawn, rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags);
 				return false;
 			}
 
 			bool isWobbling = parentHolder is Map && ToddlerUtility.IsWobbly(___pawn) && ___pawn.GetPosture() == PawnPosture.Standing && ___pawn.pather.Moving;
-			if (isWobbling)
+			if (isWobbling && Toddlers_Settings.customRenderer)
 			{
 				ToddlerRenderer.RenderToddlerInternal(__instance, ToddlerRenderer.ToddlerRenderMode.Toddling, ___pawn, rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags);
 				return false;
@@ -381,7 +381,7 @@ namespace Toddlers
 			bool isWigglingInCrib = parentHolder is Map && ___pawn.CurJob != null 
 				&& ((___pawn.CurJobDef.reportString != null && ___pawn.CurJobDef.reportString.Contains("wiggling"))
 				|| (___pawn.CurJob.reportStringOverride != null && ___pawn.CurJob.reportStringOverride.Contains("wiggling")));
-			if (isWigglingInCrib)
+			if (isWigglingInCrib && Toddlers_Settings.customRenderer)
 			{
 				ToddlerRenderer.RenderToddlerInternal(__instance, ToddlerRenderer.ToddlerRenderMode.WigglingInCrib, ___pawn, rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags);
 				return false;

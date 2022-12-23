@@ -16,9 +16,9 @@ namespace Toddlers
         {
             if (!base.CanDo(pawn)) return false;
             Thing fire = FindNearbyUseableFire(pawn);
-            if (fire == null | !pawn.CanReach(fire, PathEndMode.Touch, Danger.Some)) return false;
+            if (fire == null | !pawn.CanReach(fire, PathEndMode.Touch, Danger.None)) return false;
             IntVec3 standCell = FindFiregazingSpot(pawn,fire);
-            if (standCell == IntVec3.Invalid | !pawn.CanReserveAndReach(standCell, PathEndMode.OnCell, Danger.Some)) return false;
+            if (standCell == IntVec3.Invalid | !pawn.CanReserveAndReach(standCell, PathEndMode.OnCell, Danger.None)) return false;
             return true;
         }
 
@@ -73,14 +73,14 @@ namespace Toddlers
                     }
                 }
             }
-            return GenClosest.ClosestThingReachable(pawn.Position, pawn.Map, ThingRequest.ForDef(ThingDefOf.Campfire), PathEndMode.OnCell, TraverseParms.For(pawn, Danger.Deadly, TraverseMode.ByPawn, false, false, false), 15.9f, (Thing t) => this.IsValidFire(t, pawn), null, 0, -1, false, RegionType.Set_Passable, false);
+            return GenClosest.ClosestThingReachable(pawn.Position, pawn.Map, ThingRequest.ForDef(ThingDefOf.Campfire), PathEndMode.OnCell, TraverseParms.For(pawn, Danger.None, TraverseMode.ByPawn, false, false, false), 15.9f, (Thing t) => this.IsValidFire(t, pawn), null, 0, -1, false, RegionType.Set_Passable, false);
         }
 
         private IntVec3 FindFiregazingSpot(Pawn pawn, Thing fire)
         {
             foreach(IntVec3 cell in GenAdj.CellsAdjacent8Way(fire).InRandomOrder())
             {
-                if (pawn.CanReserveAndReach(cell,PathEndMode.OnCell,Danger.Some)) return cell;
+                if (pawn.CanReserveAndReach(cell,PathEndMode.OnCell,Danger.None)) return cell;
             }
             return IntVec3.Invalid;
         }

@@ -36,7 +36,7 @@ namespace Toddlers
 			IntVec3 exitCell = IntVec3.Invalid;
 			foreach (IntVec3 cell in GenAdj.CellsAdjacent8Way(pawn).InRandomOrder())
 			{
-				if (pawn.CanReserveAndReach(cell, PathEndMode.OnCell, Danger.Some))
+				if (pawn.CanReserveAndReach(cell, PathEndMode.OnCell, Danger.None))
 				{
 					exitCell = cell;
 				}

@@ -17,7 +17,7 @@ namespace Toddlers
         public override bool CanDo(Pawn pawn)
         {
             Thing t;
-            return base.CanDo(pawn) && (t = this.FindNearbyUseableDecor(pawn)) != null && pawn.CanReserveAndReach(t, PathEndMode.Touch, Danger.Some, 1, -1, null, false);
+            return base.CanDo(pawn) && (t = this.FindNearbyUseableDecor(pawn)) != null && pawn.CanReserveAndReach(t, PathEndMode.Touch, Danger.None, 1, -1, null, false);
         }
 
         public override bool CanDoWhileDowned(Pawn pawn)
@@ -43,9 +43,9 @@ namespace Toddlers
                 || pawn.Position.DistanceTo(decor.Position) > MaxDecorDistance)
                 return false;
             if (ToddlerPlayUtility.PlayOnCell(decor))
-                return pawn.CanReserveAndReach(decor, PathEndMode.OnCell, pawn.NormalMaxDanger());
+                return pawn.CanReserveAndReach(decor, PathEndMode.OnCell, Danger.None);
             else
-                return pawn.CanReserveAndReach(decor, PathEndMode.Touch, pawn.NormalMaxDanger());
+                return pawn.CanReserveAndReach(decor, PathEndMode.Touch, Danger.None);
         }
 
         private Thing FindNearbyUseableDecor(Pawn pawn)
@@ -61,7 +61,7 @@ namespace Toddlers
                     }
                 }
             }
-            return GenClosest.ClosestThingReachable(pawn.Position, pawn.Map, ThingRequest.ForDef(ThingDefOf.BabyDecoration), PathEndMode.OnCell, TraverseParms.For(pawn, Danger.Deadly, TraverseMode.ByPawn, false, false, false), 15.9f, (Thing t) => this.IsValidDecor(t, pawn), null, 0, -1, false, RegionType.Set_Passable, false);
+            return GenClosest.ClosestThingReachable(pawn.Position, pawn.Map, ThingRequest.ForDef(ThingDefOf.BabyDecoration), PathEndMode.OnCell, TraverseParms.For(pawn, Danger.None, TraverseMode.ByPawn, false, false, false), 15.9f, (Thing t) => this.IsValidDecor(t, pawn), null, 0, -1, false, RegionType.Set_Passable, false);
         }
     }
 }

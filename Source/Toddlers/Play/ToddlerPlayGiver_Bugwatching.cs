@@ -15,7 +15,7 @@ namespace Toddlers
         public override bool CanDo(Pawn pawn)
         {
             IntVec3 intVec;
-            return base.CanDo(pawn) && JoyUtility.EnjoyableOutsideNow(pawn.Map)
+            return base.CanDo(pawn) && JoyUtility.EnjoyableOutsideNow(pawn)
                 && TryFindBugwatchCell(pawn.Position, pawn, out intVec); ;
         }
 
@@ -43,7 +43,7 @@ namespace Toddlers
                 IntVec3 intVec;
                 return r.Room.PsychologicallyOutdoors && !r.IsForbiddenEntirely(searcher) && r.TryFindRandomCellInRegionUnforbidden(searcher, cellValidator, out intVec);
             };
-            TraverseParms traverseParms = TraverseParms.For(searcher, Danger.Deadly, TraverseMode.ByPawn, false, false, false);
+            TraverseParms traverseParms = TraverseParms.For(searcher, Danger.None, TraverseMode.ByPawn, false, false, false);
             Region root2;
             if (!CellFinder.TryFindClosestRegionWith(root.GetRegion(searcher.Map,RegionType.Set_Passable), traverseParms, validator,100, out root2, RegionType.Set_Passable))
             {

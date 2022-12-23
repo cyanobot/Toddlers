@@ -26,7 +26,7 @@ namespace Toddlers
 			{
 				return 0f;
 			}
-			if ((int)pawn.needs.food.CurCategory < 3 && FoodUtility.ShouldBeFedBySomeone(pawn))
+			if ((int)pawn.needs.food.CurLevel > 0 && FoodUtility.ShouldBeFedBySomeone(pawn))
 			{
 				return 0f;
 			}
