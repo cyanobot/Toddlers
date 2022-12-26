@@ -1,10 +1,4 @@
 High Priority
-	*fix carrying self
-	*fix feeding/caring for self
-	*make sure zoning is always respected for play
-	*add better temperature checks for toddler behaviour
-	*fix getting out of medical bed
-	*turn off rendering option
 	dubs bad hygiene compatibility
 	don't wake them to feed so much
 
@@ -14,6 +8,8 @@ Medium Priority
 	cancel move toddler if you get there and the toddler has already moved
 	facial animation patch
 	can't unequip apparel if can't undress self yet
+	better dubs bad hygiene compatibility
+	sitting sideways at tables
 	
 Low Priority
 	Misc

@@ -16,6 +16,7 @@ namespace Toddlers
         //public static bool extinguishRefuelablesLoaded;
         public static bool dressPatientsLoaded;
         public static bool injuredCarryLoaded;
+        public static bool DBHLoaded;
 
         public Toddlers_Mod(ModContentPack mcp) : base(mcp)
         {
@@ -37,8 +38,12 @@ namespace Toddlers
         {
             Toddlers_Mod.dressPatientsLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Dress Patients (1.4)");
             Toddlers_Mod.injuredCarryLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Injured Carry");
+            Toddlers_Mod.DBHLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Dubs Bad Hygiene" || x.Name == "Dubs Bad Hygiene Lite");
 
             var harmony = new Harmony("cyanobot.toddlers");
+
+            if (Toddlers_Mod.DBHLoaded) DBHPatch.GeneratePatches(harmony);
+
             harmony.PatchAll();
 
             ApplySettings();

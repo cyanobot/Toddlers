@@ -55,6 +55,7 @@
   <ItemGroup>
     <None Include="Scrapyard.cs" />
     <Compile Include="Crib\JobDriver_LeaveCrib.cs" />
+    <Compile Include="DBHPatch.cs" />
     <Compile Include="HarmonyPatching_FloatMenu.cs" />
     <Compile Include="BabyTemperatureUtility.cs" />
     <Compile Include="Crib\JobDriver_LetOutOfCrib.cs" />
