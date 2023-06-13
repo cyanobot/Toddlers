@@ -13,9 +13,9 @@ namespace Toddlers
 {
     class Toddlers_Mod : Mod
     {
-        //public static bool extinguishRefuelablesLoaded;
-        public static bool dressPatientsLoaded;
+        public static bool facialAnimationLoaded;
         public static bool injuredCarryLoaded;
+        public static bool dressPatientsLoaded;
         public static bool DBHLoaded;
 
         public Toddlers_Mod(ModContentPack mcp) : base(mcp)
@@ -37,12 +37,14 @@ namespace Toddlers
         static Toddlers_Init()
         {
             Toddlers_Mod.dressPatientsLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Dress Patients (1.4)");
-            Toddlers_Mod.injuredCarryLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Injured Carry");
             Toddlers_Mod.DBHLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Dubs Bad Hygiene" || x.Name == "Dubs Bad Hygiene Lite");
+            Toddlers_Mod.facialAnimationLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "[NL] Facial Animation - WIP");
+            Toddlers_Mod.injuredCarryLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Injured Carry");
 
             var harmony = new Harmony("cyanobot.toddlers");
 
             if (Toddlers_Mod.DBHLoaded) DBHPatch.GeneratePatches(harmony);
+            if (Toddlers_Mod.facialAnimationLoaded) FacialAnimationPatch.Init();
 
             harmony.PatchAll();
 
@@ -57,6 +59,33 @@ namespace Toddlers
             LifeStageDef babyDef = DefDatabase<LifeStageDef>.GetNamed("HumanlikeBaby");
             LifeStageDef toddlerDef = DefDatabase<LifeStageDef>.GetNamed("HumanlikeToddler");
 
+            List<ThingDef> babyClothes = new List<ThingDef>
+                { Toddlers_DefOf.Apparel_BabyOnesie, Toddlers_DefOf.Apparel_BabyTuque, Toddlers_DefOf.Apparel_BabyShadecone };
+
+            foreach (ThingDef babyClothe in babyClothes)
+            {
+                if (Toddlers_Settings.tribalBabyClothes)
+                {
+                    babyClothe.recipeMaker.researchPrerequisite = null;
+                    babyClothe.techLevel = TechLevel.Neolithic;
+
+                    foreach (RecipeDef recipe in DefDatabase<RecipeDef>.AllDefs.Where((RecipeDef x) => x.ProducedThingDef == babyClothe))
+                    {
+                        recipe.researchPrerequisite = null;
+                    }
+                }
+                else
+                {
+                    babyClothe.recipeMaker.researchPrerequisite = DefDatabase<ResearchProjectDef>.GetNamed("ComplexClothing");
+                    babyClothe.techLevel = TechLevel.Medieval;
+
+                    foreach (RecipeDef recipe in DefDatabase<RecipeDef>.AllDefs.Where((RecipeDef x) => x.ProducedThingDef == babyClothe))
+                    {
+                        recipe.researchPrerequisite = DefDatabase<ResearchProjectDef>.GetNamed("ComplexClothing");
+                    }
+                }
+            }
+            
             StatModifier maxComfyTempMod_baby = babyDef.statOffsets.Find(x => x.stat == StatDefOf.ComfyTemperatureMax);
             maxComfyTempMod_baby.value = Toddlers_Settings.maxComfortableTemperature_Baby - 26f;
 
@@ -68,6 +97,8 @@ namespace Toddlers
 
             StatModifier minComfyTempMod_toddler = toddlerDef.statOffsets.Find(x => x.stat == StatDefOf.ComfyTemperatureMin);
             minComfyTempMod_toddler.value = Toddlers_Settings.minComfortableTemperature_Toddler - 16f;
+
+            Toddlers_DefOf.BabyNoExpectations.stages[0].baseMoodEffect = Toddlers_Settings.expectations;
         }
     }
 }

@@ -668,4 +668,142 @@ class FloatMenu_Patch
 			}
 		}
 	}
+
+
+	public static LocalTargetInfo Old_SafePlaceForBaby(Pawn baby, Pawn hauler)
+	{
+		//Log.Message("Fired SafePlaceForBaby");
+		if (!ChildcareUtility.CanSuckle(baby, out var _) || !ChildcareUtility.CanHaulBabyNow(hauler, baby, false, out var _))
+			return LocalTargetInfo.Invalid;
+
+		Building_Bed bed = baby.CurrentBed() ?? RestUtility.FindBedFor(baby, hauler, checkSocialProperness: true, ignoreOtherReservations: false, baby.GuestStatus);
+		//Log.Message("bed: " + bed);
+
+		IntVec3 currentCell = baby.PositionHeld;
+		LocalTargetInfo target = LocalTargetInfo.Invalid;
+
+		//if the baby has a serious temperature injury
+		//look for somewhere they can recover
+		//ignoring zoning
+		if (baby.health != null && baby.health.hediffSet != null
+			&& baby.health.hediffSet.HasTemperatureInjury(TemperatureInjuryStage.Serious))
+		{
+			//if the best available bed is at a safe temperature, pick that
+			if (bed != null && baby.SafeTemperatureRange().Includes(TemperatureAtBed(bed, baby.MapHeld)))
+				return bed;
+
+
+		}
+
+		//sick babies and toddlers should both be taken to medical beds if possible
+		//requiring safe temperature but not necessarily comfortable
+		if (HealthAIUtility.ShouldSeekMedicalRest(baby))
+		{
+			//Log.Message("Baby " + baby + " is sick");
+
+			//if the best available bed is at a safe temperature, pick that
+			if (bed != null && baby.SafeTemperatureRange().Includes(TemperatureAtBed(bed, baby.MapHeld)))
+				return bed;
+
+			//if we didn't find a good bed, look for just a spot that's a good temperature 
+			target = ChildcareUtility.BabyNeedsMovingForTemperatureReasons(baby, hauler, out var preferredRegion)
+				? ((LocalTargetInfo)RCellFinder.SpotToStandDuringJob(hauler, null, preferredRegion))
+				: ((!baby.Spawned)
+					? ((LocalTargetInfo)RCellFinder.SpotToStandDuringJob(hauler, null, baby.GetRegionHeld()))
+					: ((LocalTargetInfo)baby.Position));
+
+			return target;
+		}
+
+		//more relaxed logic for healthy toddlers
+		if (!baby.Downed)
+		{
+			//Log.Message("Baby " + baby + " is a toddler");
+
+			//if the toddler is in a non-optimal temperature, try to pick a spot that would be better
+			if (ChildcareUtility.BabyNeedsMovingForTemperatureReasons(baby, hauler, out var preferredRegion))
+			{
+				//Log.Message("Baby " + baby + " needs moving for temperature reasons");
+
+				//if their bed would be comfortable, take them there
+				if (bed != null && baby.ComfortableTemperatureRange().Includes(TemperatureAtBed(bed, baby.MapHeld)))
+					return bed;
+				//otherwise pick a spot in the region indicated by BabyNeedsMovingForTemperatureReasons
+				else target = (LocalTargetInfo)RCellFinder.SpotToStandDuringJob(hauler, null, preferredRegion);
+				//if they have a bed check which of the bed and the target spot is the better temperature, preferring the bed if they're equivalent
+				if (bed != null) return BestTemperatureForPawn(bed, target, baby);
+				return target;
+			}
+
+			//if the toddler is tired and they have a bed to go to, consider moving them to it
+			else if (bed != null && baby.needs.rest.CurLevelPercentage < 0.28)
+			{
+				//Log.Message("Baby " + baby + " is tired");
+
+				//if the bed is a comfortable temperature, just do it
+				if (baby.ComfortableTemperatureRange().Includes(TemperatureAtBed(bed, baby.MapHeld))) return bed;
+
+				//otherwise if the bed is a better temperature than where the toddller is now, do it
+				return BestTemperatureForPawn(bed, currentCell, baby);
+			}
+
+			//otherwise if the toddler isn't spawned (ie being carried), try to pick a spot near where they are currently (ie just put them down)
+			else if (!baby.Spawned) return RCellFinder.SpotToStandDuringJob(hauler, null, baby.GetRegionHeld());
+
+			//if none of the above, just leave them where they are
+			else return currentCell;
+		}
+
+		//mostly-vanilla logic for babies that prefers taking them to bed even if they aren't tired
+		else
+		{
+			//if the bed's a comfortable temperature, take them straight there
+			if (baby.ComfortableTemperatureRange().Includes(TemperatureAtBed(bed, baby.MapHeld)))
+			{
+				//Log.Message("bed is fine");
+				return bed;
+			}
+
+			//if they need moving for temperature reasons
+			if (ChildcareUtility.BabyNeedsMovingForTemperatureReasons(baby, hauler, out var preferredRegion))
+			{
+				//Log.Message("needs moving for temperature reasons");
+				//pick a spot in the region indicated by BabyNeedsMovingForTemperatureReasons
+				target = (LocalTargetInfo)RCellFinder.SpotToStandDuringJob(hauler, null, preferredRegion);
+				//if they have a bed check which of the bed and the target spot is the better temperature, preferring the bed if they're equivalent
+				//Log.Message("bed temperature: " + GenTemperature.GetTemperatureForCell(bed.Position, hauler.MapHeld));
+				//Log.Message("target: " + target.Cell.ToString() + ", temperature: " + GenTemperature.GetTemperatureForCell(target.Cell, hauler.MapHeld));
+				if (bed != null) return BestTemperatureForPawn(bed, target, baby);
+				return target;
+			}
+			//otherwise
+			else
+			{
+				//take them to their bed so long as it's not a worse temperature than where they are now
+				if (bed != null) return BestTemperatureForPawn(bed, currentCell, baby);
+
+				//otherwise if the toddler isn't spawned (ie being carried), try to pick a spot near where they are currently (ie just put them down)
+				else if (!baby.Spawned) return RCellFinder.SpotToStandDuringJob(hauler, null, baby.GetRegionHeld());
+
+				//if none of the above, just leave them where they are
+				else return currentCell;
+			}
+		}
+
+		//fall-through, shouldn't happen
+		return LocalTargetInfo.Invalid;
+	}
+
+	public static bool NeedsRescue(Pawn baby, Pawn hauler)
+	{
+		//Log.Message("Fired NeedsRescue");
+		if (baby == null || hauler == null) return false;
+		if (CaravanFormingUtility.IsFormingCaravanOrDownedPawnToBeTakenByCaravan(baby)) return false;
+		LocalTargetInfo safePlace = SafePlaceForBaby(baby, hauler, out BabyMoveReason moveReason);
+		//Log.Message("safePlace: " + safePlace.ToString());
+		//Log.Message("baby.PositionHeld: " + safePlace.ToString());
+		if (safePlace.IsValid && safePlace.Cell != baby.PositionHeld) return true;
+		return false;
+	}
+
 }

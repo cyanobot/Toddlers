@@ -14,27 +14,6 @@ using Verse.AI.Group;
 
 namespace Toddlers
 {
-    [HarmonyPatch(typeof(Need), nameof(Need.GetTipString))]
-    class NeedTipString_Patch
-    {
-        static string Postfix(string result, ref Need __instance)
-        {
-            //not interested in needs other than Play
-            if (!(__instance is Need_Play)) return result;
-
-            Pawn pawn = (Pawn)typeof(Need).GetField("pawn", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance);
-
-            //not interested if not a toddler
-            if (!ToddlerUtility.IsToddler(pawn)) return result;
-
-            string header = (__instance.LabelCap + ": " + __instance.CurLevelPercentage.ToStringPercent()).Colorize(ColoredText.TipSectionTitleColor);
-            string body = "Toddlers can entertain themselves for a while, but without regular attention they become lonely and unable to fulfil their own need for play.";
-            string lonelyReport = "Loneliness: " + ToddlerUtility.GetLoneliness(pawn).ToStringPercent();
-
-
-            return header + "\n" + body + "\n\n" + lonelyReport;
-        }
-    }
 
     [HarmonyPatch(typeof(Pawn_MindState))]
     class IsIdle_Patch
@@ -50,67 +29,6 @@ namespace Toddlers
         }
     }
 
-    [HarmonyPatch(typeof(ITab_Pawn_Gear))]
-    class ITab_Pawn_Gear_Patch
-    {
-        public static MethodBase TargetMethod()
-        {
-            return typeof(ITab_Pawn_Gear).GetProperty(nameof(ITab_Pawn_Gear.IsVisible), BindingFlags.Public | BindingFlags.Instance).GetGetMethod(false);
-        }
-
-        static bool Postfix(bool result, ITab_Pawn_Gear __instance)
-        {
-            if (result == true) return true;
-
-            Pawn selPawnForGear = (Pawn)typeof(ITab_Pawn_Gear).GetProperty("SelPawnForGear", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance);
-            if (selPawnForGear.ageTracker.CurLifeStage == LifeStageDefOf.HumanlikeBaby)
-            {
-                object[] prms = new object[] { selPawnForGear };
-                if (!(bool)typeof(ITab_Pawn_Gear).GetMethod("ShouldShowInventory", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(__instance, prms) && !(bool)typeof(ITab_Pawn_Gear).GetMethod("ShouldShowApparel", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(__instance, prms))
-                {
-                    return (bool)typeof(ITab_Pawn_Gear).GetMethod("ShouldShowEquipment", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(__instance, prms);
-                }
-                return true;
-            }
-
-            return result;
-        }
-    }
-
-    [HarmonyPatch(typeof(Need_Play), nameof(Need_Play.NeedInterval))]
-    class Play_NeedInterval_Patch
-    {
-        static bool Prefix(ref Need_Play __instance)
-        {
-            bool isFrozen = (bool)typeof(Need_Play).GetProperty("IsFrozen", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance);
-            if (!isFrozen)
-            {
-                Pawn pawn = (Pawn)typeof(Need_Play).GetField("pawn", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance);
-                float factor = ToddlerUtility.IsToddler(pawn) ? Toddlers_Settings.playFallFactor_Toddler : Toddlers_Settings.playFallFactor_Baby;
-                __instance.CurLevel -= Need_Play.BaseFallPerInterval * factor;
-            }
-            return false;
-        }
-    }
-
-    //raises the threshold at which pawns will do childcare work: play with baby
-    [HarmonyPatch(typeof(Need_Play))]
-    class Play_IsLow_Patch
-    {
-        public static MethodBase TargetMethod()
-        {
-            return typeof(Need_Play).GetProperty(nameof(Need_Play.IsLow), BindingFlags.Public | BindingFlags.Instance).GetGetMethod(false);
-        }
-
-        static bool Prefix(ref bool __result, Need_Play __instance, Pawn ___pawn)
-        {
-            if (__instance.CurLevelPercentage <= 0.4f) __result = true;
-            else if (ToddlerUtility.IsLiveToddler(___pawn) && ToddlerUtility.GetLoneliness(___pawn) >= 0.4f && __instance.CurLevelPercentage <= 0.8f)
-                __result = true;
-            else __result = false;
-            return false;
-        }
-    }
 
     [HarmonyPatch(typeof(Building_Door), nameof(Building_Door.PawnCanOpen))]
     class Door_Patch
@@ -123,40 +41,6 @@ namespace Toddlers
                 return false;
             }
             return true;
-        }
-    }
-
-    [HarmonyPatch(typeof(ChildcareUtility), nameof(ChildcareUtility.SwaddleBaby))]
-    class SwaddleBaby_Patch
-    {
-        static bool Prefix(ref bool __result, Pawn baby)
-        {
-            if (baby.ageTracker.CurLifeStage == Toddlers_DefOf.HumanlikeToddler)
-            {
-                __result = false;
-                return false;
-            }
-            else if (baby.DevelopmentalStage.Baby() && !baby.apparel.PsychologicallyNude)
-            {
-                __result = false;
-                return false;
-            }
-            else return true;
-        }
-    }
-
-
-
-    [HarmonyPatch(typeof(ChildcareUtility), nameof(ChildcareUtility.MakeBabyPlayAsLongAsToilIsActive))]
-    class MakeBabyPlayAsLongAsToilIsActive_Patch
-    {
-        static Toil Postfix(Toil toil, TargetIndex babyIndex)
-        {
-            toil.AddPreTickAction(delegate
-            {
-                ToddlerPlayUtility.CureLoneliness((Pawn)toil.actor.jobs.curJob.GetTarget(babyIndex).Thing);
-            });
-            return toil;
         }
     }
 
@@ -195,29 +79,63 @@ namespace Toddlers
         }
     }
 
-    [HarmonyPatch(typeof(StrippableUtility),nameof(StrippableUtility.CanBeStrippedByColony))]
-    class CanBeStrippedByColony_Patch
-    {
-        static bool Postfix(bool result, Thing th)
-        {
-            if (th is Pawn pawn && ToddlerUtility.IsToddler(pawn)) return true;
-            else return result;
-        }
-    }
-
-
-
     [HarmonyPatch(typeof(JobGiver_GetRest), "TryGiveJob")]
     class GetRest_Patch
     {
         static Job Postfix(Job job, JobGiver_GetRest __instance, Pawn pawn)
         {
-            if (job.targetA.Thing is Building_Bed && ToddlerUtility.IsCrawler(pawn))
+            if (ToddlerUtility.IsCrawler(pawn) && job.targetA.Thing != null && job.targetA.Thing is Building_Bed)
             {
                 if (job.targetA.Cell == pawn.Position) return job;
                 job.targetA = (IntVec3)typeof(JobGiver_GetRest).GetMethod("FindGroundSleepSpotFor", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(__instance, new object[] { pawn });
             }
             return job;
+        }
+    }
+
+    //toddlers can't carry people, for any reason
+    [HarmonyPatch]
+    class TargetingParameters_Patch
+    {
+        static IEnumerable<MethodBase> TargetMethods()
+        {
+            yield return typeof(TargetingParameters).GetMethod(nameof(TargetingParameters.ForArrest));
+            yield return typeof(TargetingParameters).GetMethod(nameof(TargetingParameters.ForCarryDeathresterToBed));
+            yield return typeof(TargetingParameters).GetMethod(nameof(TargetingParameters.ForCarryToBiosculpterPod));
+            yield return typeof(TargetingParameters).GetMethod(nameof(TargetingParameters.ForDraftedCarryBed));
+            yield return typeof(TargetingParameters).GetMethod(nameof(TargetingParameters.ForDraftedCarryCryptosleepCasket));
+            yield return typeof(TargetingParameters).GetMethod(nameof(TargetingParameters.ForRescue));
+            yield return typeof(TargetingParameters).GetMethod(nameof(TargetingParameters.ForShuttle));
+        }
+
+        static void Postfix(object[] __args, MethodBase __originalMethod, ref TargetingParameters __result)
+        {
+            Pawn p;
+            if (__originalMethod == typeof(TargetingParameters).GetMethod(nameof(TargetingParameters.ForDraftedCarryBed))) 
+            {
+                p = (Pawn)__args[1];
+            }
+            else
+            {
+                p = (Pawn)__args[0];
+            }
+
+            if (ToddlerUtility.IsToddler(p))
+            {
+                __result.canTargetPawns = false;
+            }
+            else if (__originalMethod == typeof(TargetingParameters).GetMethod(nameof(TargetingParameters.ForRescue)))
+            {
+                __result.onlyTargetIncapacitatedPawns = false;
+                __result.validator = delegate (TargetInfo targ)
+                {
+                    if (!targ.HasThing || !(targ.Thing is Pawn pawn))
+                    {
+                        return false;
+                    }
+                    return pawn.Downed || ToddlerUtility.IsLiveToddler(pawn);
+                };
+            }
         }
     }
 
@@ -229,12 +147,13 @@ namespace Toddlers
             result.onlyTargetIncapacitatedPawns = false;
             result.validator = delegate (TargetInfo targ)
             {
-                if (!targ.HasThing) return false;
-                Pawn toCarry = targ.Thing as Pawn;
-                if (toCarry == p) return false;
-                if (toCarry == null) return false;
-                if (ToddlerUtility.IsLiveToddler(toCarry)) return true;
-                if (!toCarry.Downed) return false;
+                if (!targ.HasThing) return false;                           //nothing there
+                if (ToddlerUtility.IsLiveToddler(p)) return false;          //toddlers can't carry anyone
+                Pawn toCarry = targ.Thing as Pawn; 
+                if (toCarry == null) return false;                          //no pawn
+                if (toCarry == p) return false;                             //can't carry self
+                if (ToddlerUtility.IsLiveToddler(toCarry)) return true;     //can carry toddlers
+                if (!toCarry.Downed) return false;                          //can't carry non-downed non-toddlers
                 return true;
             };
             return result;
@@ -333,6 +252,14 @@ namespace Toddlers
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
         {
+            /*
+            if (Toddlers_Settings.toddlerBabyTalk)
+            {
+                foreach (var instruction in instructions) yield return instruction;
+                yield break;
+            }
+            */
+
             bool foundStart = false;
             bool foundEnd = false;
             bool foundTarget = false;
@@ -369,8 +296,9 @@ namespace Toddlers
                         //insert our own instructions
                         yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Pawn), nameof(Pawn.ageTracker)));
                         yield return new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(Pawn_AgeTracker), nameof(Pawn_AgeTracker.CurLifeStageIndex)));
-                        yield return new CodeInstruction(OpCodes.Ldc_I4_0);
-                        yield return new CodeInstruction(OpCodes.Bne_Un, targetLabel);
+                        yield return new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(Toddlers_Settings), nameof(Toddlers_Settings.ToddlerTalkInt)));
+                        yield return new CodeInstruction(OpCodes.Bgt, targetLabel);
+
                     }
 
                     continue;
@@ -466,17 +394,6 @@ namespace Toddlers
         }
     }
 
-    //toddlers should be carried on caravans if possible
-    [HarmonyPatch(typeof(CaravanCarryUtility), nameof(CaravanCarryUtility.WouldBenefitFromBeingCarried))]
-    class WouldBenefitFromBeingCarried_Patch
-    {
-        static bool Postfix(bool result, Pawn p)
-        {
-            if (!result && ToddlerUtility.IsLiveToddler(p)) return true;
-            else return result;
-        }
-    }
-
     //babies crying or giggling should not interrupt lord jobs like rituals or caravan formation
     [HarmonyPatch(typeof(Trigger_MentalState), nameof(Trigger_MentalState.ActivateOn))]
     class Trigger_MentalState_Patch
@@ -543,4 +460,178 @@ namespace Toddlers
             return result;
         }
     }
+
+    //crying/giggling toddlers still respect forbiddances
+    [HarmonyPatch(typeof(ForbidUtility),nameof(ForbidUtility.CaresAboutForbidden))]
+    class CaresAboutForbidden_Patch
+    {
+        static bool Postfix(bool result, Pawn pawn, bool cellTarget)
+        {
+            //only care about toddlers in mental states
+            if (ToddlerUtility.IsToddler(pawn))
+            {
+                if (pawn.HostFaction != null 
+                    && (pawn.HostFaction != Faction.OfPlayer || !pawn.Spawned 
+                    || pawn.Map.IsPlayerHome 
+                    || (pawn.GetRoom() != null && pawn.GetRoom().IsPrisonCell) 
+                    || (pawn.IsPrisoner && !pawn.guest.PrisonerIsSecure)))
+                {
+                    return false;
+                }
+                if (SlaveRebellionUtility.IsRebelling(pawn))
+                {
+                    return false;
+                }
+                if (cellTarget && ThinkNode_ConditionalShouldFollowMaster.ShouldFollowMaster(pawn))
+                {
+                    return false;
+                }
+                return true;
+            }
+            return result;
+        }
+    }
+
+    //when generating toddlers, give age-appropriate hediffs
+    [HarmonyPatch(typeof(PawnGenerator),nameof(PawnGenerator.GeneratePawn), new Type[] { typeof(PawnGenerationRequest) })]
+    class GeneratePawn_Patch
+    {
+        static void Postfix(ref Pawn __result)
+        {
+            if (ToddlerUtility.IsToddler(__result))
+            {
+                float age = __result.ageTracker.AgeBiologicalYearsFloat;
+                float percentAge = (age - 1f) / 2f;
+
+                Hediff_LearningManipulation hediff_LearningManipulation = (Hediff_LearningManipulation)HediffMaker.MakeHediff(Toddlers_DefOf.LearningManipulation, __result);
+                hediff_LearningManipulation.Severity = Mathf.Min(1f,percentAge / Toddlers_Settings.learningFactor_Manipulation);
+                __result.health.AddHediff(hediff_LearningManipulation);
+
+                Hediff_LearningToWalk hediff_LearningToWalk = (Hediff_LearningToWalk)HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, __result);
+                hediff_LearningToWalk.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Walk);
+                __result.health.AddHediff(hediff_LearningToWalk);
+            }
+        }
+    }
+
+    //toddlers should be carried on caravans if possible
+    /*
+    [HarmonyPatch(typeof(CaravanCarryUtility), nameof(CaravanCarryUtility.WouldBenefitFromBeingCarried))]
+    class WouldBenefitFromBeingCarried_Patch
+    {
+        static bool Postfix(bool result, Pawn p)
+        {
+            if (!result && ToddlerUtility.IsLiveToddler(p)) return true;
+            else return result;
+        }
+    }
+    */
+
+    [HarmonyPatch(typeof(Caravan_CarryTracker),"WantsToBeCarried")]
+    class WantsToBeCarried_Patch
+    {
+        static bool Prefix(ref bool __result, Pawn p)
+        {
+            if (ToddlerUtility.IsToddler(p))
+            {
+                __result = true;
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    //raiders should ignore toddlers
+    [HarmonyPatch(typeof(AttackTargetFinder), "ShouldIgnoreNoncombatant")]
+    class ShouldIgnoreNoncombatant_Patch
+    {
+        static bool Postfix(bool result, Thing searcherThing, IAttackTarget t)
+        {
+            if (result == false && t is Pawn pawn && ToddlerUtility.IsToddler(pawn))
+            {
+                return true;
+            }
+
+            return result;
+        }
+    }
+
+    //can always kidnap toddlers
+    [HarmonyPatch(typeof(KidnapAIUtility),nameof(KidnapAIUtility.TryFindGoodKidnapVictim))]
+    class TryFindGoodKidnapVictim_Patch
+    {
+        //very slightly different from vanilla
+        private static bool KidnapValidator(Thing t, Pawn kidnapper, List<Thing> disallowed = null)
+        {
+            Pawn pawn = t as Pawn;
+            if (!pawn.RaceProps.Humanlike)
+            {
+                return false;
+            }
+            if (!pawn.Downed && !ToddlerUtility.IsToddler(pawn))
+            {
+                return false;
+            }
+            if (pawn.Faction != Faction.OfPlayer)
+            {
+                return false;
+            }
+            if (!pawn.Faction.HostileTo(kidnapper.Faction))
+            {
+                return false;
+            }
+            if (!kidnapper.CanReserve(pawn))
+            {
+                return false;
+            }
+            return (disallowed == null || !disallowed.Contains(pawn)) ? true : false;
+        }
+
+        //same as vanilla except uses adjusted validator above
+        static bool Prefix(ref bool __result, Pawn kidnapper, float maxDist, out Pawn victim, List<Thing> disallowed = null)
+        {
+            if (!kidnapper.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) || !kidnapper.Map.reachability.CanReachMapEdge(kidnapper.Position, TraverseParms.For(kidnapper, Danger.Some)))
+            {
+                victim = null;
+                __result = false;
+                return false;
+            }
+
+            victim = (Pawn)GenClosest.ClosestThingReachable(kidnapper.Position, kidnapper.Map, 
+                ThingRequest.ForGroup(ThingRequestGroup.Pawn), PathEndMode.OnCell, 
+                TraverseParms.For(TraverseMode.NoPassClosedDoors, Danger.Some), maxDist, 
+                t => KidnapValidator(t,kidnapper,disallowed));
+            __result = victim != null;
+
+            return false;
+        }
+    }
+
+    //JobGiver_Kidnap fails if trying to target a non-downed awake pawn
+    //new version KidnapToddler does not
+    [HarmonyPatch(typeof(JobGiver_Kidnap),"TryGiveJob")]
+    class JobGiver_Kidnap_Patch
+    {
+        static Job Postfix(Job oldjob, Pawn pawn)
+        {
+            if (oldjob != null)
+            {
+                Pawn victim = (Pawn)oldjob.targetA;
+
+                if (ToddlerUtility.IsToddler(victim))
+                {
+                    Job newjob = JobMaker.MakeJob(Toddlers_DefOf.KidnapToddler);
+                    newjob.targetA = victim;
+                    newjob.targetB = oldjob.targetB;
+                    newjob.count = 1;
+
+                    return newjob;
+                }
+            }
+
+            return oldjob;
+        }
+    }
+
 }

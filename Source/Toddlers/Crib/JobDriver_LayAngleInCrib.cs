@@ -32,6 +32,7 @@ namespace Toddlers
                 angle = Rand.Value * 360f;
                 PawnPosture posture = PawnPosture.LayingInBedFaceUp;
                 this.pawn.jobs.posture = posture;
+                this.pawn.Drawer.renderer.graphics.SetAllGraphicsDirty();
             });
             toil.AddPreTickAction(delegate ()
             {
@@ -40,8 +41,10 @@ namespace Toddlers
                 {
                     angle = Rand.Value * 360f;
                     ticksAtAngle = 0;
+                    this.pawn.Drawer.renderer.graphics.SetAllGraphicsDirty();
                 }
             });
+            toil.AddFinishAction(() => this.pawn.Drawer.renderer.graphics.SetAllGraphicsDirty());
             yield return toil;
         }
     }

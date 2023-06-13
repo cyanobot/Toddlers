@@ -10,7 +10,7 @@
       <li>
         <label>no expectations</label>
         <description>Babies don't know what to expect from the world, so they can't be disappointed.</description>
-        <baseMoodEffect>25</baseMoodEffect>
+        <baseMoodEffect>20</baseMoodEffect>
       </li>
     </stages>
   </ThoughtDef>

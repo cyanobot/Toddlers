@@ -27,8 +27,10 @@ namespace Toddlers
             {
                 this.pawn.jobs.posture = PawnPosture.InBedMask;
                 pawn.Rotation = Rot4.South;
+                pawn.Drawer.renderer.graphics.SetAllGraphicsDirty();
             });
-            toil.handlingFacing = true; 
+            toil.handlingFacing = true;
+            toil.AddFinishAction(() => pawn.Drawer.renderer.graphics.SetAllGraphicsDirty());
             yield return toil;
         }
     }

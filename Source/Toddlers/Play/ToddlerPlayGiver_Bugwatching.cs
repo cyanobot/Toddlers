@@ -34,14 +34,18 @@ namespace Toddlers
             return JobMaker.MakeJob(this.def.jobDef, c);
         }
 
-        //modelled off RCellFinder.TryFindSkygazeCell
         public static bool TryFindBugwatchCell(IntVec3 root, Pawn searcher, out IntVec3 result)
         {
-            Predicate<IntVec3> cellValidator = (IntVec3 c) => !c.GetTerrain(searcher.Map).avoidWander;
+            Predicate<IntVec3> cellValidator = delegate (IntVec3 c) {
+                return !c.GetTerrain(searcher.Map).avoidWander
+                    && searcher.SafeTemperatureAtCell(c, searcher.MapHeld)
+                    && !c.IsForbidden(searcher);
+                };
             Predicate<Region> validator = delegate (Region r)
             {
                 IntVec3 intVec;
-                return r.Room.PsychologicallyOutdoors && !r.IsForbiddenEntirely(searcher) && r.TryFindRandomCellInRegionUnforbidden(searcher, cellValidator, out intVec);
+                return r.Room.PsychologicallyOutdoors && !r.IsForbiddenEntirely(searcher) 
+                    && r.TryFindRandomCellInRegionUnforbidden(searcher, cellValidator, out intVec);
             };
             TraverseParms traverseParms = TraverseParms.For(searcher, Danger.None, TraverseMode.ByPawn, false, false, false);
             Region root2;

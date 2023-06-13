@@ -99,4 +99,10 @@
 		<reportString>removing TargetA.</reportString>
 	</JobDef>
 	
+	<JobDef>
+		<defName>KidnapToddler</defName>
+		<driverClass>Toddlers.JobDriver_KidnapToddler</driverClass>
+		<reportString>kidnapping TargetA.</reportString>
+	</JobDef>
+	
 </Defs>

@@ -4,6 +4,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using Verse;
+using Verse.AI;
 
 namespace Toddlers
 {
@@ -96,9 +97,57 @@ namespace Toddlers
 
 		public enum ToddlerRenderMode
 		{
+			Base,
+			Carried,
 			Crawling,
 			Toddling,
-			WigglingInCrib
+			WigglingInCrib,
+			LayingAngle,
+			Bugwatching
+		}
+
+		public static ToddlerRenderMode GetToddlerRenderMode(Pawn pawn)
+        {
+			//Log.Message("parentHolder: " + ___pawn.ParentHolder.ToString());
+			IThingHolder parentHolder = pawn.ParentHolder;
+
+			if (!(parentHolder is Map || parentHolder is Pawn_CarryTracker)) 
+				return ToddlerRenderMode.Base;
+
+			if (parentHolder is Pawn_CarryTracker)
+            {
+				//if not "standing" and carried then the default render logic will work fine, so only care about this case
+				if (pawn.GetPosture() == PawnPosture.Standing)
+					return ToddlerRenderMode.Carried;
+
+				else return ToddlerRenderMode.Base;
+			}
+
+			if (parentHolder is Map)
+            {
+				if (pawn.jobs != null && pawn.jobs.curJob != null
+				&& pawn.CurJobDef == Toddlers_DefOf.ToddlerBugwatching && pawn.jobs.curJob.targetA.Cell == pawn.Position)
+					return ToddlerRenderMode.Bugwatching;
+
+				if (pawn.GetPosture() == PawnPosture.Standing && pawn.pather.Moving)
+				{
+					if (ToddlerUtility.IsCrawler(pawn))
+						return ToddlerRenderMode.Crawling;
+
+					if (ToddlerUtility.IsWobbly(pawn))
+						return ToddlerRenderMode.Toddling;
+				}
+
+				if (pawn.CurJobDef == Toddlers_DefOf.LayAngleInCrib)
+					return ToddlerRenderMode.LayingAngle;
+
+				if (pawn.CurJob != null
+				&& ((pawn.CurJobDef.reportString != null && pawn.CurJobDef.reportString.Contains("wiggling"))
+				|| (pawn.CurJob.reportStringOverride != null && pawn.CurJob.reportStringOverride.Contains("wiggling"))))
+					return ToddlerRenderMode.WigglingInCrib;
+			}
+
+			return ToddlerRenderMode.Base;
 		}
 
 		public static void RenderToddlerInternal(PawnRenderer pawnRenderer, ToddlerRenderMode renderMode, Pawn pawn, Vector3 rootLoc, float angleIn, bool renderBody, Rot4 bodyFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags)
@@ -117,32 +166,16 @@ namespace Toddlers
 				baseLoc += pawn.ageTracker.CurLifeStage.bodyDrawOffset.Value;
 			}
 			Vector3 bodyLoc = baseLoc;
+			Vector3 baseHeadOffset = pawnRenderer.BaseHeadOffsetAt(bodyFacing);
+			baseHeadOffset.y += bodyFacing == Rot4.North ? 3f / 148f : 0.0231660213f;
+			
 			Vector3 headOffset = Vector3.zero;
-			Vector3 headLoc = baseLoc;
 
 			//set the y-axis (depth) element of the head offset
 			headOffset.y += bodyFacing == Rot4.North ? 3f / 148f : 0.0231660213f;
 
 			//get the base head offset
 			headOffset += pawnRenderer.BaseHeadOffsetAt(bodyFacing);
-
-			//if crawling, apply further custom offsets for the head 
-			if (renderMode == ToddlerRenderMode.Crawling)
-			{
-				if (bodyFacing == Rot4.East)
-				{
-				}
-				if (bodyFacing == Rot4.West)
-				{
-				}
-				if (bodyFacing == Rot4.North)
-				{
-				}
-				if (bodyFacing == Rot4.South)
-				{
-					headOffset.z += 0.00f;
-				}
-			}
 
 			//establish rotations
 			float bodyAngle = angleIn;
@@ -167,15 +200,10 @@ namespace Toddlers
 					bodyAngle = 180f;
 				}
 			}
-			if (renderMode == ToddlerRenderMode.WigglingInCrib)
-            {
-				float wiggleAngle = WiggleAngle(pawn, 15f, 120, WiggleFunc.Sine);
-				bodyAngle = wiggleAngle;
-				headAngle = wiggleAngle;
-            }
+			
 			//if we're toddling we rotate around a separate rotation centre
 			//so we also need to apply offsets to the body
-			if (renderMode == ToddlerRenderMode.Toddling)
+			if (renderMode == ToddlerRenderMode.Toddling && !flags.HasFlag(PawnRenderFlags.Cache))
 			{
 				float wiggleAngle = WiggleAngle(pawn, GetWobbleMagnitude(pawn), GetWobblePeriod(pawn), WiggleFunc.Toddle);
 
@@ -190,7 +218,8 @@ namespace Toddlers
 				bodyLoc = rotateAbout + bodyRel;
 			}
 
-			headLoc = bodyLoc + headOffset.RotatedBy(bodyAngle);
+			Vector3 headOffset_actual = headOffset.RotatedBy(bodyAngle);
+			Vector3 headLoc = bodyLoc + headOffset_actual;
 
 			Quaternion bodyQuat = Quaternion.AngleAxis(bodyAngle, Vector3.up);
 			Quaternion headQuat = Quaternion.AngleAxis(headAngle, Vector3.up);
@@ -208,7 +237,6 @@ namespace Toddlers
 			shellLoc.y += 0.009187258f;
 			Vector3 firefoamLoc = bodyLoc;
 			firefoamLoc.y += 0.033301156f;
-
 			Vector3 firefoamHeadLoc = headLoc;
 			firefoamHeadLoc.y += 0.033301156f;
 
@@ -245,12 +273,25 @@ namespace Toddlers
 			if (pawnRenderer.graphics.headGraphic != null)
 			{
 				Mesh headMesh = null;
+				Material material;
 
-				Material material = pawnRenderer.graphics.HeadMatAt(bodyFacing, bodyDrawType, flags.FlagSet(PawnRenderFlags.HeadStump), flags.FlagSet(PawnRenderFlags.Portrait), !flags.FlagSet(PawnRenderFlags.Cache));
+				if (Toddlers_Mod.facialAnimationLoaded)
+                {
+                }
+
+				material = pawnRenderer.graphics.HeadMatAt(bodyFacing, bodyDrawType, flags.FlagSet(PawnRenderFlags.HeadStump), flags.FlagSet(PawnRenderFlags.Portrait), !flags.FlagSet(PawnRenderFlags.Cache));
 				if (material != null)
 				{
 					headMesh = HumanlikeMeshPoolUtility.GetHumanlikeHeadSetForPawn(pawn).MeshAt(bodyFacing);
-					GenDraw.DrawMeshNowOrLater(headMesh, headLoc, headQuat, material, flags.FlagSet(PawnRenderFlags.DrawNow));
+
+					if (Toddlers_Mod.facialAnimationLoaded)
+					{
+						FacialAnimationPatch.DrawFace(headMesh, headLoc, headQuat, material, flags.FlagSet(PawnRenderFlags.Portrait));
+					}
+					else
+					{
+						GenDraw.DrawMeshNowOrLater(headMesh, headLoc, headQuat, material, flags.FlagSet(PawnRenderFlags.DrawNow));
+					}
 				}
 
 				if (bodyDrawType == RotDrawMode.Fresh)
@@ -259,7 +300,21 @@ namespace Toddlers
 				}
 				if (pawnRenderer.graphics.headGraphic != null)
 				{
-					DrawHeadHair(pawnRenderer, headLoc, Vector3.zero, headAngle, bodyFacing, bodyFacing, bodyDrawType, flags, renderBody);
+					Vector3 bodyLoc_effective;
+					Vector3 headOffset_effective;
+
+					if (headAngle != bodyAngle)
+					{
+						headOffset_effective = headOffset.RotatedBy(headAngle);
+						bodyLoc_effective = headLoc - headOffset_effective;
+                    }
+                    else
+                    {
+						headOffset_effective = headOffset_actual;
+						bodyLoc_effective = bodyLoc;
+                    }
+
+					DrawHeadHair(pawnRenderer, bodyLoc_effective, headOffset_effective, headAngle, bodyFacing, bodyFacing, bodyDrawType, flags, renderBody);
 				}
 				if (bodyDrawType == RotDrawMode.Fresh && pawnRenderer.FirefoamOverlays.IsCoveredInFoam && headMesh != null)
 				{
@@ -316,6 +371,7 @@ namespace Toddlers
 	[HarmonyPatch(typeof(PawnRenderer), "RenderPawnInternal")]
 	class RenderPawnInternal_Patch
 	{
+		[HarmonyAfter(new string[] { FacialAnimationPatch.FAHarmonyID })]
 		static bool Prefix(PawnRenderer __instance, Pawn ___pawn, Vector3 rootLoc, ref float angle, bool renderBody, ref Rot4 bodyFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags)
 		{
 			//Log.Message("__instance: " + __instance.ToString());
@@ -332,70 +388,85 @@ namespace Toddlers
 			//leave portraits alone
 			if (flags.HasFlag(PawnRenderFlags.Portrait) | flags.HasFlag(PawnRenderFlags.StylingStation)) return true;
 
-			//Log.Message("parentHolder: " + ___pawn.ParentHolder.ToString());
-			IThingHolder parentHolder = ___pawn.ParentHolder;
+			ToddlerRenderer.ToddlerRenderMode mode = ToddlerRenderer.GetToddlerRenderMode(___pawn);
 
-			if (!(parentHolder is Map || parentHolder is Pawn_CarryTracker)) return true;
-
-			bool isBugWatching = parentHolder is Map 
-				&& ___pawn.jobs != null && ___pawn.jobs.curJob != null
-				&& ___pawn.CurJobDef == Toddlers_DefOf.ToddlerBugwatching && ___pawn.jobs.curJob.targetA.Cell == ___pawn.Position;
-			if (isBugWatching)
-			{
-				if (bodyFacing == Rot4.East)
-				{
-					angle = 40f;
-					return true;
-				}
-				if (bodyFacing == Rot4.West)
-				{
-					angle = -40f;
-					return true;
-				}
-			}
-
-			//baby carry angle relies on them being downed therefore not in the standing posture
-			//therefore this is a copy of the same logic to draw toddlers at the right angle when held
-			bool isCarried = parentHolder is Pawn_CarryTracker && ___pawn.GetPosture() == PawnPosture.Standing;
-			if (isCarried)
-			{
-				angle = (((parentHolder as Pawn_CarryTracker).pawn.Rotation == Rot4.West) ? 290f : 70f) + (parentHolder as Pawn_CarryTracker).pawn.Drawer.renderer.BodyAngle();
-				bodyFacing = (!((parentHolder as Pawn_CarryTracker).pawn.Rotation == Rot4.West) ? Rot4.West : Rot4.East);
-				return true;
-			}
-
-			bool isCrawling = parentHolder is Map && ToddlerUtility.IsCrawler(___pawn) && ___pawn.GetPosture() == PawnPosture.Standing && ___pawn.pather.Moving;
-			if (isCrawling && Toddlers_Settings.customRenderer)
-			{
-				ToddlerRenderer.RenderToddlerInternal(__instance, ToddlerRenderer.ToddlerRenderMode.Crawling, ___pawn, rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags);
-				return false;
-			}
-
-			bool isWobbling = parentHolder is Map && ToddlerUtility.IsWobbly(___pawn) && ___pawn.GetPosture() == PawnPosture.Standing && ___pawn.pather.Moving;
-			if (isWobbling && Toddlers_Settings.customRenderer)
-			{
-				ToddlerRenderer.RenderToddlerInternal(__instance, ToddlerRenderer.ToddlerRenderMode.Toddling, ___pawn, rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags);
-				return false;
-			}
-
-			bool isWigglingInCrib = parentHolder is Map && ___pawn.CurJob != null 
-				&& ((___pawn.CurJobDef.reportString != null && ___pawn.CurJobDef.reportString.Contains("wiggling"))
-				|| (___pawn.CurJob.reportStringOverride != null && ___pawn.CurJob.reportStringOverride.Contains("wiggling")));
-			if (isWigglingInCrib && Toddlers_Settings.customRenderer)
-			{
-				ToddlerRenderer.RenderToddlerInternal(__instance, ToddlerRenderer.ToddlerRenderMode.WigglingInCrib, ___pawn, rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags);
-				return false;
-			}
-
-			bool isLayingAngleInCrib = parentHolder is Map && ___pawn.CurJobDef == Toddlers_DefOf.LayAngleInCrib;
-			if (isLayingAngleInCrib)
+			switch (mode)
             {
-				JobDriver_LayAngleInCrib driver = (JobDriver_LayAngleInCrib)___pawn.jobs.curDriver;
-				angle = driver.angle;
-				return true;
-            }
+				case ToddlerRenderer.ToddlerRenderMode.Base:
+					return true;
 
-			return true;
+				case ToddlerRenderer.ToddlerRenderMode.Bugwatching:
+					if (bodyFacing == Rot4.East)
+					{
+						angle = 40f;
+					}
+					if (bodyFacing == Rot4.West)
+					{
+						angle = -40f;
+					}
+					return true;
+
+				case ToddlerRenderer.ToddlerRenderMode.Carried:
+					Pawn carrier = (___pawn.ParentHolder as Pawn_CarryTracker).pawn;
+
+					angle = ((carrier.Rotation == Rot4.West) ? 290f : 70f) + carrier.Drawer.renderer.BodyAngle();
+					bodyFacing = (!(carrier.Rotation == Rot4.West) ? Rot4.West : Rot4.East);
+					return true;
+
+				case ToddlerRenderer.ToddlerRenderMode.LayingAngle:
+					JobDriver_LayAngleInCrib driver = (JobDriver_LayAngleInCrib)___pawn.jobs.curDriver;
+					angle = driver.angle;
+					return true;
+
+				case ToddlerRenderer.ToddlerRenderMode.WigglingInCrib:
+					if (!flags.HasFlag(PawnRenderFlags.Cache))
+						angle = ToddlerRenderer.WiggleAngle(___pawn, 15f, 120, ToddlerRenderer.WiggleFunc.Sine);
+					return true;
+
+				default:
+					if (Toddlers_Settings.customRenderer)
+					{
+						ToddlerRenderer.RenderToddlerInternal(__instance, mode, ___pawn, rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags);
+						return false;
+					}
+					else return true;
+			}
 		}
 	}
+
+	
+	[HarmonyPatch(typeof(Pawn_PathFollower),nameof(Pawn_PathFollower.StartPath))]
+	class StartPath_Patch
+    {
+		static void Postfix(Pawn ___pawn)
+        {
+			if (ToddlerUtility.IsToddler(___pawn))
+				___pawn.Drawer.renderer.graphics.SetAllGraphicsDirty();
+		}
+    }
+
+	[HarmonyPatch(typeof(Pawn_PathFollower), nameof(Pawn_PathFollower.StopDead))]
+	class StopDead_Patch
+	{
+		static void Postfix(Pawn ___pawn)
+		{
+			if (ToddlerUtility.IsToddler(___pawn))
+				___pawn.Drawer.renderer.graphics.SetAllGraphicsDirty();
+		}
+	}
+	
+
+	[HarmonyPatch(typeof(JobDriver_Carried),"CarryToil")]
+	class CarryToil_Patch
+    {
+		static Toil Postfix(Toil toil)
+        {
+			if (ToddlerUtility.IsLiveToddler(toil.actor))
+            {
+				toil.initAction = () => toil.actor.Drawer.renderer.graphics.SetAllGraphicsDirty();
+				toil.AddFinishAction(() => toil.actor.Drawer.renderer.graphics.SetAllGraphicsDirty());
+			}
+			return toil;
+        }
+    }
 }

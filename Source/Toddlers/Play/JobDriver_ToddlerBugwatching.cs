@@ -27,6 +27,7 @@ namespace Toddlers
                 this.pawn.jobs.posture = PawnPosture.Standing;
                 List<Rot4> rots = new List<Rot4> { Rot4.East, Rot4.West };
                 pawn.Rotation = rots.RandomElement<Rot4>();
+                pawn.Drawer.renderer.graphics.SetAllGraphicsDirty();
             };
             toil.handlingFacing = true;
             toil.tickAction = delegate ()
@@ -36,6 +37,7 @@ namespace Toddlers
             toil.defaultCompleteMode = ToilCompleteMode.Delay;
             toil.defaultDuration = ToddlerPlayUtility.PlayDuration;
             toil.FailOn(() => !this.pawn.Position.GetRoom(this.pawn.Map).PsychologicallyOutdoors);
+            toil.AddFinishAction(() => pawn.Drawer.renderer.graphics.SetAllGraphicsDirty()); 
             yield return toil;
             yield break;
         }

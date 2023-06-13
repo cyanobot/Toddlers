@@ -26,7 +26,6 @@ namespace Toddlers
     }
     */
 
-
     [HarmonyPatch(typeof(FloatMenuMakerMap), "ChoicesAtFor")]
     class FloatMenu_Patch
     {
@@ -98,6 +97,7 @@ namespace Toddlers
         {
             //Log.Message("opts.Count = " + opts.Count);
             IntVec3 c = IntVec3.FromVector3(clickPos);
+            
             //for non-toddlers
             if (!ToddlerUtility.IsLiveToddler(pawn))
             {
@@ -167,6 +167,19 @@ namespace Toddlers
                             }
                             opts.Add(FloatMenuUtility.DecoratePrioritizedTask(putInCrib, pawn, toddler));
                         }
+
+                        //option to return toddlers to safety
+                        //should have correct label rather than "rescue"
+                        foreach (FloatMenuOption rescue in opts.FindAll(x =>
+                            x.Label.Contains("Rescue".Translate(toddler.LabelCap, toddler))))
+                        {
+                            //if they do need rescuing, still say rescue
+                            if (!HealthAIUtility.ShouldSeekMedicalRest(toddler))
+                            {
+                                rescue.Label = "PutSomewhereSafe".Translate(toddler.LabelCap, toddler);
+                            }
+                        }
+
                     }
                     //options for dressing and undressing babies and toddlers
                     foreach (LocalTargetInfo localTargetInfo1 in GenUI.TargetsAt(clickPos, ForBaby(pawn), thingsOnly: true))
@@ -203,7 +216,6 @@ namespace Toddlers
                         opts.Add(FloatMenuUtility.DecoratePrioritizedTask(dressBaby, pawn, baby));
                     }
                 }
-
             }
 
             //for toddlers, mostly disabling/removing options for things they can't do

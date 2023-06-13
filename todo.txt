@@ -1,15 +1,32 @@
 High Priority
-	dubs bad hygiene compatibility
-	don't wake them to feed so much
+	*put toddlers back down inside the toddler's allowed area
+	*don't retrieve toddlers from ceremonies unless they're in danger
+	*childcare settings
+	*check animal rescue behaviour
+	*adults will put babies down on top of batteries etc
+	*move to safe place option should be available on dropdown consistent with new rules
+	*toddlers should not put themselves back into seriously dangerous temperatures
+	*notifying too much about just choosing to put the toddler down
+	
+	play with medically downed toddler should not involve putting them on the floor
+	giggling/crying shouldn't break draft
+	started 10 jobs in 1 tick, play with sad inaccessible baby
+	RimWorld.WorkGiver_PlayWithBaby provided target Thing_Human84796 but yielded no actual job for pawn Koga. The CanGiveJob and JobOnX methods may not be synchronized.
 
+	
+	
 Medium Priority
-	-nullexception toybox while off map
-	toddlers ignore forbidden doors?
 	cancel move toddler if you get there and the toddler has already moved
-	facial animation patch
 	can't unequip apparel if can't undress self yet
 	better dubs bad hygiene compatibility
-	sitting sideways at tables
+	don't wake them to feed so much
+	more than capable patch
+	-disable inspirations
+	what happens to kidnapped toddlers?
+	neater settings menu
+	babies and toddlers ideology
+	hold toddlers still to play
+	way to add hediffs to toddlers on mod added to existing game
 	
 Low Priority
 	Misc
@@ -21,6 +38,14 @@ Low Priority
 	learn to Translate
 	simple floordrawings only
 	hold toddlers still while being stripped
+	sitting sideways at tables
+	firewatching for braziers
+	tantrums
+	mental state: roaming
+	HAR compatibility
+	baby gates
+	positive thought for parents on First Steps
+	reasons for parents to spend more time playing with/otherwise interacting with their babies
 	
 	Capabilities	
 	should manipulation come with an actual manipulation penalty?
@@ -38,3 +63,7 @@ Low Priority
 Extra
 	firegazing for children
 	baby bjorn
+	
+	
+flee if attacker.HostileTo(fleer)
+attack if attacker.HostileTo(attackee)

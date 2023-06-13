@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toddlers", "Toddlers.csproj", "{B1DF138F-3AA0-4E02-B985-5101A5F06100}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{50A49C0B-1254-44F0-B014-552E2E8ABB20}"
+	ProjectSection(SolutionItems) = preProject
+		BedTesting.cs = BedTesting.cs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

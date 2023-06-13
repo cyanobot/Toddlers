@@ -71,7 +71,6 @@
 						
 
 			<!-- Lord directives (high priority) -->
-			<!-- what is this? -->
 			<li Class="ThinkNode_JoinVoluntarilyJoinableLord">
 				<dutyHook>HighPriority</dutyHook>
 				<subNodes>
@@ -167,12 +166,12 @@
 			
 			<!-- Colonist -->
 			<li Class="ThinkNode_ConditionalColonist">
-				<subNodes>
+				<subNodes>				
+					<!-- Seek safe temperatures -->
+					<li Class="Toddlers.JobGiver_ToddlerSeekSafeTemperature" />
+					
 					<!-- Seek allowed area -->
 					<li Class="JobGiver_SeekAllowedArea" />
-				
-					<!-- Seek safe temperatures -->
-					<li Class="JobGiver_SeekSafeTemperature" />
 					
 					<!-- Drop unnused inventory -->
 					<li Class="JobGiver_DropUnusedInventory" />

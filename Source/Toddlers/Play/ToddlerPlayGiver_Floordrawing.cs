@@ -12,7 +12,7 @@ namespace Toddlers
 {
     class ToddlerPlayGiver_Floordrawing : ToddlerPlayGiver
 	{
-		//copied directly from ILSpy's decompile of LearningGiver_Floordrawing
+		//based on LearningGiver_Floordrawing
 		public static bool TryFindFloordrawingSpots(Pawn pawn, out IntVec3 drawFrom, out IntVec3 drawOn)
 		{
 			TraverseParms traverseParams = TraverseParms.For(pawn, Danger.None);
@@ -32,7 +32,8 @@ namespace Toddlers
 			return false;
 			void FindDrawCell(bool desperate)
 			{
-				RegionTraverser.BreadthFirstTraverse(pawn.Position, pawn.Map, (Region from, Region r) => r.Allows(traverseParams, isDestination: false), delegate (Region r)
+				RegionTraverser.BreadthFirstTraverse(pawn.Position, pawn.Map, 
+					(Region from, Region r) => r.Allows(traverseParams, isDestination: false), delegate (Region r)
 				{
 					if (r.IsForbiddenEntirely(pawn))
 					{
@@ -66,8 +67,11 @@ namespace Toddlers
 
 		public static bool CanFloorDrawFrom(IntVec3 spot, Pawn drawer)
 		{
-			Map map = drawer.Map;
-			return spot.InBounds(map) && spot.Standable(map) && !spot.IsForbidden(drawer) && map.areaManager.Home[spot] && spot.GetDoor(map) == null && drawer.CanReserve(spot, 1, -1, null, false);
+			Map map = drawer.MapHeld;
+			return spot.InBounds(map) && spot.Standable(map) && !spot.IsForbidden(drawer) 
+				&& drawer.SafeTemperatureAtCell(spot,map)
+				&& map.areaManager.Home[spot] && spot.GetDoor(map) == null 
+				&& drawer.CanReserve(spot, 1, -1, null, false);
 		}
 
 		private static bool CanDrawOn(IntVec3 cell, Map map, bool desperate)

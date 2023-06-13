@@ -53,6 +53,7 @@ namespace Toddlers
 			{
 				if (!baby.Suspended && ChildcareUtility.CanSuckle(baby, out var _)
 					&& adult.CanReserveAndReach(baby, PathEndMode.ClosestTouch, adult.NormalMaxDanger())
+					&& !baby.IsForbidden(adult)
 					&& baby.needs != null && baby.needs.play != null
 					&& baby.needs.play.CurLevelPercentage < 0.3
 					&& ((baby.needs.mood != null && baby.needs.mood.CurLevelPercentage < 0.4)

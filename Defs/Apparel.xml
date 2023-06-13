@@ -70,7 +70,7 @@
     <graphicData>
       <texPath>Apparel/Tuque/Tuque</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(0.5, 0.5)</drawSize>
+      <drawSize>(1, 1)</drawSize>
     </graphicData>
     <costStuffCount>10</costStuffCount>
     <stuffCategories>
@@ -110,7 +110,7 @@
     <graphicData>
       <texPath>Apparel/Shadecone/Shadecone</texPath>
       <graphicClass>Graphic_Single</graphicClass>
-      <drawSize>(0.5, 0.5)</drawSize>
+      <drawSize>(1, 1)</drawSize>
     </graphicData>
     <costStuffCount>10</costStuffCount>
     <statBases>

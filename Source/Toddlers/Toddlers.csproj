@@ -54,19 +54,29 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Scrapyard.cs" />
+    <Compile Include="Temperature\ThinkNode_ConditionalNoTemperatureInjury.cs" />
     <Compile Include="Crib\JobDriver_LeaveCrib.cs" />
     <Compile Include="DBHPatch.cs" />
+    <Compile Include="FacialAnimationPatch.cs" />
+    <Compile Include="Apparel\HarmonyPatching_Apparel.cs" />
     <Compile Include="HarmonyPatching_FloatMenu.cs" />
-    <Compile Include="BabyTemperatureUtility.cs" />
+    <None Include="ReplaceTesting.cs" />
+    <Compile Include="Temperature\JobGiver_ToddlerSeekSafeTemperature.cs" />
+    <Compile Include="Temperature\BabyTemperatureUtility.cs" />
     <Compile Include="Crib\JobDriver_LetOutOfCrib.cs" />
     <Compile Include="Apparel\JobDriver_BeDressed.cs" />
     <Compile Include="Apparel\JobDriver_ToddlerRemoveApparel.cs" />
+    <Compile Include="Temperature\BringBabyToSafety.cs" />
+    <Compile Include="Play\HarmonyPatching_Play.cs" />
+    <Compile Include="Temperature\HarmonyPatching_Temperature.cs" />
+    <Compile Include="JobDriver_KidnapToddler.cs" />
     <Compile Include="Play\JobDriver_ToddlerPlayDecor.cs" />
     <Compile Include="Apparel\JobDriver_DressBaby.cs" />
     <Compile Include="Crib\JobGiver_LeaveCrib.cs" />
     <Compile Include="Apparel\JobGiver_OptimizeBabyApparel.cs" />
-    <Compile Include="JobGiver_PlayWithSadBaby.cs" />
+    <Compile Include="Play\JobGiver_PlayWithSadBaby.cs" />
     <Compile Include="Play\ToddlerPlayGiver_PlayDecor.cs" />
+    <Compile Include="Toddlers_DebugTools.cs" />
     <Compile Include="Toddlers_Mod.cs" />
     <Compile Include="ToddlerUtility.cs" />
     <Compile Include="Hediff_LearningManipulation.cs" />
