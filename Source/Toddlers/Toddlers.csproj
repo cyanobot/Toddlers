@@ -54,6 +54,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Scrapyard.cs" />
+    <Compile Include="Play\JobDriver_BePlayedWith.cs" />
+    <Compile Include="Play\JobDriver_PlayCrib.cs" />
+    <Compile Include="Play\BabyPlayGiver_PlayCrib.cs" />
     <Compile Include="Temperature\ThinkNode_ConditionalNoTemperatureInjury.cs" />
     <Compile Include="Crib\JobDriver_LeaveCrib.cs" />
     <Compile Include="DBHPatch.cs" />

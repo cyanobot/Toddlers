@@ -91,6 +91,11 @@ namespace Toddlers
 			AddFailCondition(() => !ChildcareUtility.CanSuckle(Baby, out var _));
 			
 			LocalTargetInfo tempSafePlace = BabyTemperatureUtility.SafePlaceForBaby(Baby, pawn, out BabyTemperatureUtility.BabyMoveReason moveReason);
+			if (tempSafePlace == Baby.PositionHeld && !pawn.IsCarryingPawn(Baby))
+            {
+				yield break;
+				this.EndJobWith(JobCondition.Succeeded);
+            }
 			if (moveReason != BabyTemperatureUtility.BabyMoveReason.TemperatureDanger)
 			{
 				this.FailOnForbidden(TargetIndex.A);

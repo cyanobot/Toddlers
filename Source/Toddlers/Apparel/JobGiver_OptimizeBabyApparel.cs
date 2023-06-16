@@ -102,7 +102,7 @@ namespace Toddlers
 				SetNextOptimizeTick(baby);
 				return null;
 			}
-			neededWarmth = PawnApparelGenerator.CalculateNeededWarmth(baby, baby.MapHeld.Tile, GenLocalDate.Twelfth(baby));
+			neededWarmth = RimWorld.PawnApparelGenerator.CalculateNeededWarmth(baby, baby.MapHeld.Tile, GenLocalDate.Twelfth(baby));
 			//Log.Message("neededWarmth:" + neededWarmth.ToString());
 			wornApparelScores.Clear();
 			for (int i = 0; i < wornApparel.Count; i++)

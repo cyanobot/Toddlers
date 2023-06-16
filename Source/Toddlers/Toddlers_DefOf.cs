@@ -27,8 +27,11 @@ namespace Toddlers
         public static JobDef BeDressed;
         public static JobDef ToddlerRemoveApparel;
         public static JobDef KidnapToddler;
+        public static JobDef BePlayedWith;
 
         public static LifeStageDef HumanlikeToddler;
+
+        public static MentalStateDef RemoveClothes;
 
         //public static ThingDef BabyApparelMakeableBase;
         public static ThingDef Apparel_BabyOnesie;

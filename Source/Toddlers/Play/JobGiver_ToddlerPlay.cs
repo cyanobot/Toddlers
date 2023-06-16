@@ -26,15 +26,20 @@ namespace Toddlers
             JobGiver_ToddlerPlay.tmpRandomPlay.AddRange(DefDatabase<ToddlerPlayDef>.AllDefsListForReading.InRandomOrder(null));
             foreach (ToddlerPlayDef playDef in tmpRandomPlay)
             {
+                //Log.Message("Trying playDef: " + playDef);
                 if (playDef.Worker.CanDo(pawn))
                 {
+                    //Log.Message("CanDo, attempting to give job");
                     Job job = playDef.Worker.TryGiveJob(pawn);
                     if (job != null)
                     {
+                        //Log.Message("Returning job");
                         JobGiver_ToddlerPlay.tmpRandomPlay.Clear();
                         return job;
                     }
+                    //Log.Message("Failed to give job");
                 }
+                //Log.Message("!CanDo");
             }
             JobGiver_ToddlerPlay.tmpRandomPlay.Clear();
             return null;

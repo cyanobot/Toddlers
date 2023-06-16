@@ -105,4 +105,15 @@
 		<reportString>kidnapping TargetA.</reportString>
 	</JobDef>
 	
+	<JobDef ParentName="BabyPlay">
+		<defName>PlayCrib</defName>
+		<driverClass>Toddlers.JobDriver_PlayCrib</driverClass>
+	</JobDef>
+	
+	<JobDef>
+		<defName>BePlayedWith</defName>
+		<driverClass>Toddlers.JobDriver_BePlayedWith</driverClass>
+		<reportString>playing with TargetA.</reportString>
+	</JobDef>
+	
 </Defs>

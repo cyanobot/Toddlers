@@ -41,7 +41,7 @@ namespace Toddlers
 
         private bool IsValidFire(Thing fire, Pawn pawn)
         {
-            if (fire.def != ThingDefOf.Campfire || fire.IsForbidden(pawn) || !pawn.CanReach(fire, PathEndMode.Touch, Danger.None) || pawn.Position.DistanceTo(fire.Position) >= MaxFireDistance)
+            if (fire.def != ThingDefOf.Campfire || fire.IsForbidden(pawn) || !pawn.CanReach(fire, PathEndMode.Touch, Danger.Some) || pawn.Position.DistanceTo(fire.Position) >= MaxFireDistance)
             {
                 return false;
             }
