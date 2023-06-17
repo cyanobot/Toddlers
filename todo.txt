@@ -1,15 +1,6 @@
-High Priority
-
-	*play with medically downed toddler should not involve putting them on the floor	
-	*giggling/crying shouldn't break draft
-	*pawns no longer stand on babies/toddlers to play with them
-	*hold toddlers still to play
+High Priority	
+	*way to add hediffs to toddlers on mod added to existing game
 	
-	gain bed benefits
-	
-	
-	way to add hediffs to toddlers on mod added to existing game
-	babies and toddlers ideology
 	HAR compatibility
 	
 	cancel move toddler if you get there and the toddler has already moved

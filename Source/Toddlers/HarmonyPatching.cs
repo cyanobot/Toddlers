@@ -699,16 +699,7 @@ namespace Toddlers
         {
             if (ToddlerUtility.IsToddler(__result))
             {
-                float age = __result.ageTracker.AgeBiologicalYearsFloat;
-                float percentAge = (age - 1f) / 2f;
-
-                Hediff_LearningManipulation hediff_LearningManipulation = (Hediff_LearningManipulation)HediffMaker.MakeHediff(Toddlers_DefOf.LearningManipulation, __result);
-                hediff_LearningManipulation.Severity = Mathf.Min(1f,percentAge / Toddlers_Settings.learningFactor_Manipulation);
-                __result.health.AddHediff(hediff_LearningManipulation);
-
-                Hediff_LearningToWalk hediff_LearningToWalk = (Hediff_LearningToWalk)HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, __result);
-                hediff_LearningToWalk.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Walk);
-                __result.health.AddHediff(hediff_LearningToWalk);
+                ToddlerUtility.ResetHediffsForAge(__result);
             }
         }
     }

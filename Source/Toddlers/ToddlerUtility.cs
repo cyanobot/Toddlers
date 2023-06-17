@@ -32,6 +32,36 @@ namespace Toddlers
             return (ticksSinceBaby / toddlerStageInTicks);
         }
 
+        public static void ResetHediffsForAge(Pawn p, bool clearExisting = true)
+        {
+            if (!IsToddler(p)) return;
+
+            if (p.ageTracker == null || p.health == null) return;
+
+            if (clearExisting)
+            {
+                List<Hediff_ToddlerLearning> learningHediffs = new List<Hediff_ToddlerLearning>();
+                p.health.hediffSet.GetHediffs<Hediff_ToddlerLearning>(ref learningHediffs);
+                foreach (Hediff hediff in learningHediffs)
+                {
+                    p.health.RemoveHediff(hediff);
+                }
+            }
+
+            float age = p.ageTracker.AgeBiologicalYearsFloat;
+            float percentAge = (age - 1f) / 2f;
+
+            Hediff_LearningManipulation hediff_LearningManipulation = (Hediff_LearningManipulation)HediffMaker.MakeHediff(Toddlers_DefOf.LearningManipulation, p);
+            hediff_LearningManipulation.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Manipulation);
+            p.health.AddHediff(hediff_LearningManipulation);
+
+            Hediff_LearningToWalk hediff_LearningToWalk = (Hediff_LearningToWalk)HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, p);
+            hediff_LearningToWalk.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Walk);
+            p.health.AddHediff(hediff_LearningToWalk);
+
+            return;
+        }
+
         public static float GetLearningPerTickBase(Storyteller storyteller = null)
         {
             //2 years * 60 days per year * 60000 ticks per day

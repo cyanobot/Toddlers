@@ -23,5 +23,11 @@ namespace Toddlers
                 .GetMethod("SpawnAtDevelopmentalStages", BindingFlags.Static | BindingFlags.NonPublic)
                 .Invoke(null, new object[] { DevelopmentalStage.Baby });
         }
+
+        [DebugAction("Pawns", null, false, false, false, 0, false, actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap, displayPriority = 1000)]
+        private static void ResetToddlerHediffs(Pawn p)
+        {
+            ToddlerUtility.ResetHediffsForAge(p);
+        }
     }
 }
