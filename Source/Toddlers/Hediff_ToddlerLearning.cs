@@ -47,7 +47,9 @@ namespace Toddlers
 
             this.OnUpdate(CurStageIndex);
 
-            Severity += ToddlerUtility.GetLearningPerTickBase() * factor * (1/ (float)typeof(Toddlers_Settings).GetField(SettingName, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public).GetValue(null));
+            //Log.Message("InnerTick for " + pawn + ", GetLearningPerTickBase: " + ToddlerUtility.GetLearningPerTickBase(pawn));
+
+            Severity += ToddlerUtility.GetLearningPerTickBase(pawn) * factor * (1/ (float)typeof(Toddlers_Settings).GetField(SettingName, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public).GetValue(null));
 
             if (CurStageIndex != prevStage)
             {

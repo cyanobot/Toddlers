@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<loadFolders>
+	<v1.4>
+		<li>Content</li>
+		<!--
+		<li IfModActive="ArmoredAmpharos.Snowbolds">Mods/ArmoredAmpharos.Snowbolds</li>
+		<li IfModActive="ArmoredAmpharos.Dogbolds">Mods/ArmoredAmpharos.Dogbolds</li>
+		<li IfModActive="ArmoredAmpharos.Foxbolds">Mods/ArmoredAmpharos.Foxbolds</li>
+		<li IfModActive="ArmoredAmpharos.SilvaliseKobolds">Mods/ArmoredAmpharos.SilvaliseKobolds</li>
+		<li IfModActive="ArmoredAmpharos.Spacebolds">Mods/ArmoredAmpharos.Spacebolds</li>
+		-->
+	</v1.4>
+</loadFolders>

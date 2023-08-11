@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using RimWorld;
 using System;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using Verse;
@@ -13,6 +14,7 @@ namespace Toddlers
 		private const float MaxWobbleMagnitude = 10f;
 		private const int MaxWobblePeriod = 70;
 		private const int MinWobblePeriod = 40;
+		public const float CrawlAngle = 40f;
 
 		public static float GetWobbleMagnitude(Pawn pawn)
         {
@@ -149,7 +151,7 @@ namespace Toddlers
 
 			return ToddlerRenderMode.Base;
 		}
-
+ 
 		public static void RenderToddlerInternal(PawnRenderer pawnRenderer, ToddlerRenderMode renderMode, Pawn pawn, Vector3 rootLoc, float angleIn, bool renderBody, Rot4 bodyFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags)
 		{
 			if (!pawnRenderer.graphics.AllResolved)
@@ -157,49 +159,54 @@ namespace Toddlers
 				pawnRenderer.graphics.ResolveAllGraphics();
 			}
 
-			Mesh bodyMesh = null;
-
-			//start in the unrotated frame
-			Vector3 baseLoc = rootLoc;
-			if (pawn.ageTracker.CurLifeStage.bodyDrawOffset.HasValue)
-			{
-				baseLoc += pawn.ageTracker.CurLifeStage.bodyDrawOffset.Value;
-			}
-			Vector3 bodyLoc = baseLoc;
-			Vector3 baseHeadOffset = pawnRenderer.BaseHeadOffsetAt(bodyFacing);
-			baseHeadOffset.y += bodyFacing == Rot4.North ? 3f / 148f : 0.0231660213f;
-			
-			Vector3 headOffset = Vector3.zero;
-
-			//set the y-axis (depth) element of the head offset
-			headOffset.y += bodyFacing == Rot4.North ? 3f / 148f : 0.0231660213f;
-
-			//get the base head offset
-			headOffset += pawnRenderer.BaseHeadOffsetAt(bodyFacing);
-
 			//establish rotations
 			float bodyAngle = angleIn;
 			float headAngle = angleIn;
 
+			Rot4 effectiveBodyFacing = bodyFacing;
+
 			//if we're crawling we rotate around the body centre
 			//so the body only gets its angles changed
 			if (renderMode == ToddlerRenderMode.Crawling)
-            {
+			{
 				if (bodyFacing == Rot4.East)
 				{
-					bodyAngle = 40f;
+					bodyAngle = CrawlAngle;
 					headAngle = bodyAngle / 2;
 				}
 				if (bodyFacing == Rot4.West)
 				{
-					bodyAngle = -40f;
+					bodyAngle = -1 * CrawlAngle;
 					headAngle = bodyAngle / 2;
 				}
 				if (bodyFacing == Rot4.South)
 				{
+					headAngle = 0f;
 					bodyAngle = 180f;
+					//should see the toddler's back not their front
+					effectiveBodyFacing = Rot4.North;
 				}
 			}
+
+			Vector3 bodyOffset = Vector3.zero;
+			if (pawn.ageTracker.CurLifeStage.bodyDrawOffset.HasValue)
+			{
+				bodyOffset = pawn.ageTracker.CurLifeStage.bodyDrawOffset.Value;
+			}
+			bodyOffset = bodyOffset.RotatedBy(bodyAngle);
+			//Log.Message("bodyOffset: " + bodyOffset);
+
+			Vector3 bodyLoc = rootLoc;
+			bodyLoc += bodyOffset;
+
+			Vector3 headOffset = Vector3.zero;
+
+			//set the y-axis (depth) element 
+			headOffset.y += bodyFacing == Rot4.North ? 3f / 148f : 0.0231660213f;
+
+			//get the base head offset
+			headOffset += pawnRenderer.BaseHeadOffsetAt(effectiveBodyFacing);
+			//Log.Message("headOffset: " + headOffset);
 			
 			//if we're toddling we rotate around a separate rotation centre
 			//so we also need to apply offsets to the body
@@ -218,17 +225,31 @@ namespace Toddlers
 				bodyLoc = rotateAbout + bodyRel;
 			}
 
+			if (Toddlers_Mod.HARLoaded)
+			{
+				AlienRace alienRace = Patch_HAR.GetAlienRaceWrapper(pawn);
+				//Log.Message("alienRace: " + alienRace + ", tweak: " + alienRace.crawlingTweak);
+				if (alienRace.crawlingTweak != null)
+				{
+					Vector2 tweakOffset = alienRace.crawlingTweak.HeadOffset(bodyFacing);
+					//Log.Message("tweakOffset(" + bodyFacing + "): " + tweakOffset);
+					headOffset.x += tweakOffset.x;
+					headOffset.z += tweakOffset.y;
+				}
+			}
 			Vector3 headOffset_actual = headOffset.RotatedBy(bodyAngle);
+
 			Vector3 headLoc = bodyLoc + headOffset_actual;
+			//Log.Message("headOffset_actual: " + headOffset_actual + ", headLoc: " + headLoc);
 
 			Quaternion bodyQuat = Quaternion.AngleAxis(bodyAngle, Vector3.up);
 			Quaternion headQuat = Quaternion.AngleAxis(headAngle, Vector3.up);
 
 			//other layers are defined by y-axis (ie depth) offsets
 			Vector3 utilityLoc = bodyLoc;
-			utilityLoc.y += bodyFacing == Rot4.South ? 0.00579150533f : 0.0289575271f;
+			utilityLoc.y += effectiveBodyFacing == Rot4.South ? 0.00579150533f : 0.0289575271f;
 			Vector3 bodyApparelLoc = bodyLoc;
-			bodyApparelLoc.y += bodyFacing == Rot4.North ? 0.0231660213f : 3f / 148f;
+			bodyApparelLoc.y += effectiveBodyFacing == Rot4.North ? 0.0231660213f : 3f / 148f;
 			Vector3 woundLoc1 = bodyLoc;
 			woundLoc1.y += 0.009687258f;
 			Vector3 woundLoc2 = bodyLoc;
@@ -240,44 +261,40 @@ namespace Toddlers
 			Vector3 firefoamHeadLoc = headLoc;
 			firefoamHeadLoc.y += 0.033301156f;
 
+			Mesh bodyMesh = null;
 			if (renderBody)
 			{
-				DrawPawnBody(pawnRenderer, bodyLoc, bodyAngle, bodyFacing, bodyDrawType, flags, out bodyMesh);
+				DrawPawnBody(pawnRenderer, bodyLoc, bodyAngle, effectiveBodyFacing, bodyDrawType, flags, out bodyMesh);
 				if (bodyDrawType == RotDrawMode.Fresh && pawnRenderer.graphics.furCoveredGraphic != null)
 				{
-					DrawPawnFur(pawnRenderer, shellLoc, bodyFacing, bodyQuat, flags);
+					DrawPawnFur(pawnRenderer, shellLoc, effectiveBodyFacing, bodyQuat, flags);
 				}
 				if (bodyDrawType == RotDrawMode.Fresh)
 				{
-					pawnRenderer.WoundOverlays.RenderPawnOverlay(woundLoc1, bodyMesh, bodyQuat, flags.FlagSet(PawnRenderFlags.DrawNow), PawnOverlayDrawer.OverlayLayer.Body, bodyFacing, false);
+					pawnRenderer.WoundOverlays.RenderPawnOverlay(woundLoc1, bodyMesh, bodyQuat, flags.FlagSet(PawnRenderFlags.DrawNow), PawnOverlayDrawer.OverlayLayer.Body, effectiveBodyFacing, false);
 				}
 				if (flags.FlagSet(PawnRenderFlags.Clothes))
 				{
-					DrawBodyApparel(pawnRenderer, bodyApparelLoc, utilityLoc, bodyMesh, bodyAngle, bodyFacing, flags);
+					DrawBodyApparel(pawnRenderer, bodyApparelLoc, utilityLoc, bodyMesh, bodyAngle, effectiveBodyFacing, flags);
 				}
 				if (ModLister.BiotechInstalled && pawn.genes != null)
 				{
-					DrawBodyGenes(pawnRenderer, bodyLoc, bodyQuat, bodyAngle, bodyFacing, bodyDrawType, flags);
+					DrawBodyGenes(pawnRenderer, bodyLoc, bodyQuat, bodyAngle, effectiveBodyFacing, bodyDrawType, flags);
 				}
 				if (bodyDrawType == RotDrawMode.Fresh)
 				{
-					pawnRenderer.WoundOverlays.RenderPawnOverlay(woundLoc2, bodyMesh, bodyQuat, flags.FlagSet(PawnRenderFlags.DrawNow), PawnOverlayDrawer.OverlayLayer.Body, bodyFacing, true);
+					pawnRenderer.WoundOverlays.RenderPawnOverlay(woundLoc2, bodyMesh, bodyQuat, flags.FlagSet(PawnRenderFlags.DrawNow), PawnOverlayDrawer.OverlayLayer.Body, effectiveBodyFacing, true);
 				}
 				if (bodyDrawType == RotDrawMode.Fresh && pawnRenderer.FirefoamOverlays.IsCoveredInFoam)
 				{
-					pawnRenderer.FirefoamOverlays.RenderPawnOverlay(firefoamLoc, bodyMesh, bodyQuat, flags.FlagSet(PawnRenderFlags.DrawNow), PawnOverlayDrawer.OverlayLayer.Body, bodyFacing);
+					pawnRenderer.FirefoamOverlays.RenderPawnOverlay(firefoamLoc, bodyMesh, bodyQuat, flags.FlagSet(PawnRenderFlags.DrawNow), PawnOverlayDrawer.OverlayLayer.Body, effectiveBodyFacing);
 				}
 			}
-
 
 			if (pawnRenderer.graphics.headGraphic != null)
 			{
 				Mesh headMesh = null;
 				Material material;
-
-				if (Toddlers_Mod.facialAnimationLoaded)
-                {
-                }
 
 				material = pawnRenderer.graphics.HeadMatAt(bodyFacing, bodyDrawType, flags.FlagSet(PawnRenderFlags.HeadStump), flags.FlagSet(PawnRenderFlags.Portrait), !flags.FlagSet(PawnRenderFlags.Cache));
 				if (material != null)
@@ -286,7 +303,7 @@ namespace Toddlers
 
 					if (Toddlers_Mod.facialAnimationLoaded)
 					{
-						FacialAnimationPatch.DrawFace(headMesh, headLoc, headQuat, material, flags.FlagSet(PawnRenderFlags.Portrait));
+						Patch_FacialAnimation.DrawFace(headMesh, headLoc, headQuat, material, flags.FlagSet(PawnRenderFlags.Portrait));
 					}
 					else
 					{
@@ -322,13 +339,32 @@ namespace Toddlers
 				}
 			}
 
+            if (Toddlers_Mod.HARLoaded)
+            {
+				// public static void DrawAddons(PawnRenderFlags renderFlags, Vector3 vector, Vector3 headOffset, Pawn pawn, Quaternion quat, Rot4 rotation)
+				/*
+				Type class_HARHarmonyPatches = (from asm in AppDomain.CurrentDomain.GetAssemblies()
+														from type in asm.GetTypes()
+														where type.Namespace == "AlienRace" && type.IsClass && type.Name == "HarmonyPatches"
+												select type).Single();
+				MethodInfo drawAddOns = class_HARHarmonyPatches.GetMethod("DrawAddons", BindingFlags.Static | BindingFlags.Public);
+				*/
+				Vector3 headOffset_sansY = new Vector3(headOffset_actual.x, 0f, headOffset_actual.z);
+
+				//Log.Message("About to DrawAddons, pawn: " + pawn + ", bodyLoc: " + bodyLoc + ", headOffset_sansY: " + headOffset_sansY 
+				//	+ ", bodyQuat: " + bodyQuat + ", bodyFacing: " + bodyFacing);
+				object[] args = new object[] { flags, bodyLoc, headOffset_sansY, pawn , bodyQuat , bodyFacing };
+
+				Patch_HAR.method_HarmonyPatches_DrawAddons.Invoke(null, args);
+            }
+
 
 			if (!flags.FlagSet(PawnRenderFlags.Portrait) && !flags.FlagSet(PawnRenderFlags.Cache))
 			{
 				DrawDynamicParts(pawnRenderer, bodyLoc, bodyAngle, bodyFacing, flags);
 			}
-		}
 
+		}
 
 		private static void DrawPawnBody(PawnRenderer instance, Vector3 rootLoc, float angle, Rot4 facing, RotDrawMode bodyDrawType, PawnRenderFlags flags, out Mesh bodyMesh)
 		{
@@ -371,9 +407,10 @@ namespace Toddlers
 	[HarmonyPatch(typeof(PawnRenderer), "RenderPawnInternal")]
 	class RenderPawnInternal_Patch
 	{
-		[HarmonyAfter(new string[] { FacialAnimationPatch.FAHarmonyID })]
-		static bool Prefix(PawnRenderer __instance, Pawn ___pawn, Vector3 rootLoc, ref float angle, bool renderBody, ref Rot4 bodyFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags)
+		[HarmonyAfter(new string[] { Patch_FacialAnimation.FAHarmonyID, Patch_HAR.HARHarmonyID })]
+		static bool Prefix(PawnRenderer __instance, Pawn ___pawn, Vector3 rootLoc, ref float angle, bool renderBody, ref Rot4 bodyFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags, out bool __state)
 		{
+			__state = false;
 			//Log.Message("__instance: " + __instance.ToString());
 			//Log.Message("___pawn: " + ___pawn.ToString());
 			//Log.Message("rootLoc: " + rootLoc.ToString());
@@ -389,6 +426,8 @@ namespace Toddlers
 			if (flags.HasFlag(PawnRenderFlags.Portrait) | flags.HasFlag(PawnRenderFlags.StylingStation)) return true;
 
 			ToddlerRenderer.ToddlerRenderMode mode = ToddlerRenderer.GetToddlerRenderMode(___pawn);
+
+			//Log.Message("IsLiveToddler, RenderMode: " + mode);
 
 			switch (mode)
             {
@@ -427,6 +466,7 @@ namespace Toddlers
 					if (Toddlers_Settings.customRenderer)
 					{
 						ToddlerRenderer.RenderToddlerInternal(__instance, mode, ___pawn, rootLoc, angle, renderBody, bodyFacing, bodyDrawType, flags);
+						__state = true;
 						return false;
 					}
 					else return true;

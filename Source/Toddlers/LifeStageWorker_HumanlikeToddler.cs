@@ -47,7 +47,15 @@ namespace Toddlers
 			}
 			if (!pawn.health.hediffSet.HasHediff(Toddlers_DefOf.LearningToWalk))
             {
-                pawn.health.AddHediff(HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, pawn));
+				if (Toddlers_Mod.HARLoaded)
+                {
+					if (Patch_HAR.GetAlienRaceWrapper(pawn).humanlikeGait)
+						pawn.health.AddHediff(HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, pawn));
+				}
+                else
+				{
+					pawn.health.AddHediff(HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, pawn));
+				}
 			}
 			if (!pawn.health.hediffSet.HasHediff(Toddlers_DefOf.LearningManipulation))
 			{

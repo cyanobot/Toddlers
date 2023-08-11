@@ -45,4 +45,11 @@ namespace Toddlers
 
     }
 
+    [DefOf]
+    static class Toddlers_ThinkTreeDefOf
+    {
+        public static ThinkTreeDef HumanlikeToddler;
+        public static ThinkTreeDef HumanlikeToddlerConstant;
+    }
+
 }

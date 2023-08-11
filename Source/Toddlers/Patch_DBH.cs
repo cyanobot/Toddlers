@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Toddlers
 {
-    public static class DBHPatch
+    public static class Patch_DBH
     {
         public static void GeneratePatches(Harmony harmony)
         {
@@ -21,7 +21,7 @@ namespace Toddlers
                                     where type.Namespace == "DubsBadHygiene" && type.IsClass && type.Name == "NeedsUtil"
                                     select type).Single();
             harmony.Patch(class_NeedsUtil.GetMethod("ShouldHaveNeed", BindingFlags.Public | BindingFlags.Static),
-                postfix: new HarmonyMethod(typeof(DBHPatch),nameof(ShouldHaveNeed_Postfix)));
+                postfix: new HarmonyMethod(typeof(Patch_DBH),nameof(ShouldHaveNeed_Postfix)));
         }
 
         public static bool ShouldHaveNeed_Postfix(bool result, Pawn pawn)

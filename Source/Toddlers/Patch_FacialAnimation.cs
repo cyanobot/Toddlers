@@ -11,7 +11,7 @@ using Verse.AI;
 
 namespace Toddlers
 {
-    public static class FacialAnimationPatch
+    public static class Patch_FacialAnimation
     {
         public const string FANamespace = "FacialAnimation";
         public const string FAHarmonyID = "rimworld.Nals.FacialAnimation";

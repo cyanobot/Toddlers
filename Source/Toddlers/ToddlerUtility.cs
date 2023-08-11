@@ -13,9 +13,44 @@ namespace Toddlers
 {
     public static class ToddlerUtility
     {
+        public const float BASE_MIN_AGE = 1f;
+        public const float BASE_MAX_AGE = 3f;
+
+        public static float ToddlerMinAge(Pawn p)
+        {
+            if (!Toddlers_Mod.HARLoaded)
+            {
+                return BASE_MIN_AGE;
+            }
+            else
+            {
+                AlienRace alienRace = Patch_HAR.GetAlienRaceWrapper(p);
+                return alienRace.toddlerMinAge;
+            }
+        }
+
+        public static float ToddlerMaxAge(Pawn p)
+        {
+            if (!Toddlers_Mod.HARLoaded)
+            {
+                return BASE_MAX_AGE;
+            }
+            else
+            {
+                AlienRace alienRace = Patch_HAR.GetAlienRaceWrapper(p);
+                return alienRace.lifeStageChild.minAge;
+            }
+        }
+
         public static bool IsToddler(Pawn p)
         {
-            return p != null && p.ageTracker.CurLifeStage == Toddlers_DefOf.HumanlikeToddler;
+            if (p == null) return false;
+            if (p.ageTracker.CurLifeStage == Toddlers_DefOf.HumanlikeToddler) return true;
+            if (Toddlers_Mod.HARLoaded)
+            {
+                if (p.ageTracker.CurLifeStage.workerClass == typeof(LifeStageWorker_HumanlikeToddler)) return true;
+            }
+            return false;
         }
 
         public static bool IsLiveToddler(Pawn p)
@@ -26,9 +61,9 @@ namespace Toddlers
         public static float PercentGrowth(Pawn p)
         {
             //2 years * 60 days per year * 60000 ticks per day
-            float toddlerStageInTicks = 2f * 60f * 60000f;
+            float toddlerStageInTicks = (ToddlerMaxAge(p) - ToddlerMinAge(p)) * 60f * 60000f;
             //age up at 1 yearold
-            float ticksSinceBaby = (float)p.ageTracker.AgeBiologicalTicks - (60f * 60000f);
+            float ticksSinceBaby = (float)p.ageTracker.AgeBiologicalTicks - (ToddlerMinAge(p) * 60f * 60000f);
             return (ticksSinceBaby / toddlerStageInTicks);
         }
 
@@ -48,12 +83,13 @@ namespace Toddlers
                 }
             }
 
-            float age = p.ageTracker.AgeBiologicalYearsFloat;
-            float percentAge = (age - 1f) / 2f;
+            float percentAge = PercentGrowth(p);
 
             Hediff_LearningManipulation hediff_LearningManipulation = (Hediff_LearningManipulation)HediffMaker.MakeHediff(Toddlers_DefOf.LearningManipulation, p);
             hediff_LearningManipulation.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Manipulation);
             p.health.AddHediff(hediff_LearningManipulation);
+
+            if (Toddlers_Mod.HARLoaded && !Patch_HAR.GetAlienRaceWrapper(p).humanlikeGait) return;
 
             Hediff_LearningToWalk hediff_LearningToWalk = (Hediff_LearningToWalk)HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, p);
             hediff_LearningToWalk.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Walk);
@@ -62,11 +98,11 @@ namespace Toddlers
             return;
         }
 
-        public static float GetLearningPerTickBase(Storyteller storyteller = null)
+        public static float GetLearningPerTickBase(Pawn p, Storyteller storyteller = null)
         {
             //2 years * 60 days per year * 60000 ticks per day
             if (storyteller == null) storyteller = Find.Storyteller;
-            float ticksAsToddler = 2 * 60 * 60000 / Find.Storyteller.difficulty.childAgingRate;
+            float ticksAsToddler = (ToddlerMaxAge(p) - ToddlerMinAge(p)) * 60 * 60000 / Find.Storyteller.difficulty.childAgingRate;
             return 1 / ticksAsToddler;
         }
 
@@ -79,6 +115,7 @@ namespace Toddlers
 
         public static bool IsCrawler(Pawn pawn)
         {
+            if (!IsToddler(pawn)) return false;
             Hediff hediff = pawn.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.LearningToWalk) as Hediff_LearningToWalk;
             if (hediff != null && hediff.CurStageIndex == 0) return true;
             return false;

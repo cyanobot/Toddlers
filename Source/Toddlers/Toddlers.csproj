@@ -17,7 +17,7 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Assemblies\</OutputPath>
+    <OutputPath>..\..\Content\Assemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -54,13 +54,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Scrapyard.cs" />
+    <Compile Include="HAR\BodyAddon.cs" />
+    <Compile Include="HAR\AlienRace.LifeStages.cs" />
+    <Compile Include="HAR\AlienRace.Graphics.cs" />
+    <Compile Include="HAR\AlienRace.BodyTypes.cs" />
+    <Compile Include="HAR\CrawlingTweak.cs" />
+    <Compile Include="HAR\Harmony.cs" />
+    <Compile Include="HAR\Patch_HAR.cs" />
+    <Compile Include="HAR\AlienRace.cs" />
     <Compile Include="Play\JobDriver_BePlayedWith.cs" />
     <Compile Include="Play\JobDriver_PlayCrib.cs" />
     <Compile Include="Play\BabyPlayGiver_PlayCrib.cs" />
     <Compile Include="Temperature\ThinkNode_ConditionalNoTemperatureInjury.cs" />
     <Compile Include="Crib\JobDriver_LeaveCrib.cs" />
-    <Compile Include="DBHPatch.cs" />
-    <Compile Include="FacialAnimationPatch.cs" />
+    <Compile Include="Patch_DBH.cs" />
+    <Compile Include="Patch_FacialAnimation.cs" />
     <Compile Include="Apparel\HarmonyPatching_Apparel.cs" />
     <Compile Include="HarmonyPatching_FloatMenu.cs" />
     <None Include="ReplaceTesting.cs" />
@@ -79,6 +87,7 @@
     <Compile Include="Apparel\JobGiver_OptimizeBabyApparel.cs" />
     <Compile Include="Play\JobGiver_PlayWithSadBaby.cs" />
     <Compile Include="Play\ToddlerPlayGiver_PlayDecor.cs" />
+    <None Include="TestPatch.cs" />
     <Compile Include="Toddlers_DebugTools.cs" />
     <Compile Include="Toddlers_Mod.cs" />
     <Compile Include="ToddlerUtility.cs" />

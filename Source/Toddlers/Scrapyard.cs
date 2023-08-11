@@ -13,6 +13,531 @@ using System.Threading.Tasks;
 
 
 
+
+
+
+
+public partial class AlienRace
+{
+	public bool bodyAccountedFor_Baby = false;
+	public bool bodyAccountedFor_Child = false;
+	public BodyTypeDef bodyType_Baby = null;
+	public BodyTypeDef bodyType_Child = null;
+
+
+	public object bodyGraphic_obj;
+
+	public void InitBodyTypes()
+	{
+		Log.Message("Starting InitBodyTypes");
+		//if both child- and baby-specific bodies are defined using the HAR ageGraphics format
+		//then we don't need to worry about bodyTypes for them
+		if (bodyAccountedFor_Baby && bodyAccountedFor_Child) return;
+
+		object bodyTypes_obj = alienPartGenerator.GetType().GetField("bodyTypes", BindingFlags.Public | BindingFlags.Instance).GetValue(alienPartGenerator);
+		Log.Message("bodyTypes_obj: " + (bodyTypes_obj as IEnumerable).ToStringSafeEnumerable());
+
+		List<BodyTypeDef> bodyTypes = bodyTypes_obj as List<BodyTypeDef>;
+
+		foreach (BodyTypeDef bodyTypeDef in bodyTypes)
+		{
+			if (bodyTypeDef == BodyTypeDefOf.Baby) bodyType_Baby = BodyTypeDefOf.Baby;
+			else if (bodyTypeDef.defName.Contains("baby") || bodyTypeDef.defName.Contains("Baby")) bodyType_Baby = bodyTypeDef;
+
+			if (bodyTypeDef == BodyTypeDefOf.Child) bodyType_Child = BodyTypeDefOf.Child;
+			else if (bodyTypeDef.defName.Contains("child") || bodyTypeDef.defName.Contains("Child")) bodyType_Child = bodyTypeDef;
+
+			if (bodyType_Baby != null && bodyType_Child != null) break;
+		}
+		Log.Message("Body type search complete, bodyType_Baby: " + bodyType_Baby + ", bodyType_Child: " + bodyType_Child);
+
+		//List<BodyTypeDef> vanillaBodies = new List<BodyTypeDef> { BodyTypeDefOf.Fat, BodyTypeDefOf.Female, BodyTypeDefOf.Hulk, BodyTypeDefOf.Male, BodyTypeDefOf.Thin};
+		//if the race has not been allowed the baby/child body types, add those in
+		if (bodyType_Baby == null)
+		{
+			bodyTypes.Add(BodyTypeDefOf.Baby);
+			bodyType_Baby = BodyTypeDefOf.Baby;
+		}
+		if (bodyType_Child == null)
+		{
+			bodyTypes.Add(BodyTypeDefOf.Child);
+			bodyType_Child = BodyTypeDefOf.Child;
+		}
+		Log.Message("new bodyTypes_obj: " + (bodyTypes_obj as IEnumerable).ToStringSafeEnumerable());
+
+		//Note: bodyGraphic_obj is identified earlier in InitGraphicField when it loops through graphicPaths
+		if (bodyGraphic_obj == null || !Patch_HAR.class_AbstractExtendedGraphic.IsAssignableFrom(bodyGraphic_obj.GetType()))
+		{
+			Log.Error("Toddlers HAR Patch failed to find extended body graphic for race: " + def.defName);
+			return;
+		}
+
+		string path = (string)bodyGraphic_obj.GetType().GetField("path").GetValue(bodyGraphic_obj);
+		Log.Message("path: " + path);
+
+		//nested loop to find all nested bodyTypeGraphics objects that will need updating
+		List<object> bodyTypeGraphicses = new List<object>();
+
+		FindNestedBodyTypeVariants(bodyGraphic_obj, ref bodyTypeGraphicses);
+		Log.Message("bodyTypeGraphicses: " + bodyTypeGraphicses.ToStringSafeEnumerable());
+
+		foreach (object bodyTypeGraphics_obj in bodyTypeGraphicses)
+		{
+			Log.Message("bodyTypeGraphics_obj: " + bodyTypeGraphics_obj);
+			IEnumerable bodyTypeGraphics_ienum = bodyTypeGraphics_obj as IEnumerable;
+			Log.Message("bodyTypeGraphics_ienum: " + bodyTypeGraphics_ienum.ToStringSafeEnumerable());
+
+			//if there aren't any graphics listed per body type, skip over this
+			if (bodyTypeGraphics_ienum == null || bodyTypeGraphics_ienum.EnumerableCount() <= 0) continue;
+
+			//establish whether there are already working graphics for baby/child
+			object graphicBaby_obj = null;
+			object graphicChild_obj = null;
+
+			Log.Message("Looping through bodyTypeGraphics, first pass");
+			foreach (object bodyTypeGraphic in bodyTypeGraphics_ienum)
+			{
+				BodyTypeDef bodyTypeDef = (BodyTypeDef)Patch_HAR.field_BodyTypeGraphic_bodyType.GetValue(bodyTypeGraphic);
+				string typePath = (string)Patch_HAR.class_BodyTypeGraphic.GetMethod("GetPath", new Type[] { }).Invoke(bodyTypeGraphic, new object[] { });
+				Log.Message("bodyTypeDef: " + bodyTypeDef + ", typePath: " + typePath);
+
+				//if we've found the entry for the baby or child body type
+				if (!bodyAccountedFor_Baby && bodyTypeDef == bodyType_Baby)
+				{
+					graphicBaby_obj = bodyTypeGraphic;
+					if (!CheckTextures(path))
+					{
+						//Log.Message("Found broken graphic entry at " + path + " for baby");
+						continue;
+					}
+					else
+					{
+						//Log.Message("Found a graphic for bodyType_Baby, no need to make a new one.");
+						bodyAccountedFor_Baby = true;
+					}
+				}
+				if (!bodyAccountedFor_Child && bodyTypeDef == bodyType_Child)
+				{
+					graphicChild_obj = bodyTypeGraphic;
+					if (!CheckTextures(path))
+					{
+						//Log.Message("Found broken graphic entry at " + path + " for child");
+						continue;
+					}
+					else
+					{
+						//Log.Message("Found a graphic for bodyType_Child, no need to make a new one.");
+						bodyAccountedFor_Child = true;
+					}
+				}
+				//if we've found working graphics for both babies and children, we're done here
+				if (bodyAccountedFor_Baby && bodyAccountedFor_Child) continue;
+			}
+			Log.Message("graphicBaby_obj: " + graphicBaby_obj + ", graphicChild_obj: " + graphicChild_obj);
+
+
+			//if we haven't found an existing graphic for babies/children
+			//make a new one
+			if (!bodyAccountedFor_Baby && graphicBaby_obj == null)
+			{
+				graphicBaby_obj = Activator.CreateInstance(Patch_HAR.class_BodyTypeGraphic);
+				bodyTypeGraphics_obj.GetType().GetMethod("Add", new Type[] { Patch_HAR.class_BodyTypeGraphic })
+						.Invoke(bodyTypeGraphics_obj, new object[] { graphicBaby_obj });
+				Patch_HAR.field_BodyTypeGraphic_bodyType.SetValue(graphicBaby_obj, bodyType_Baby);
+			}
+			if (!bodyAccountedFor_Child && graphicChild_obj == null)
+			{
+				graphicChild_obj = Activator.CreateInstance(Patch_HAR.class_BodyTypeGraphic);
+				bodyTypeGraphics_obj.GetType().GetMethod("Add", new Type[] { Patch_HAR.class_BodyTypeGraphic })
+						.Invoke(bodyTypeGraphics_obj, new object[] { graphicChild_obj });
+				Patch_HAR.field_BodyTypeGraphic_bodyType.SetValue(graphicChild_obj, bodyType_Child);
+			}
+
+			//if the race uses vanilla textures
+			//then we can very easily set the baby/child graphics to the correct ones
+			//Log.Message("path: " + path + ", vanilla: " + VANILLA_BODY_PATH + ", eq: " + (path == VANILLA_BODY_PATH));
+			if (path == VANILLA_BODY_PATH)
+			{
+				Log.Message("path == VANILLA_BODY_PATH");
+				if (!bodyAccountedFor_Baby)
+				{
+					Patch_HAR.field_BodyTypeGraphic_path.SetValue(graphicBaby_obj, VANILLA_BODY_PATH + "Naked_Child");
+				}
+				if (!bodyAccountedFor_Child)
+				{
+					Patch_HAR.field_BodyTypeGraphic_path.SetValue(graphicChild_obj, VANILLA_BODY_PATH + "Naked_Child");
+				}
+				continue;
+			}
+
+			//if we're not using vanilla textures it gets a little more complicated
+			//loop through the available body type graphics defined in this subgraphic for the race
+			//and try to pick one that will be the least strange as a baby/child body
+			int priority = 0;
+			int bestPriority_Baby = 0;
+			object bestGraphic_Baby = null;
+			int bestPriority_Child = 0;
+			object bestGraphic_Child = null;
+
+			//Log.Message("Looping through bodyTypeGraphics, second pass");
+			foreach (object bodyTypeGraphic in bodyTypeGraphics_ienum)
+			{
+				BodyTypeDef bodyTypeDef = (BodyTypeDef)Patch_HAR.field_BodyTypeGraphic_bodyType.GetValue(bodyTypeGraphic);
+				path = (string)Patch_HAR.class_BodyTypeGraphic.GetMethod("GetPath", new Type[] { }).Invoke(bodyTypeGraphic, new object[] { });
+				//Log.Message("bodyTypeDef: " + bodyTypeDef + ", path: " + path);
+
+				//if the graphic path doesn't resolve, can't use this graphic for anything
+				if (!CheckTextures(path))
+				{
+					//Log.Message("Found no graphic at " + path + ", continuing");
+					continue;
+				}
+
+				//if we're still looking for a good substitute for baby or child
+				//consider the current graphic
+				//and compare to the last best one we've found
+				if (!bodyAccountedFor_Baby)
+				{
+					priority = BodyTypePriority_Baby(bodyTypeDef);
+					if (priority > bestPriority_Baby)
+					{
+						bestPriority_Baby = priority;
+						bestGraphic_Baby = bodyTypeGraphic;
+					}
+				}
+				if (!bodyAccountedFor_Child)
+				{
+					priority = BodyTypePriority_Child(bodyTypeDef);
+					if (priority > bestPriority_Child)
+					{
+						bestPriority_Child = priority;
+						bestGraphic_Child = bodyTypeGraphic;
+					}
+				}
+			}
+			//Log.Message("bestGraphic_Baby: " + bestGraphic_Baby + ", priority: " + bestPriority_Baby
+			//    + ", bestGraphic_Child: " + bestGraphic_Child + ", priority: " + bestPriority_Child);
+
+			if (!bodyAccountedFor_Baby)
+			{
+				//if we've identified a candidate from the race-specific graphics
+				//use that
+				if (bestGraphic_Baby != null)
+				{
+					//Log.Message("Copying from bestGraphic");
+					//copy all fields
+					foreach (FieldInfo fieldInfo in bestGraphic_Baby.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+					{
+						fieldInfo.SetValue(graphicBaby_obj, fieldInfo.GetValue(bestGraphic_Baby));
+					}
+
+					//then set bodyType (back) to what it should be
+					Patch_HAR.field_BodyTypeGraphic_bodyType.SetValue(graphicBaby_obj, bodyType_Baby);
+				}
+				//if we haven't, default back to vanilla
+				else
+				{
+					//Log.Message("Copying from vanilla");
+					Patch_HAR.field_BodyTypeGraphic_bodyType.SetValue(graphicBaby_obj, bodyType_Baby);
+					graphicBaby_obj.GetType().GetField("path").SetValue(graphicBaby_obj, VANILLA_BODY_PATH);
+				}
+			}
+
+			if (!bodyAccountedFor_Child)
+			{
+				//if we've identified a candidate from the race-specific graphics
+				//use that
+				if (bestGraphic_Child != null)
+				{
+					//Log.Message("Copying from bestGraphic");
+					//copy all fields
+					foreach (FieldInfo fieldInfo in bestGraphic_Child.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+					{
+						fieldInfo.SetValue(graphicChild_obj, fieldInfo.GetValue(bestGraphic_Child));
+					}
+
+					//then set bodyType (back) to what it should be
+					Patch_HAR.field_BodyTypeGraphic_bodyType.SetValue(graphicChild_obj, bodyType_Child);
+				}
+				//if we haven't, default back to vanilla
+				else
+				{
+					//Log.Message("Copying from vanilla");
+					Patch_HAR.field_BodyTypeGraphic_bodyType.SetValue(graphicChild_obj, bodyType_Child);
+					graphicChild_obj.GetType().GetField("path").SetValue(graphicChild_obj, VANILLA_BODY_PATH);
+				}
+			}
+
+		}
+	}
+
+	public void FindNestedBodyTypeVariants(object graphic, ref List<object> collector)
+	{
+		Log.Message("FindNestedBodyTypeVariants, graphic: " + graphic);
+		if (!Patch_HAR.class_AbstractExtendedGraphic.IsAssignableFrom(graphic.GetType())) return;
+
+		IEnumerable<object> subgraphics = Patch_HAR.fields_subgraphics.Select<FieldInfo, object>(x => x.GetValue(graphic));
+		Log.Message("fields_subgraphics: " + Patch_HAR.fields_subgraphics.ToStringSafeEnumerable());
+		Log.Message("subgraphics: " + subgraphics.ToStringSafeEnumerable());
+		if (subgraphics.EnumerableNullOrEmpty()) return;
+
+		foreach (object subgraphic in subgraphics)
+		{
+			Log.Message("subgraphic: " + subgraphic + ", " + (subgraphic as IEnumerable).ToStringSafeEnumerable());
+			//if the list is not empty we will need to iterate through it
+			if (!((subgraphic as IEnumerable).EnumerableCount() == 0))
+			{
+				//if the type of the list is List<AlienPartGenerator.ExtendedBodytypeGraphic>
+				//we want to "return" it as one of the objects we're looking for
+				Type[] types = subgraphic.GetType().GetGenericArguments();
+				if (types.Length == 1 && types[0] == Patch_HAR.class_BodyTypeGraphic)
+				{
+					collector.Add(subgraphic);
+				}
+				FindNestedBodyTypeVariants(subgraphic, ref collector);
+			}
+		}
+	}
+
+	
+
+	public int BodyTypePriority_Baby(BodyTypeDef def)
+	{
+		if (def == BodyTypeDefOf.Baby || def.defName.Contains("Baby") || def.defName.Contains("baby")) return 100;
+		if (def == BodyTypeDefOf.Child || def.defName.Contains("Child") || def.defName.Contains("child")) return 10;
+		if (def == BodyTypeDefOf.Thin || def.defName.Contains("Thin") || def.defName.Contains("thin")) return 9;
+		if (def.defName.Contains("Main") || def.defName.Contains("main")
+			|| def.defName.Contains("Norm") || def.defName.Contains("norm")
+			|| def.defName.Contains("Stand") || def.defName.Contains("stand")
+			|| def.defName.Contains("Std") || def.defName.Contains("std")
+			|| def.defName.Contains("Default") || def.defName.Contains("default")
+			|| def.defName.Contains("Base") || def.defName.Contains("base")
+			|| def.defName.Contains("Basic") || def.defName.Contains("basic")
+			) return 8;
+		if (def == BodyTypeDefOf.Male || def.defName.Contains("Male") || def.defName.Contains("male")) return 7;
+		return 1;
+	}
+	public int BodyTypePriority_Child(BodyTypeDef def)
+	{
+		if (def == BodyTypeDefOf.Child || def.defName.Contains("Child") || def.defName.Contains("child")) return 100;
+		if (def == BodyTypeDefOf.Baby || def.defName.Contains("Baby") || def.defName.Contains("baby")) return 10;
+		if (def == BodyTypeDefOf.Thin || def.defName.Contains("Thin") || def.defName.Contains("thin")) return 9;
+		if (def.defName.Contains("Main") || def.defName.Contains("main")
+			|| def.defName.Contains("Norm") || def.defName.Contains("norm")
+			|| def.defName.Contains("Stand") || def.defName.Contains("stand")
+			|| def.defName.Contains("Std") || def.defName.Contains("std")
+			|| def.defName.Contains("Default") || def.defName.Contains("default")
+			|| def.defName.Contains("Base") || def.defName.Contains("base")
+			|| def.defName.Contains("Basic") || def.defName.Contains("basic")
+			) return 8;
+		if (def == BodyTypeDefOf.Male || def.defName.Contains("Male") || def.defName.Contains("male")) return 7;
+		return 1;
+	}
+
+}
+
+
+
+public partial class AlienRace
+{
+
+	public Dictionary<object, BodyAddon> bodyAddons = new Dictionary<object, BodyAddon>();
+	public Dictionary<string, string> babyAgeGraphics = new Dictionary<string, string>();
+	public Dictionary<string, string> bodyAddonAgeGraphics = new Dictionary<string, string>();
+
+	public void InitGraphicField(object graphic, string key, ref Dictionary<string, string> outputDict)
+	{
+		if (key == "body")
+		{
+			bodyGraphic_obj = graphic;
+		}
+
+		//if there are no age graphic variants we don't need to touch this graphic
+		FieldInfo ageGraphics_field = graphic.GetType().GetField("ageGraphics", BindingFlags.Instance | BindingFlags.Public);
+		if (ageGraphics_field == null) return;
+
+		object ageGraphics_obj = ageGraphics_field.GetValue(graphic);
+		IEnumerable ageGraphics_ienum = ageGraphics_obj as IEnumerable;
+		if (ageGraphics_ienum.EnumerableCount() == 0) return;
+
+		string path = "";
+		//loop over the life stages registered in the ageGraphic
+		foreach (object ageGraphic in ageGraphics_ienum)
+		{
+			path = (string)ageGraphic.GetType().GetMethod("GetPath", types: new Type[] { }).Invoke(ageGraphic, new object[] { });
+			LifeStageDef lifeStageDef = (LifeStageDef)ageGraphic.GetType().GetField("age", BindingFlags.Instance | BindingFlags.Public).GetValue(ageGraphic);
+
+			//if we've found a child-specific body graphic, make a note of it
+			if (lifeStageDef == lifeStageChild.def && key == "body") bodyAccountedFor_Child = true;
+			if (lifeStageDef == lifeStageBaby.def)
+			{
+				//if we've found a child-specific body graphic, make a note of it
+				if (key == "body") bodyAccountedFor_Baby = true;
+				//found the most relevant path: the one for baby
+				break;
+			}
+		}
+		//if we found no baby-specific path, we'll just make a note of the last path we looked at
+
+		Log.Message("Final path for " + key + ": " + path);
+		if (path.NullOrEmpty()) return;
+
+		outputDict.Add(key, path);
+	}
+
+	public void InitGraphicFields()
+	{
+		Log.Message("Firing InitGraphicFields, def: " + def);
+
+			if (Patch_HAR.class_ThingDef_AlienRace.IsAssignableFrom(def.GetType()))
+			{
+				if (Patch_HAR.class_GraphicPaths.IsAssignableFrom(graphicPaths.GetType()))
+				{
+					List<FieldInfo> graphicFields = (from field
+													in graphicPaths.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance)
+													 where Patch_HAR.class_AbstractExtendedGraphic.IsAssignableFrom(field.FieldType)
+													 select field).ToList();
+					//Log.Message("graphicFields: " + graphicFields);
+					foreach (FieldInfo field in graphicFields)
+					{
+						string fieldName = field.Name;
+						object graphic = field.GetValue(graphicPaths);
+
+						InitGraphicField(graphic, fieldName, ref babyAgeGraphics);
+
+					}
+				}
+				//else Log.Message("Failed GraphicPaths.IsAssignableFrom(graphicPaths)");
+
+				foreach (KeyValuePair<object, BodyAddon> kvp in bodyAddons)
+				{
+					object orig = kvp.Key;
+					BodyAddon wrapper = kvp.Value;
+
+					string name = wrapper.name;
+					InitGraphicField(orig, name, ref bodyAddonAgeGraphics);
+
+					//Log.Message("orig: " + orig.ToString());
+				}
+			}
+		//else Log.Message("Failed ThingDef_AlienRace.IsAssignableFrom(def)");
+	}
+
+	public void UpdateAgeGraphics()
+	{
+		//Log.Message("Started UpdateAgeGraphics");
+		//Log.Message("babyAgeGraphics: " + babyAgeGraphics + ", Count: " + babyAgeGraphics.Count);
+		//Log.Message("bodyAddons: " + bodyAddons + ", Count: " + bodyAddons.Count);
+
+		foreach (KeyValuePair<string, string> kvp in babyAgeGraphics)
+		{
+			Log.Message("UpdateAgeGraphics: " + kvp);
+
+			string fieldName = kvp.Key;
+			string path = kvp.Value;
+
+			object graphic = graphicPaths.GetType().GetField(fieldName).GetValue(graphicPaths);
+
+			FieldInfo ageGraphics_field = graphic.GetType().GetField("ageGraphics", BindingFlags.Instance | BindingFlags.Public);
+			if (ageGraphics_field == null)
+			{
+				Log.Message("Graphic field " + fieldName + " has no ageGraphics");
+				continue;
+			}
+			object ageGraphics_obj = ageGraphics_field.GetValue(graphic);
+
+			object ageGraphic_toddler = Activator.CreateInstance(Patch_HAR.class_ExtendedAgeGraphic);
+			ageGraphic_toddler.GetType().GetField("age").SetValue(ageGraphic_toddler, lifeStageToddler.def);
+			ageGraphic_toddler.GetType().GetField("path").SetValue(ageGraphic_toddler, path);
+			ageGraphic_toddler.GetType().GetField("variantCount").SetValue(ageGraphic_toddler, 1);
+
+			ageGraphics_obj.GetType().GetMethod("Add").Invoke(ageGraphics_obj, new object[] { ageGraphic_toddler });
+
+			/*
+			Log.Message("ageGraphics_obj: " + ageGraphics_obj);
+			IEnumerable ageGraphics_ienum = ageGraphics_obj as IEnumerable;
+			foreach (object item in ageGraphics_ienum)
+			{
+				Log.Message("age: " + item.GetType().GetField("age").GetValue(item)
+					+ ", path: " + item.GetType().GetField("path").GetValue(item)
+					);
+				;
+			}
+			*/
+		}
+
+		foreach (KeyValuePair<object, BodyAddon> kvp in bodyAddons as IEnumerable)
+		{
+			//Log.Message("UpdateAgeGraphics: " + kvp);
+
+			object orig = kvp.Key;
+			BodyAddon wrapper = kvp.Value;
+
+			string name = wrapper.name;
+			string path;
+
+			//Log.Message("name: " + name);
+
+			if (bodyAddonAgeGraphics.ContainsKey(name))
+			{
+				path = bodyAddonAgeGraphics[name];
+				//Log.Message("path: " + path);
+
+				//FieldInfo ageGraphics_field = bodyAddon.GetType().GetField("ageGraphics", BindingFlags.Instance | BindingFlags.Public);
+				if (wrapper.ageGraphics == null)
+				{
+					Log.Message("BodyAddon " + wrapper.name + " has no ageGraphics");
+					continue;
+				}
+				//object ageGraphics_obj = ageGraphics_field.GetValue(bodyAddon);
+
+				object ageGraphic_toddler = Activator.CreateInstance(Patch_HAR.class_ExtendedAgeGraphic);
+				ageGraphic_toddler.GetType().GetField("age").SetValue(ageGraphic_toddler, lifeStageToddler.def);
+				ageGraphic_toddler.GetType().GetField("path").SetValue(ageGraphic_toddler, path);
+				ageGraphic_toddler.GetType().GetField("variantCount").SetValue(ageGraphic_toddler, 1);
+
+				wrapper.ageGraphics.GetType().GetMethod("Add").Invoke(wrapper.ageGraphics, new object[] { ageGraphic_toddler });
+
+				//Log.Message("ageGraphics: " + wrapper.ageGraphics);
+				/*
+				IEnumerable ageGraphics_ienum = wrapper.ageGraphics as IEnumerable;
+
+				foreach (object item in ageGraphics_ienum)
+				{
+					Log.Message("age: " + item.GetType().GetField("age").GetValue(item)
+						+ ", path: " + item.GetType().GetField("path").GetValue(item)
+						);
+					;
+				}
+				*/
+			}
+		}
+
+		//Log.Message("Finished UpdateAgeGraphics");
+	}
+
+	public void InitBodyAddons()
+	{
+		object bodyAddons_obj = alienPartGenerator.GetType().GetField("bodyAddons", BindingFlags.Public | BindingFlags.Instance).GetValue(alienPartGenerator);
+		//Log.Message("bodyAddons_obj: " + bodyAddons_obj + ", Count: " + (bodyAddons_obj as IEnumerable).EnumerableCount());
+
+		foreach (object bodyAddon_origType in bodyAddons_obj as IEnumerable)
+		{
+			//Log.Message("bodyAddon_origType: " + bodyAddon_origType + ", Type: " + bodyAddon_origType.GetType());
+			BodyAddon bodyAddon = new BodyAddon(bodyAddon_origType);
+			bodyAddons.Add(bodyAddon_origType, bodyAddon);
+			Log.Message("Adding BodyAddon " + bodyAddon.name + " to list for " + def.defName);
+		}
+	}
+
+}
+
+
+
+
+
+
+
 class JobGiver_LeaveCrib : ThinkNode_JobGiver
 {
 	public override float GetPriority(Pawn pawn)
@@ -192,8 +717,13 @@ class JobDriver_LeaveCrib : JobDriver
 
 }
 
-			   //must be capable of manipulation to do anything to a toddler
-			   if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
+
+
+
+
+
+//must be capable of manipulation to do anything to a toddler
+if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
 			   {
 				   foreach (Thing t in c.GetThingList(pawn.Map))
 				   {

@@ -1,17 +1,47 @@
-High Priority	
-	*way to add hediffs to toddlers on mod added to existing game
+HAR
+
+High Priority		
+		
+Exception in SetupToils for pawn Harvey driver=JobDriver_PlayStatic (toilIndex=0) driver.job=(PlayStatic (Job_9164) A=Thing_ERN_Koyan56895)
+System.NullReferenceException: Object reference not set to an instance of an object
+  at Verse.GenGrid.Walkable (Verse.IntVec3 c, Verse.Map map) [0x00000] in <95de19971c5d40878d8742747904cdcd>:0 
+  at Verse.GenGrid.Standable (Verse.IntVec3 c, Verse.Map map) [0x00000] in <95de19971c5d40878d8742747904cdcd>:0 
+  at RimWorld.RCellFinder.TryFindGoodAdjacentSpotToTouch (Verse.Pawn toucher, Verse.Thing touchee, Verse.IntVec3& result) [0x00022] in <95de19971c5d40878d8742747904cdcd>:0 
+  at Toddlers.CreateStartingCondition_Patch+<Postfix>d__0.MoveNext () [0x00090] in <3126e8dea49d4fa38f5974fcb5072ddf>:0 
+  at Verse.AI.JobDriver_BabyPlay+<MakeNewToils>d__14.MoveNext () [0x000c4] in <95de19971c5d40878d8742747904cdcd>:0 
+  at Verse.AI.JobDriver.SetupToils () [0x00051] in <95de19971c5d40878d8742747904cdcd>:0 
+  
 	
-	HAR compatibility
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Verse.Log:Error (string)
+Verse.AI.JobUtility:TryStartErrorRecoverJob (Verse.Pawn,string,System.Exception,Verse.AI.JobDriver)
+Verse.AI.JobDriver:TryActuallyStartNextToil ()
+Verse.AI.JobDriver:ReadyForNextToil ()
+Verse.AI.Pawn_JobTracker:StartJob (Verse.AI.Job,Verse.AI.JobCondition,Verse.AI.ThinkNode,bool,bool,Verse.ThinkTreeDef,System.Nullable`1<Verse.AI.JobTag>,bool,bool,System.Nullable`1<bool>,bool,bool)
+Verse.AI.JobUtility:TryStartErrorRecoverJob (Verse.Pawn,string,System.Exception,Verse.AI.JobDriver)
+Verse.AI.JobDriver:SetupToils ()
+Verse.AI.JobDriver:ExposeData ()
+Verse.AI.JobDriver_BabyPlay:ExposeData ()
+Verse.PostLoadIniter:DoAllPostLoadInits ()
+Verse.ScribeLoader:FinalizeLoading ()
+
+Exception in Verse.AI.ThinkNode_PrioritySorter TryIssueJobPackage: System.NullReferenceException: Object reference not set to an instance of an object
+at Verse.Region.DangerFor (Verse.Pawn p) [0x00077] in <95de19971c5d40878d8742747904cdcd>:0
+at (wrapper dynamic-method) Verse.Region.Verse.Region.Allows_Patch0(Verse.Region,Verse.TraverseParms,bool)
+at Verse.Reachability.CheckRegionBasedReachability (Verse.TraverseParms traverseParams) [0x0005a] in <95de19971c5d40878d8742747904cdcd>:0
+at (wrapper dynamic-method)
 	
+	toddlers carrying each other again?
+	priorities on move to safe temperature vs move to bed are still wonky
+	never sleep toddlers can't be taken to safety
+	
+	show toddlers in schedule
 	cancel move toddler if you get there and the toddler has already moved
 	carry toddlers to caravans
 	
 Medium Priority
 	can't unequip apparel if can't undress self yet
 	better dubs bad hygiene compatibility
-	don't wake them to feed so much
-	more than capable patch
-	-disable inspirations
 	what happens to kidnapped toddlers?
 	neater settings menu
 	modded mental states (eg psycasts) may not affect toddlers correctly
@@ -33,10 +63,14 @@ Low Priority
 	positive thought for parents on First Steps
 	reasons for parents to spend more time playing with/otherwise interacting with their babies
 	toddlers make mess while feeding themselves
+	toddlers interact with each other
+	think about disturbed sleep
+	don't wake them to feed so much
 	
 	Capabilities	
 	should manipulation come with an actual manipulation penalty?
 	randomised walking vs manipulation rates per toddler
+	teaching
 
 	Play
 	play with unsafe objects?

@@ -31,7 +31,7 @@ namespace Toddlers
         {
             get
             {
-                if (pawn.ageTracker.CurLifeStage != Toddlers_DefOf.HumanlikeToddler) return true;
+                if (!ToddlerUtility.IsToddler(pawn)) return true;
                 return base.ShouldRemove;
             }
         }

@@ -70,14 +70,14 @@ namespace Toddlers
 
         public static void CureLoneliness(Pawn pawn)
         {
-            if (pawn.ageTracker.CurLifeStage != Toddlers_DefOf.HumanlikeToddler) return;
+            if (!ToddlerUtility.IsToddler(pawn)) return;
             Hediff hediff = pawn.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.ToddlerLonely);
             if (hediff != null) hediff.Severity -= LonelinessCuredPerTick;
         }
 
         public static bool ToddlerPlayedWithTickCheckEnd(Pawn pawn)
         {
-            if (pawn.ageTracker.CurLifeStage == Toddlers_DefOf.HumanlikeToddler)
+            if (ToddlerUtility.IsToddler(pawn))
             {
                 Hediff hediff = pawn.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.ToddlerLonely);
                 if (hediff != null) hediff.Severity -= LonelinessCuredPerTick;

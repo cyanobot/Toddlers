@@ -35,7 +35,7 @@ namespace Toddlers
     {
         static bool Prefix(ref bool __result, Pawn p)
         {
-            if (p.ageTracker.CurLifeStage == Toddlers_DefOf.HumanlikeToddler && ToddlerUtility.IsCrawler(p))
+            if (ToddlerUtility.IsCrawler(p))
             {
                 __result = false;
                 return false;
