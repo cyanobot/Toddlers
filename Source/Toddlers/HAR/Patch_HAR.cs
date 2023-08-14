@@ -20,30 +20,6 @@ namespace Toddlers
         public const string HARNamespace = "AlienRace";
         public const string HARHarmonyID = "rimworld.erdelf.alien_race.main";
 
-        /*
-        public static Type class_AlienSettings;
-        public static Type class_ThingDef_AlienRace;
-        public static FieldInfo field_alienRace;
-        public static Type class_GraphicPaths;
-        public static Type class_AbstractExtendedGraphic;
-        public static FieldInfo field_bodyTypeGraphics;
-        public static Type class_ExtendedGraphicTop;
-        public static Type class_ExtendedAgeGraphic;
-        public static Type class_LifeStageAgeAlien;
-        public static Type class_HARHarmonyPatches;
-        public static MethodInfo method_DrawAddons;
-        public static MethodInfo method_DrawAddonsFinalHook;
-        public static Type class_BodyAddon;
-        public static Type class_DirectionalOffset;
-        public static MethodInfo method_GetOffsetByRotation;
-        public static Type class_RotationOffset;
-        public static MethodInfo method_GetOffsetByTypes;
-        public static Type class_BodyTypeGraphic;
-        public static FieldInfo field_BodyTypeGraphic_bodyType;
-        public static FieldInfo field_BodyTypeGraphic_path;
-        public static Type class_ExtendedGraphicsPawnWrapper;
-        */
-
         public static ConstructorInfo constructor_LifeStageAgeAlien;
 
         public static MethodInfo method_AbstractExtendedGraphic_GetPath;
@@ -73,25 +49,6 @@ namespace Toddlers
             //do as much of the required reflection as possible just once at initialization
             //because reflection is slow and we don't want to do it repeatedly/during play
             //or especially on every rendering tick!
-
-            /*
-            List<Type> list_HARClasses = (from asm in AppDomain.CurrentDomain.GetAssemblies()
-                          from type in asm.GetTypes()
-                          where (type.Namespace == "AlienRace" || type.Namespace == "AlienRace.ExtendedGraphics")
-                          && type.IsClass && !type.CustomAttributes.Any(x => x.AttributeType == typeof(CompilerGeneratedAttribute))
-                          select type)
-                            .ToList();
-            foreach (Type type in list_HARClasses)
-            {
-                
-                Log.Message(type.Name + ": CustomAttributes[0].AttributeType: " 
-                    + (type.CustomAttributes.EnumerableCount() > 0 ? type.CustomAttributes.First().AttributeType 
-                    + ", == : " + (type.CustomAttributes.First().AttributeType == typeof(CompilerGeneratedAttribute))
-                    : ""));
-                
-                Log.Message(type.Name + ": Any == : " + type.CustomAttributes.Any(x => x.AttributeType == typeof(CompilerGeneratedAttribute)));
-            }
-                */
 
             HARClasses = (from asm in AppDomain.CurrentDomain.GetAssemblies()
                             from type in asm.GetTypes()

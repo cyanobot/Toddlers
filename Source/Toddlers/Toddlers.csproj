@@ -87,7 +87,7 @@
     <Compile Include="Apparel\JobGiver_OptimizeBabyApparel.cs" />
     <Compile Include="Play\JobGiver_PlayWithSadBaby.cs" />
     <Compile Include="Play\ToddlerPlayGiver_PlayDecor.cs" />
-    <None Include="TestPatch.cs" />
+    <Compile Include="TestPatch.cs" />
     <Compile Include="Toddlers_DebugTools.cs" />
     <Compile Include="Toddlers_Mod.cs" />
     <Compile Include="ToddlerUtility.cs" />

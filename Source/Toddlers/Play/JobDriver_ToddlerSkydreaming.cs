@@ -13,6 +13,8 @@ namespace Toddlers
 	//more or less copied from JobDriver_Skydreaming
     class JobDriver_ToddlerSkydreaming : JobDriver
     {
+		public bool FromBed => job.GetTarget(TargetIndex.A).Thing is Building_Bed;
+
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
 			return this.pawn.Reserve(base.TargetA, this.job, 1, -1, null, errorOnFailed);
@@ -21,16 +23,18 @@ namespace Toddlers
 
 		protected override IEnumerable<Toil> MakeNewToils()
 		{
-			this.FailOnChildLearningConditions<JobDriver_ToddlerSkydreaming>();
-			yield return Toils_Goto.GotoCell(TargetIndex.A, PathEndMode.OnCell);
+			this.FailOnChildLearningConditions();
+			if (pawn.Position != TargetLocA) 
+				yield return Toils_Goto.GotoCell(TargetIndex.A, PathEndMode.OnCell);
 			Toil toil = ToilMaker.MakeToil("MakeNewToils");
 			toil.initAction = delegate ()
 			{
 				PawnPosture posture = PawnPosture.LayingOnGroundFaceUp;
-				if (this.pawn.Position.GetThingList(pawn.Map).Find(t => t as Building_Bed != null) != null)
+				if (FromBed)
                 {
 					posture |= PawnPosture.InBedMask;
-                }
+					this.KeepLyingDown(TargetIndex.A);
+				}
 				this.pawn.jobs.posture = posture;
 			};
 			toil.tickAction = delegate ()

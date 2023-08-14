@@ -33,7 +33,6 @@ namespace Toddlers
 		}
 		public override bool CanDoWhileDowned(Pawn pawn)
 		{
-			IntVec3 intVec;
 			//using TryFindSkygazeCell instead of TryFindSkydreamingSpotOutsideColony
 			//because toddlers should be more inclined to want to stick close to people
 			return base.CanDoWhileDowned(pawn) && !pawn.Position.Roofed(pawn.Map);
@@ -42,6 +41,7 @@ namespace Toddlers
 		public Job TryGiveJobWhileDowned(Pawn pawn)
         {
 			if (pawn.Position.Roofed(pawn.Map)) return null;
+			if (pawn.InBed()) return JobMaker.MakeJob(this.def.jobDef, pawn.CurrentBed());
 			return JobMaker.MakeJob(this.def.jobDef, pawn.Position);
         }
 	}

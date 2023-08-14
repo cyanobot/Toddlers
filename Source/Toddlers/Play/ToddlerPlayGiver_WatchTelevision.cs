@@ -44,8 +44,9 @@ namespace Toddlers
 
             Thing tv = FindTelevisionWhileDowned(pawn);
             if (tv == null) return null;
-
-            Job job = JobMaker.MakeJob(this.def.jobDef, tv, pawn.Position, pawn.Position);
+            Job job;
+            if (pawn.InBed()) job = JobMaker.MakeJob(this.def.jobDef, tv, pawn.Position, pawn.CurrentBed());
+            else job = JobMaker.MakeJob(this.def.jobDef, tv, pawn.Position, pawn.Position);
             job.count = 1;
             return job;
         }

@@ -12,6 +12,8 @@ namespace Toddlers
 {
     class JobDriver_ToddlerWatchTelevision : JobDriver_WatchBuilding
     {
+        public bool FromBed => job.GetTarget(TargetIndex.A).Thing is Building_Bed;
+
         protected override void WatchTickAction()
         {
             if (!((Building)base.TargetA.Thing).TryGetComp<CompPowerTrader>().PowerOn)
@@ -24,40 +26,27 @@ namespace Toddlers
             ToddlerPlayUtility.ToddlerPlayTickCheckEnd(this.pawn);
         }
 
-        public override bool TryMakePreToilReservations(bool errorOnFailed)
-        {
-            if (!pawn.Reserve(job.targetA, job, ToddlerPlayUtility.TelevisionMaxParticipants, 0, null, errorOnFailed))
-            {
-                return false;
-            }
-            if (!pawn.ReserveSittableOrSpot(job.targetB.Cell, job, errorOnFailed))
-            {
-                return false;
-            }
-            if (base.TargetC.HasThing && base.TargetC.Thing is Building_Bed && !pawn.Reserve(job.targetC, job, ((Building_Bed)base.TargetC.Thing).SleepingSlotsCount, 0, null, errorOnFailed))
-            {
-                return false;
-            }
-            return true;
-        }
-
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            this.EndOnDespawnedOrNull(TargetIndex.A, JobCondition.Incompletable);
-            yield return Toils_Goto.GotoCell(TargetIndex.B, PathEndMode.OnCell);
-            Toil watch = ToilMaker.MakeToil("MakeNewToils"); ;
+            this.EndOnDespawnedOrNull(TargetIndex.A);
+            Toil watch;
+            if (base.TargetC.HasThing && base.TargetC.Thing is Building_Bed)
+            {
+                this.KeepLyingDown(TargetIndex.C);
+                yield return Toils_Bed.ClaimBedIfNonMedical(TargetIndex.C);
+                yield return Toils_Bed.GotoBed(TargetIndex.C);
+                watch = Toils_LayDown.LayDown(TargetIndex.C, hasBed: true, lookForOtherJobs: false);
+                watch.AddFailCondition(() => !watch.actor.Awake());
+            }
+            else
+            {
+                yield return Toils_Goto.GotoCell(TargetIndex.B, PathEndMode.OnCell);
+                watch = ToilMaker.MakeToil("MakeNewToils");
+            }
             watch.AddPreTickAction(delegate
             {
                WatchTickAction();
             });
-            if (TargetB.Cell.GetThingList(pawn.Map).Find(t => t as Building_Bed != null) != null)
-                {
-                //Log.Message("Got into has building_bed");
-                watch.AddPreInitAction(delegate ()
-                {
-                    watch.actor.jobs.posture = PawnPosture.LayingInBed;
-                });
-            }
             watch.defaultCompleteMode = ToilCompleteMode.Delay;
             watch.defaultDuration = ToddlerPlayUtility.PlayDuration;
             watch.handlingFacing = true; 

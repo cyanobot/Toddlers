@@ -705,18 +705,6 @@ namespace Toddlers
     }
 
     //toddlers should be carried on caravans if possible
-    /*
-    [HarmonyPatch(typeof(CaravanCarryUtility), nameof(CaravanCarryUtility.WouldBenefitFromBeingCarried))]
-    class WouldBenefitFromBeingCarried_Patch
-    {
-        static bool Postfix(bool result, Pawn p)
-        {
-            if (!result && ToddlerUtility.IsLiveToddler(p)) return true;
-            else return result;
-        }
-    }
-    */
-
     [HarmonyPatch(typeof(Caravan_CarryTracker),"WantsToBeCarried")]
     class WantsToBeCarried_Patch
     {

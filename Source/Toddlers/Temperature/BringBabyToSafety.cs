@@ -89,6 +89,7 @@ namespace Toddlers
 			AddFailCondition(() => !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation));
 			this.FailOnDestroyedOrNull(TargetIndex.A);
 			AddFailCondition(() => !ChildcareUtility.CanSuckle(Baby, out var _));
+			AddFailCondition(() => pawn.Downed);
 			
 			LocalTargetInfo tempSafePlace = BabyTemperatureUtility.SafePlaceForBaby(Baby, pawn, out BabyTemperatureUtility.BabyMoveReason moveReason);
 			if (tempSafePlace == Baby.PositionHeld && !pawn.IsCarryingPawn(Baby))
@@ -141,7 +142,7 @@ namespace Toddlers
 			Toil toil_FindBabyDestination = FindBabyDestination();
 			//toil_FindBabyDestination.AddPreInitAction(() => Log.Message("PreInit for toil_FindBabyDestination"));
 
-			yield return Toils_Jump.JumpIf(toil_FindBabyDestination, () => pawn.IsCarryingPawn(Baby)).FailOn(() => !pawn.IsCarryingPawn(Baby) && (pawn.Downed || pawn.Drafted));
+			yield return Toils_Jump.JumpIf(toil_FindBabyDestination, () => pawn.IsCarryingPawn(Baby));
 			yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch).FailOnSomeonePhysicallyInteracting(TargetIndex.A);
 			yield return Toils_Haul.StartCarryThing(TargetIndex.A, putRemainderInQueue: false);
 
@@ -153,7 +154,7 @@ namespace Toddlers
 				.FailOnInvalidOrDestroyed(TargetIndex.B)
 				.FailOnSomeonePhysicallyInteracting(TargetIndex.B)
 				.FailOnDestroyedOrNull(TargetIndex.A)
-				.FailOn(() => !pawn.IsCarryingPawn(Baby) || pawn.Downed || pawn.Drafted);
+				.FailOn(() => !pawn.IsCarryingPawn(Baby));
 			if (moveReason != BabyTemperatureUtility.BabyMoveReason.TemperatureDanger)
             {
 				goTo.FailOnForbidden(TargetIndex.B);
@@ -201,7 +202,7 @@ namespace Toddlers
 					pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
 				}
 			};
-			toil.FailOn(() => !pawn.IsCarryingPawn(Baby) || pawn.Downed || pawn.Drafted);
+			toil.FailOn(() => !pawn.IsCarryingPawn(Baby));
 			toil.defaultCompleteMode = ToilCompleteMode.Instant;
 			return toil;
 		}

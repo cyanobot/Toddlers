@@ -14,7 +14,148 @@ using static Toddlers.Patch_HAR;
 
 namespace Toddlers
 {
+    /*
+    [HarmonyPatch]
+    class TryIssueJobPackage_Testpatch
+    {
+      
+        static IEnumerable<MethodBase> TargetMethods()
+        {
+            IEnumerable<Type> nodes = from asm in AppDomain.CurrentDomain.GetAssemblies()
+                                          from type in asm.GetTypes()
+                                          where typeof(ThinkNode_Priority).IsAssignableFrom(type)
+                                          select type;
+            Log.Message("nodes: " + nodes.ToStringSafeEnumerable());
 
+            IEnumerable<MethodBase> methods0 = from node in nodes
+                                               where node != null
+                                               select node.GetMethod("TryIssueJobPackage", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            Log.Message("methods0: " + methods0.ToStringSafeEnumerable());
+
+            IEnumerable<MethodBase> methods1 = methods0.Where(x => x != null && !x.IsAbstract);
+            Log.Message("methods1: " + methods1.ToStringSafeEnumerable());
+
+            return methods1;
+        }
+        
+
+        //public override ThinkResult TryIssueJobPackage(Pawn pawn, JobIssueParams jobParams)
+        static void Prefix(ThinkNode_Priority __instance, Pawn pawn, JobIssueParams jobParams, List<ThinkNode> ___subNodes)
+        {
+            //if (!ToddlerUtility.IsLiveToddler(pawn)) return;
+            if (__instance.GetType() != typeof(ThinkNode_ConditionalMustKeepLyingDown) 
+                && __instance.GetType() != typeof(ThinkNode_Priority)
+                && __instance.GetType() != typeof(JobGiver_KeepLyingDown)
+                && __instance.GetType() != typeof(JobGiver_LayDownAwake)
+                && __instance.GetType() != typeof(JobGiver_LayDownResting)) return;
+            Log.Message("TryIssueJobPackage - pawn: " + pawn + ", __instance: " + __instance + ", subNodes: " + ___subNodes.ToStringSafeEnumerable());
+
+            int count = ___subNodes.Count;
+            for (int i = 0; i < count; i++)
+            {
+                ThinkNode node = ___subNodes[i];
+                ThinkResult result;
+                try
+                {
+                    result = node.TryIssueJobPackage(pawn, jobParams);
+                }
+                catch
+                {
+                    result = ThinkResult.NoJob;
+                }
+                bool? satisfied = null;
+                if (node.GetType().GetMethod("Satisfied", BindingFlags.Instance | BindingFlags.NonPublic) != null)
+                {
+                    satisfied = (bool)node.GetType().GetMethod("Satisfied", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(node, new object[] { pawn });
+                }
+                Log.Message("i: " + i + ", subNode: " + node
+                    + ", satisfied: " + satisfied
+                    + ", result: " + result + ", valid: " + result.IsValid);
+            }
+        }
+    }
+    */
+
+    [HarmonyPatch(typeof(ThinkNode_ConditionalMustKeepLyingDown), "Satisfied")]
+    class MustKeepLyingDown_Testpatch
+    {
+        //protected override bool Satisfied(Pawn pawn)
+        static void Prefix(Pawn pawn)
+        {
+            Log.Message("MustKeepLyingDown, pawn: " + pawn + ", CurJob: " + pawn.CurJob + ", posture: " + pawn.GetPosture());
+        }
+    }
+
+    [HarmonyPatch(typeof(Pawn_JobTracker), "TryFindAndStartJob")]
+    class TryFindAndStartJob_Testpatch
+    {
+        //private void TryFindAndStartJob()
+        static void Prefix(Pawn_JobTracker __instance, Pawn ___pawn)
+        {
+            Log.Message("TryFindAndStartJob - pawn: " + ___pawn + ", job: " + __instance.curJob + ", posture: " + __instance.posture);
+        }
+    }
+
+    [HarmonyPatch]
+    class TryGiveJob_Testpatch
+    {
+        static IEnumerable<MethodBase> TargetMethods()
+        {
+            IEnumerable<Type> jobGivers = from asm in AppDomain.CurrentDomain.GetAssemblies()
+                                 from type in asm.GetTypes()
+                                 where typeof(ThinkNode_JobGiver).IsAssignableFrom(type)
+                                 select type;
+            Log.Message("jobGivers: " + jobGivers.ToStringSafeEnumerable());
+            
+            IEnumerable<MethodBase> methods0 = from jobGiver in jobGivers
+                   where jobGiver != null
+                   select jobGiver.GetMethod("TryGiveJob", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            Log.Message("methods0: " + methods0.ToStringSafeEnumerable());
+
+            IEnumerable<MethodBase> methods1 = methods0.Where(x => x != null && !x.IsAbstract);
+            Log.Message("methods1: " + methods1.ToStringSafeEnumerable());
+
+            return methods1;
+        }
+
+        static void Prefix(ThinkNode_JobGiver __instance, Pawn __0)
+        {
+            Log.Message("TryGiveJob, ThinkNode: " + __instance.GetType() + ", pawn: " + __0);
+        }
+    }
+
+
+    [HarmonyPatch(typeof(Pawn_JobTracker),nameof(Pawn_JobTracker.EndCurrentJob))]
+    class EndCurrentJob_Testpatch
+    {
+        //public void EndCurrentJob(JobCondition condition, bool startNewJob = true, bool canReturnToPool = true)
+        static void Prefix(Pawn_JobTracker __instance, Pawn ___pawn)
+        {
+            Log.Message("EndCurrentJob - pawn: " + ___pawn + ", job: " + __instance.curJob + ", posture: " + __instance.posture);
+        }
+    }
+
+    [HarmonyPatch(typeof(Pawn_JobTracker), "CleanupCurrentJob")]
+    class CleanupCurrentJob_Testpatch
+    {
+        //private void CleanupCurrentJob(JobCondition condition, bool releaseReservations, bool cancelBusyStancesSoft = true, bool canReturnToPool = false, bool? carryThingAfterJobOverride = null)
+        static void Prefix(Pawn_JobTracker __instance, Pawn ___pawn)
+        {
+            Log.Message("CleanupCurrentJob - pawn: " + ___pawn + ", job: " + __instance.curJob + ", posture: " + __instance.posture);
+        }
+    }
+
+    [HarmonyPatch(typeof(Pawn_JobTracker), nameof(Pawn_JobTracker.StartJob))]
+    class StartJob_Testpatch
+    {
+        //public void StartJob(Job newJob, JobCondition lastJobEndCondition = JobCondition.None, ThinkNode jobGiver = null, bool resumeCurJobAfterwards = false, bool cancelBusyStances = true, ThinkTreeDef thinkTree = null, JobTag? tag = null, bool fromQueue = false, bool canReturnCurJobToPool = false, bool? keepCarryingThingOverride = null, bool continueSleeping = false, bool addToJobsThisTick = true)
+        static void Prefix(Pawn_JobTracker __instance, Pawn ___pawn, Job newJob)
+        {
+            Log.Message("StartJob - pawn: " + ___pawn + ", newJob: " + newJob + ", posture: " + __instance.posture);
+        }
+    }
+
+    /*
     [HarmonyPatch]
     class ExtendedGraphicTop_GetBestGraphic_TestPatch
     {
@@ -73,6 +214,7 @@ namespace Toddlers
             Log.Message("Final bestGraphic: " + bestGraphic);
         }
     }
+    */
 
     /*
     [HarmonyPatch]
@@ -100,7 +242,7 @@ namespace Toddlers
         }
     }
     */
-    
+
     /*
     [HarmonyPatch(typeof(Graphic_Multi), nameof(Graphic_Multi.Init))]
     class Graphic_Multi_TestPatch
@@ -112,7 +254,7 @@ namespace Toddlers
         }
     }
     */
-    
+
     /*
     [HarmonyPatch(typeof(PawnRenderer), "RenderPawnInternal")]
     class RenderPawnInternal_TestPatch
@@ -232,7 +374,7 @@ namespace Toddlers
             Log.Message("mesh: " + mesh + ", loc: " + loc + ", quat: " + quat + ", mat: " + mat);
         }
     }
-    */  
+    */
 
 
     /*
