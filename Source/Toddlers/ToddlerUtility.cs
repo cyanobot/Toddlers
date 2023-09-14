@@ -106,12 +106,14 @@ namespace Toddlers
             return 1 / ticksAsToddler;
         }
 
+        /*
         public static float GetLoneliness(Pawn pawn)
         {
             Hediff hediff = pawn.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.ToddlerLonely) as Hediff_ToddlerLonely;
             if (hediff == null) return 0f;
             else return hediff.Severity;
         }
+        */
 
         public static bool IsCrawler(Pawn pawn)
         {

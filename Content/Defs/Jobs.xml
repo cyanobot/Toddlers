@@ -35,6 +35,7 @@
 		<defName>ToddlerWatchTelevision</defName>
 		<driverClass>Toddlers.JobDriver_ToddlerWatchTelevision</driverClass>
 		<reportString>watching television.</reportString>
+		<joyMaxParticipants>8</joyMaxParticipants>
 	</JobDef>
 
 	<JobDef>

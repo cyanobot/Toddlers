@@ -18,6 +18,7 @@ namespace Toddlers
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
+            if (pawn.CarriedBy == null) pawn.Reserve(pawn.Position,job);
             return true;
         }
         protected override IEnumerable<Toil> MakeNewToils()

@@ -10,6 +10,7 @@ using System.Text;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using static Toddlers.BabyMoveUtility;
 
 namespace Toddlers
 {
@@ -18,7 +19,7 @@ namespace Toddlers
 		public override Job NonScanJob(Pawn pawn)
 		{
 			Pawn baby;
-			if ((baby = BabyTemperatureUtility.FindUnsafeBaby(pawn, AutofeedMode.Childcare, out BabyTemperatureUtility.BabyMoveReason moveReason)) == null)
+			if ((baby = FindUnsafeBaby(pawn, AutofeedMode.Childcare, out BabyMoveReason moveReason)) == null)
 			{
 				return null;
 			}
@@ -43,7 +44,7 @@ namespace Toddlers
 		protected override Job TryGiveJob(Pawn pawn)
 		{
 			Pawn baby;
-			if ((baby = BabyTemperatureUtility.FindUnsafeBaby(pawn, AutofeedMode.Urgent, out BabyTemperatureUtility.BabyMoveReason moveReason)) == null)
+			if ((baby = FindUnsafeBaby(pawn, AutofeedMode.Urgent, out BabyMoveReason moveReason)) == null)
 			{
 				return null;
 			}
@@ -53,8 +54,8 @@ namespace Toddlers
 			//if we wouldn't usually do childcare work as a top priority
 			//still respond to children in urgent danger
 			//but otherwise no
-			if ((autofeedMode != AutofeedMode.Urgent) && !(moveReason == BabyTemperatureUtility.BabyMoveReason.TemperatureDanger
-				|| moveReason == BabyTemperatureUtility.BabyMoveReason.Medical))
+			if ((autofeedMode != AutofeedMode.Urgent) && !(moveReason == BabyMoveReason.TemperatureDanger
+				|| moveReason == BabyMoveReason.Medical))
 			{
 				return null;
 			}
@@ -85,19 +86,23 @@ namespace Toddlers
 
 		protected override IEnumerable<Toil> MakeNewToils()
 		{
+			//Log.Message("job.def: " + job.def + ", pI: " + job.def.playerInterruptible + ", driver: " + this + ", pI: " + this.PlayerInterruptable);
+			//Log.Message("pawn.CurJob" + pawn.CurJob +
+			//	"IsCurrentJobPlayerInterruptible(): " + pawn.jobs.IsCurrentJobPlayerInterruptible()
+			//	+ ", forceCompleteBeforeNextJob: " + pawn.CurJob.def.forceCompleteBeforeNextJob);
 			
 			AddFailCondition(() => !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation));
 			this.FailOnDestroyedOrNull(TargetIndex.A);
 			AddFailCondition(() => !ChildcareUtility.CanSuckle(Baby, out var _));
 			AddFailCondition(() => pawn.Downed);
 			
-			LocalTargetInfo tempSafePlace = BabyTemperatureUtility.SafePlaceForBaby(Baby, pawn, out BabyTemperatureUtility.BabyMoveReason moveReason);
+			LocalTargetInfo tempSafePlace = SafePlaceForBaby(Baby, pawn, out BabyMoveReason moveReason);
 			if (tempSafePlace == Baby.PositionHeld && !pawn.IsCarryingPawn(Baby))
-            {
-				yield break;
+			{
 				this.EndJobWith(JobCondition.Succeeded);
+				yield break;
             }
-			if (moveReason != BabyTemperatureUtility.BabyMoveReason.TemperatureDanger)
+			if (moveReason != BabyMoveReason.TemperatureDanger)
 			{
 				this.FailOnForbidden(TargetIndex.A);
 			}
@@ -108,19 +113,19 @@ namespace Toddlers
 				string text = null;
                 switch (moveReason)
                 {
-                    case BabyTemperatureUtility.BabyMoveReason.TemperatureDanger:
-						text = "{ADULT_labelShort} is moving {BABY_labelShort} away from life-threatening temperature.";
+                    case BabyMoveReason.TemperatureDanger:
+						text = "{ADULT_labelShort} is moving {BABY_labelShort} away from dangeous temperature.";
 						break;
-                    case BabyTemperatureUtility.BabyMoveReason.TemperatureUnsafe:
+                    case BabyMoveReason.TemperatureNonUrgent:
 						text = "{ADULT_labelShort} is moving {BABY_labelShort} to a safer temperature.";
 						break;
-                    case BabyTemperatureUtility.BabyMoveReason.Medical:
+                    case BabyMoveReason.Medical:
 						text = "{ADULT_labelShort} is moving {BABY_labelShort} to a medical bed.";
 						break;
-                    case BabyTemperatureUtility.BabyMoveReason.OutsideZone:
+                    case BabyMoveReason.OutsideZone:
 						//text = "{ADULT_labelShort} is moving {BABY_labelShort} back to {BABY_possessive} allowed zone.";
 						break;
-                    case BabyTemperatureUtility.BabyMoveReason.Sleepy:
+                    case BabyMoveReason.ReturnToBed:
 						//text = "{ADULT_labelShort} is putting {BABY_labelShort} to bed.";
 						break;
                     default:
@@ -137,25 +142,24 @@ namespace Toddlers
 				yield return toil_Message;
 
 			}
-
-			
+		
 			Toil toil_FindBabyDestination = FindBabyDestination();
 			//toil_FindBabyDestination.AddPreInitAction(() => Log.Message("PreInit for toil_FindBabyDestination"));
 
 			yield return Toils_Jump.JumpIf(toil_FindBabyDestination, () => pawn.IsCarryingPawn(Baby));
 			yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch).FailOnSomeonePhysicallyInteracting(TargetIndex.A);
-			yield return Toils_Haul.StartCarryThing(TargetIndex.A, putRemainderInQueue: false);
 
-			
 			yield return toil_FindBabyDestination;
 			yield return Toils_Reserve.ReserveDestinationOrThing(TargetIndex.B);
-			
+
+			yield return Toils_Haul.StartCarryThing(TargetIndex.A, putRemainderInQueue: false);
+
 			Toil goTo = Toils_Goto.Goto(TargetIndex.B, PathEndMode.OnCell)	
 				.FailOnInvalidOrDestroyed(TargetIndex.B)
 				.FailOnSomeonePhysicallyInteracting(TargetIndex.B)
 				.FailOnDestroyedOrNull(TargetIndex.A)
 				.FailOn(() => !pawn.IsCarryingPawn(Baby));
-			if (moveReason != BabyTemperatureUtility.BabyMoveReason.TemperatureDanger)
+			if (moveReason != BabyMoveReason.TemperatureDanger)
             {
 				goTo.FailOnForbidden(TargetIndex.B);
 			}
@@ -175,7 +179,11 @@ namespace Toddlers
 			toil.initAction = delegate
 			{
 				//Log.Message("Toil FindBabyDestination initAction firing");
-				LocalTargetInfo dest_default = BabyTemperatureUtility.SafePlaceForBaby(Baby, pawn, out var _);
+				LocalTargetInfo dest_default = SafePlaceForBaby(Baby, pawn, out BabyMoveReason reason);
+				if (reason == BabyMoveReason.None)
+                {
+					pawn.jobs.EndCurrentJob(JobCondition.Succeeded);
+				}
 				LocalTargetInfo dest_caravan = LocalTargetInfo.Invalid;
 				if (CaravanFormingUtility.IsFormingCaravanOrDownedPawnToBeTakenByCaravan(Baby))
 				{
@@ -202,7 +210,7 @@ namespace Toddlers
 					pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
 				}
 			};
-			toil.FailOn(() => !pawn.IsCarryingPawn(Baby));
+			//toil.FailOn(() => !pawn.IsCarryingPawn(Baby));
 			toil.defaultCompleteMode = ToilCompleteMode.Instant;
 			return toil;
 		}

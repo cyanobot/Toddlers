@@ -72,6 +72,7 @@ namespace Toddlers
 				}
 			}
 			PawnBioAndNameGenerator.FillBackstorySlotShuffled(pawn, BackstorySlot.Childhood, ToddlerBackstoryFilters, null);
+			pawn.Notify_DisabledWorkTypesChanged();
 		}
     }
 }

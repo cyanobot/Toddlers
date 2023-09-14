@@ -11,20 +11,6 @@ using System.Threading.Tasks;
 
 namespace Toddlers
 {
-    /*
-    //allows crying/giggling toddlers to be given orders
-    [HarmonyPatch(typeof(FloatMenuMakerMap), "CanTakeOrder")]
-    class CanTakeOrder_Patch
-    {
-        static bool Postfix(bool result, Pawn pawn)
-        {
-            if (result == false && ToddlerUtility.IsLiveToddler(pawn) && pawn.Spawned
-                && (pawn.IsColonist || pawn.IsSlaveOfColony))
-                result = true;
-            return result;
-        }
-    }
-    */
 
     [HarmonyPatch(typeof(FloatMenuMakerMap), "ChoicesAtFor")]
     class FloatMenu_Patch

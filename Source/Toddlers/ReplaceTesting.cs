@@ -12,6 +12,17 @@ using UnityEngine;
 
 namespace Toddlers
 {
+
+	//put copies here
+	//make classes static
+	//give non-static methods a new first argument: object instance
+	//make those methods static
+	//wherever "this" would be used, replace with instance
+
+
+
+
+	/*
 	[HarmonyPatch()]
 	class Seek_Patch_NonVoid
 	{
@@ -78,7 +89,7 @@ namespace Toddlers
 				//Log.Message("Static, prepending " + __instance);
 				args = args.Prepend(__instance).ToArray();
 			}
-			/*
+			
 			string message = "Attempting to call " + __newMethod.Name + " with args: ";
 			foreach (object arg in args)
 			{
@@ -86,7 +97,7 @@ namespace Toddlers
 				message += ", ";
 			}
 			Log.Message(message);
-			*/
+			
 
 			__result = newMethod.Invoke(null, args);
 			return false;
@@ -160,7 +171,7 @@ namespace Toddlers
 					//Log.Message("Static, prepending " + __instance);
 					args = args.Prepend(__instance).ToArray();
 				}
-				/*
+				
 				string message = "Attempting to call " + __newMethod.Name + " with args: ";
 				foreach (object arg in args)
 				{
@@ -168,7 +179,7 @@ namespace Toddlers
 					message += ", ";
 				}
 				Log.Message(message);
-				*/
+				
 
 				newMethod.Invoke(null, args);
 				return false;
@@ -177,11 +188,6 @@ namespace Toddlers
 		}
 	}
 
-	//put copies here
-	//make classes static
-	//give non-static methods a new first argument: object instance
-	//make those methods static
-	//wherever "this" would be used, replace with instance
 
 	public static class PawnApparelGenerator
 	{
@@ -776,5 +782,5 @@ namespace Toddlers
 			}
 		}
 	}
-
+	*/
 }

@@ -11,6 +11,8 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 using Verse.AI.Group;
+using static Toddlers.ToddlerUtility;
+using static Toddlers.ToddlerPlayUtility;
 
 namespace Toddlers
 {
@@ -25,11 +27,11 @@ namespace Toddlers
             Pawn pawn = (Pawn)typeof(Need).GetField("pawn", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance);
 
             //not interested if not a toddler
-            if (!ToddlerUtility.IsToddler(pawn)) return result;
+            if (!IsToddler(pawn)) return result;
 
             string header = (__instance.LabelCap + ": " + __instance.CurLevelPercentage.ToStringPercent()).Colorize(ColoredText.TipSectionTitleColor);
             string body = "Toddlers can entertain themselves for a while, but without regular attention they become lonely and unable to fulfil their own need for play.";
-            string lonelyReport = "Loneliness: " + ToddlerUtility.GetLoneliness(pawn).ToStringPercent();
+            string lonelyReport = "Loneliness: " + GetLoneliness(pawn).ToStringPercent();
 
 
             return header + "\n" + body + "\n\n" + lonelyReport;
@@ -46,7 +48,7 @@ namespace Toddlers
             if (!isFrozen)
             {
                 Pawn pawn = (Pawn)typeof(Need_Play).GetField("pawn", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance);
-                float factor = ToddlerUtility.IsToddler(pawn) ? Toddlers_Settings.playFallFactor_Toddler : Toddlers_Settings.playFallFactor_Baby;
+                float factor = IsToddler(pawn) ? Toddlers_Settings.playFallFactor_Toddler : Toddlers_Settings.playFallFactor_Baby;
                 __instance.CurLevel -= Need_Play.BaseFallPerInterval * factor;
             }
             return false;
@@ -65,7 +67,7 @@ namespace Toddlers
         static bool Prefix(ref bool __result, Need_Play __instance, Pawn ___pawn)
         {
             if (__instance.CurLevelPercentage <= 0.4f) __result = true;
-            else if (ToddlerUtility.IsLiveToddler(___pawn) && ToddlerUtility.GetLoneliness(___pawn) >= 0.4f && __instance.CurLevelPercentage <= 0.8f)
+            else if (IsLiveToddler(___pawn) && GetLoneliness(___pawn) >= 0.4f && __instance.CurLevelPercentage <= 0.8f)
                 __result = true;
             else __result = false;
             return false;
@@ -80,7 +82,7 @@ namespace Toddlers
         {
             toil.AddPreTickAction(delegate
             {
-                ToddlerPlayUtility.CureLoneliness((Pawn)toil.actor.jobs.curJob.GetTarget(babyIndex).Thing);
+                CureLoneliness((Pawn)toil.actor.jobs.curJob.GetTarget(babyIndex).Thing);
             });
             return toil;
         }
@@ -119,23 +121,43 @@ namespace Toddlers
         }
     }
 
-    //don't stand on the baby you're playing with
-    [HarmonyPatch(typeof(JobDriver_BabyPlay),"CreateStartingCondition")]
-    class CreateStartingCondition_Patch
+    //small tweak so that the adult and baby more often successfully end up in adjacent squares
+    //rather than several squares apart
+    //or with the adult standing on the baby
+    [HarmonyPatch(typeof(JobDriver_PlayStatic), "Play")]
+    class PlayStatic_Patch
     {
-        static IEnumerable<Toil> Postfix(IEnumerable<Toil> __result, JobDriver_BabyPlay __instance)
+        static IEnumerable<Toil> Postfix(IEnumerable<Toil> result, Pawn ___pawn, JobDriver __instance)
         {
-            JobDriver_BabyPlay.StartingConditions startingCondition = (JobDriver_BabyPlay.StartingConditions)typeof(JobDriver_BabyPlay)
-                .GetProperty("StartingCondition", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
-            if (startingCondition == JobDriver_BabyPlay.StartingConditions.GotoBaby)
+            //second Goto toil to shift adult off the baby's square if they're already standing on it
+            //or make adult close any distance that baby might have covered since adult started trying to reach them
+
+            Toil toil = ToilMaker.MakeToil("DelayedGoTo");
+            toil.initAction = delegate
             {
-                RCellFinder.TryFindGoodAdjacentSpotToTouch(__instance.pawn, __instance.job.targetA.Thing, out IntVec3 adjacentSpot);
-                yield return Toils_Goto.GotoCell(adjacentSpot, PathEndMode.OnCell);
-            }
-            else
+                Pawn actor = toil.actor;
+                Pawn baby = (Pawn)toil.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
+
+                if (RCellFinder.TryFindGoodAdjacentSpotToTouch(___pawn, baby, out IntVec3 dest))
+                {
+                    actor.pather.StartPath(dest, PathEndMode.OnCell);
+                }
+                else
+                {
+                    actor.pather.StartPath(baby, PathEndMode.ClosestTouch);
+                }
+                    
+            };
+            toil.defaultCompleteMode = ToilCompleteMode.PatherArrival;
+            toil.AddPreInitAction(delegate
             {
-                foreach (Toil toil in __result) yield return toil;
-            }
+                Pawn baby = (Pawn)toil.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
+                Job babyPlay = ChildcareUtility.MakeBabyPlayJob(toil.actor);
+                //force baby to stay still for adult to finish getting close
+                baby.jobs.StartJob(babyPlay, JobCondition.InterruptForced);
+            });
+
+            return result.Prepend(toil);
         }
     }
 }

@@ -11,6 +11,7 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 using Verse.AI.Group;
+using static Toddlers.BabyMoveUtility;
 
 namespace Toddlers
 {
@@ -20,7 +21,7 @@ namespace Toddlers
     {
         static bool Prefix(ref LocalTargetInfo __result, Pawn baby, Pawn hauler)
         {
-            __result = BabyTemperatureUtility.SafePlaceForBaby(baby, hauler, out var _);
+            __result = SafePlaceForBaby(baby, hauler, out var _);
             return false;
         }
     }
@@ -72,7 +73,7 @@ namespace Toddlers
                     && !pawn3.IsForbidden(pawn) && !GenAI.EnemyIsNear(pawn3, 25f) && !pawn.ShouldBeSlaughtered()
                     //extra logic for only finding babies that need moving, similar to FindUnsafeBaby
                     && ((!(pawn3.DevelopmentalStage == DevelopmentalStage.Baby))
-                        || BabyTemperatureUtility.BabyNeedsMovingByHauler(pawn3, pawn, out Region _, out BabyTemperatureUtility.BabyMoveReason _));
+                        || BabyNeedsMovingByHauler(pawn3, pawn, out Region _, out BabyMoveReason _));
             };
             Pawn pawn2 = (Pawn)GenClosest.ClosestThingReachable(pawn.Position, pawn.MapHeld, ThingRequest.ForGroup(ThingRequestGroup.Pawn), PathEndMode.OnCell, TraverseParms.For(pawn), radius, validator);
             if (pawn2 == null)
@@ -85,7 +86,7 @@ namespace Toddlers
             Job job = null;
             if (pawn2.DevelopmentalStage == DevelopmentalStage.Baby)
             {
-                LocalTargetInfo target = BabyTemperatureUtility.SafePlaceForBaby(pawn2, pawn , out var _);
+                LocalTargetInfo target = SafePlaceForBaby(pawn2, pawn , out var _);
                 if (target != null && target.Cell != pawn2.PositionHeld)
                 {
                     job = JobMaker.MakeJob(JobDefOf.BringBabyToSafety, pawn2);
