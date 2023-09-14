@@ -1,9 +1,7 @@
 High Priority		
-*rare error when attempting to play with a baby/toddler on the floor
-*adults and babies ending up miles from each other during floor play
-*edge case where toddlers could sometimes incorrectly do childcare jobs
 
-	
+
+		
 	show toddlers in schedule
 	cancel move toddler if you get there and the toddler has already moved
 	carry toddlers to caravans
@@ -14,6 +12,9 @@ Medium Priority
 	what happens to kidnapped toddlers?
 	neater settings menu
 	modded mental states (eg psycasts) may not affect toddlers correctly
+	proper baby tribalwear
+	shield belt for babies
+	
 	
 Low Priority
 	Misc
@@ -35,6 +36,7 @@ Low Priority
 	toddlers interact with each other
 	think about disturbed sleep
 	don't wake them to feed so much
+	hideaway building to protect from raiders
 	
 	Capabilities	
 	should manipulation come with an actual manipulation penalty?
@@ -42,7 +44,7 @@ Low Priority
 	teaching
 
 	Play
-	play with unsafe objects?
+	play with unsafe objects? weapons, artifacts...
 
 	Rendering
 	finetune wobble
