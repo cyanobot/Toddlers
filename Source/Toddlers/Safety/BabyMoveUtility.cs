@@ -370,22 +370,42 @@ namespace Toddlers
         {
             //Log.Message("Firing BabyNeedsMovingByHauler, baby: " + baby + ", hauler: " + hauler);
 
-            preferredRegion = null;
-            if (!BabyNeedsMoving(baby, out babyMoveReason))
-            {
-                return false;
-            }
-
-            //Log.Message("First pass babyMoveReason: " + babyMoveReason);
-
-            //shouldn't happen but just in case
-            if (babyMoveReason == BabyMoveReason.None) 
-                return false;
+            //preferredRegion = null;
 
             IntVec3 pos = baby.PositionHeld;
             Map map = baby.MapHeld;
             //find baby's bed as a default to return them to
-            Building_Bed bed = BestBedFor(baby,hauler,true);
+            Building_Bed bed = BestBedFor(baby, hauler, true);
+
+            //if there's no pressing reason to move the baby
+            //woulld usually happen because the player gave the order to return baby to a safe place
+            //still try to output a region
+            if (!BabyNeedsMoving(baby, out babyMoveReason))
+            {
+                //if the baby can be returned to bed, try that
+                if (bed != null && !bed.IsForbidden(baby) && !bed.IsForbidden(hauler) && DangerAcceptable(baby,bed.Position)
+                    && (!baby.Downed || baby.SafeTemperatureAtCell(bed.Position, map)))
+                {
+                    preferredRegion = bed.GetRegion();
+                }
+                //otherwise current location must be fine
+                else
+                {
+                    preferredRegion = baby.GetRegionHeld();
+                }
+
+                return false;
+            }
+            
+
+            //Log.Message("First pass babyMoveReason: " + babyMoveReason);
+
+            //shouldn't happen but just in case
+            /*
+            if (babyMoveReason == BabyMoveReason.None) 
+                return false;
+            */
+
 
             //second-pass investigation of each potential move reason
             //in priority order
@@ -495,7 +515,11 @@ namespace Toddlers
                 if (bed != null)
                 {
                     //don't move the baby if they're already in the best bed
-                    if (bed == baby.CurrentBed()) return false;
+                    if (bed == baby.CurrentBed())
+                    {
+                        preferredRegion = bed.GetRegion();
+                        return false;
+                    }
 
                     //don't take the baby to a forbidden bed
                     //and
@@ -579,8 +603,8 @@ namespace Toddlers
 
             //if we can't do any of the above
             //either because the problems didn't apply
-            //or because there wasn't anywhere the hauler could take the baby to fix them
-            preferredRegion = null;
+            //or because there wasn't anywhere the hauler could take the baby that'd be better
+            preferredRegion = baby.GetRegionHeld();
             babyMoveReason = BabyMoveReason.None;
             //Log.Message("Couldn't find any solvable problems, returning false");
             return false;
@@ -660,12 +684,14 @@ namespace Toddlers
             {
                 return LocalTargetInfo.Invalid;
             }
+
+            Building_Bed bed = BestBedFor(baby, hauler, true);
+
             if (!BabyNeedsMovingByHauler(baby, hauler, out Region preferredRegion, out babyMoveReason))
             {
                 return LocalTargetInfo.Invalid;
             }
 
-            Building_Bed bed = BestBedFor(baby, hauler, true);
             if (bed != null && bed.GetRegion() == preferredRegion)
             {
                 return bed;

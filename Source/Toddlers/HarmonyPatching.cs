@@ -35,6 +35,7 @@ namespace Toddlers
     {
         static bool Prefix(ref bool __result, Pawn p)
         {
+            //Log.Message("Firing Door_Patch");
             if (ToddlerUtility.IsCrawler(p))
             {
                 __result = false;
@@ -720,6 +721,140 @@ namespace Toddlers
         }
     }
 
+    
+    [HarmonyPatch]
+    class PrepareCaravan_Patch
+    {
+        static IEnumerable<MethodBase> TargetMethods()
+        {
+            yield return AccessTools.Method(typeof(LordToil_PrepareCaravan_GatherDownedPawns), nameof(LordToil_PrepareCaravan_GatherDownedPawns.UpdateAllDuties));
+            yield return AccessTools.Method(typeof(LordToil_PrepareCaravan_GatherDownedPawns), "CheckAllPawnsArrived");
+            yield return AccessTools.Method(typeof(JobGiver_PrepareCaravan_GatherDownedPawns), "FindDownedPawn");
+            yield return AccessTools.Method(typeof(LordToil_PrepareCaravan_RopeAnimals), nameof(LordToil_PrepareCaravan_GatherDownedPawns.UpdateAllDuties));
+            yield return AccessTools.Method(typeof(LordToil_PrepareCaravan_GatherItems), nameof(LordToil_PrepareCaravan_GatherDownedPawns.UpdateAllDuties));
+            yield return AccessTools.Method(typeof(LordToil_PrepareCaravan_GatherItems), nameof(LordToil_PrepareCaravan_GatherDownedPawns.LordToilTick));
+        }
+
+        static List<Pawn> FindDownedAndToddlers(LordJob_FormAndSendCaravan lordJob)
+        {
+            return lordJob.downedPawns.Concat(lordJob.lord.ownedPawns.Where(x => ToddlerUtility.IsToddler(x))).ToList();
+        }
+
+        static MethodInfo m_IsColonist = AccessTools.Property(typeof(Pawn), nameof(Pawn.IsColonist)).GetGetMethod();
+        static MethodInfo m_Downed = AccessTools.Property(typeof(Pawn), nameof(Pawn.Downed)).GetGetMethod();
+        static MethodInfo m_IsToddler = AccessTools.Method(typeof(ToddlerUtility), nameof(ToddlerUtility.IsToddler));
+        static MethodInfo m_FindDownedAndToddlers = AccessTools.Method(typeof(PrepareCaravan_Patch), nameof(PrepareCaravan_Patch.FindDownedAndToddlers));
+
+        static FieldInfo f_lord = AccessTools.Field(typeof(LordToil), nameof(LordToil.lord));
+        static FieldInfo f_downedPawns = AccessTools.Field(typeof(LordJob_FormAndSendCaravan), nameof(LordJob_FormAndSendCaravan.downedPawns));
+
+        /*
+        static void Prefix(object[] __args, MethodBase __originalMethod)
+        {
+            Log.Message(__originalMethod.Name + " firing, args: " + __args.ToStringSafeEnumerable());
+        }
+        */
+        
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            CodeInstruction prevInstruction = null;
+            foreach (var instruction in instructions)
+            { 
+                //convert all instances of
+                //pawn.IsColonist
+                //to
+                //pawn.IsColonist && !ToddlerUtility.IsToddler(pawn)
+                if (instruction.Calls(m_IsColonist))
+                {
+                    yield return instruction;
+                    yield return prevInstruction;
+                    yield return new CodeInstruction(OpCodes.Callvirt, m_IsToddler);
+                    yield return new CodeInstruction(OpCodes.Not);
+                    yield return new CodeInstruction(OpCodes.And);
+                }
+                //convert
+                //pawn.Downed
+                //to
+                //pawn.Downed || ToddlerUtility.IsToddler(pawn)
+                else if (instruction.Calls(m_Downed))
+                {
+                    yield return instruction;
+                    yield return prevInstruction;
+                    yield return new CodeInstruction(OpCodes.Callvirt, m_IsToddler);
+                    yield return new CodeInstruction(OpCodes.Or);
+                }
+                //convert
+                //downedPawns = ((LordJob_FormAndSendCaravan)lord.LordJob).downedPawns;
+                //to
+                //downedPawns = ((LordJob_FormAndSendCaravan)lord.LordJob).downedPawns.Concat(FindToddlers(lord)).ToList();
+                else if (instruction.LoadsField(f_downedPawns))
+                {
+                    yield return new CodeInstruction(OpCodes.Call, m_FindDownedAndToddlers);
+                }
+                else
+                {
+                    yield return instruction;
+                }
+
+                prevInstruction = instruction;
+            }
+        }
+        
+    }
+
+    [HarmonyPatch(typeof(GatherAnimalsAndSlavesForCaravanUtility),nameof(GatherAnimalsAndSlavesForCaravanUtility.CheckArrived))]
+    class CheckArrived_Patch
+    {
+        static MethodInfo m_Spawned = AccessTools.Property(typeof(Thing), nameof(Thing.Spawned)).GetGetMethod();
+        static MethodInfo m_Position = AccessTools.Property(typeof(Thing), nameof(Thing.Position)).GetGetMethod();
+        static MethodInfo m_PositionHeld = AccessTools.Property(typeof(Thing), nameof(Thing.PositionHeld)).GetGetMethod();
+        static MethodInfo m_IsToddler = AccessTools.Method(typeof(ToddlerUtility), nameof(ToddlerUtility.IsToddler));
+        static MethodInfo m_CanReach = AccessTools.Method(typeof(ReachabilityUtility), nameof(ReachabilityUtility.CanReach));
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            CodeInstruction prevInstruction = null;
+            CodeInstruction getPawn = null;
+            foreach (var instruction in instructions)
+            {
+                //replace
+                //pawn.Spawned
+                //with
+                //pawn.Spawned || IsToddler(pawn)
+                if (instruction.Calls(m_Spawned))
+                {
+                    getPawn = prevInstruction;
+
+                    yield return instruction;
+                    yield return getPawn;
+                    yield return new CodeInstruction(OpCodes.Callvirt, m_IsToddler);
+                    yield return new CodeInstruction(OpCodes.Or);
+                }
+                else if (instruction.Calls(m_Position))
+                {
+                    yield return new CodeInstruction(OpCodes.Callvirt, m_PositionHeld);
+                }
+                else if (instruction.Calls(m_CanReach))
+                {
+                    yield return instruction;
+                    if (getPawn != null)
+                        yield return getPawn;
+                    else
+                        yield return new CodeInstruction(OpCodes.Ldloc_2);
+                    yield return new CodeInstruction(OpCodes.Callvirt, m_IsToddler);
+                    yield return new CodeInstruction(OpCodes.Or);
+                }
+                else
+                {
+                    yield return instruction;
+                }
+
+                prevInstruction = instruction;
+            }
+        }
+    }
+    
+
     //raiders should ignore toddlers
     [HarmonyPatch(typeof(AttackTargetFinder), "ShouldIgnoreNoncombatant")]
     class ShouldIgnoreNoncombatant_Patch
@@ -812,4 +947,29 @@ namespace Toddlers
         }
     }
 
+    //replaces the Pawns property for the schedule window
+    //to allow babies and toddlers to appear in it
+    [HarmonyPatch(typeof(MainTabWindow_Schedule),"Pawns",MethodType.Getter)]
+    class MainTabWindow_Schedule_Patch
+    {
+        static bool Prefix(ref IEnumerable<Pawn> __result)
+        {
+            __result = Find.CurrentMap.mapPawns.FreeColonists;
+
+            return false;
+        }
+    }
+
+    //replaces the Pawns property for the assign window
+    //to allow both babies and toddlers to appear in it
+    [HarmonyPatch(typeof(MainTabWindow_Assign), "Pawns", MethodType.Getter)]
+    class MainTabWindow_Assign_Patch
+    {
+        static bool Prefix(ref IEnumerable<Pawn> __result)
+        {
+            __result = PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_FreeColonists;
+
+            return false;
+        }
+    }
 }

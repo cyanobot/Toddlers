@@ -146,25 +146,28 @@ namespace Toddlers
 			Toil toil_FindBabyDestination = FindBabyDestination();
 			//toil_FindBabyDestination.AddPreInitAction(() => Log.Message("PreInit for toil_FindBabyDestination"));
 
+			Toil toil_GoToDest = Toils_Goto.Goto(TargetIndex.B, PathEndMode.OnCell)
+				.FailOnInvalidOrDestroyed(TargetIndex.B)
+				.FailOnSomeonePhysicallyInteracting(TargetIndex.B)
+				.FailOnDestroyedOrNull(TargetIndex.A)
+				.FailOn(() => !pawn.IsCarryingPawn(Baby));
+			if (moveReason != BabyMoveReason.TemperatureDanger)
+			{
+				toil_GoToDest.FailOnForbidden(TargetIndex.B);
+			}
+
+
 			yield return Toils_Jump.JumpIf(toil_FindBabyDestination, () => pawn.IsCarryingPawn(Baby));
 			yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch).FailOnSomeonePhysicallyInteracting(TargetIndex.A);
 
 			yield return toil_FindBabyDestination;
 			yield return Toils_Reserve.ReserveDestinationOrThing(TargetIndex.B);
 
+
+			yield return Toils_Jump.JumpIf(toil_GoToDest, () => pawn.IsCarryingPawn(Baby));
 			yield return Toils_Haul.StartCarryThing(TargetIndex.A, putRemainderInQueue: false);
 
-			Toil goTo = Toils_Goto.Goto(TargetIndex.B, PathEndMode.OnCell)	
-				.FailOnInvalidOrDestroyed(TargetIndex.B)
-				.FailOnSomeonePhysicallyInteracting(TargetIndex.B)
-				.FailOnDestroyedOrNull(TargetIndex.A)
-				.FailOn(() => !pawn.IsCarryingPawn(Baby));
-			if (moveReason != BabyMoveReason.TemperatureDanger)
-            {
-				goTo.FailOnForbidden(TargetIndex.B);
-			}
-			
-			yield return goTo;
+			yield return toil_GoToDest;
 
 			yield return Toils_Reserve.ReleaseDestinationOrThing(TargetIndex.B);
 			yield return Toils_Bed.TuckIntoBed(TargetIndex.B, TargetIndex.A);
@@ -174,44 +177,43 @@ namespace Toddlers
 
 		private Toil FindBabyDestination()
 		{
-			//Log.Message("Toil FindBabyDestination firing");
+			Log.Message("Toil FindBabyDestination firing");
 			Toil toil = ToilMaker.MakeToil("FindBabyDestination");
 			toil.initAction = delegate
 			{
-				//Log.Message("Toil FindBabyDestination initAction firing");
+				Log.Message("Toil FindBabyDestination initAction firing");
 				LocalTargetInfo dest_default = SafePlaceForBaby(Baby, pawn, out BabyMoveReason reason);
-				if (reason == BabyMoveReason.None)
-                {
-					pawn.jobs.EndCurrentJob(JobCondition.Succeeded);
-				}
+				Log.Message("dest_default: " + dest_default + ", reason: " + reason);
+
 				LocalTargetInfo dest_caravan = LocalTargetInfo.Invalid;
 				if (CaravanFormingUtility.IsFormingCaravanOrDownedPawnToBeTakenByCaravan(Baby))
 				{
 					dest_caravan = JobGiver_PrepareCaravan_GatherDownedPawns.FindRandomDropCell(pawn, Baby);
 				}
-				if (dest_default.IsValid)
-				{
-					if (dest_caravan.IsValid && dest_caravan.Cell.DistanceTo(pawn.Position) < dest_default.Cell.DistanceTo(pawn.Position))
-					{
-						toil.GetActor().CurJob.SetTarget(TargetIndex.B, dest_caravan);
-					}
-					else
-					{
-						toil.GetActor().CurJob.SetTarget(TargetIndex.B, dest_default);
-					}
-				}
-				else if (dest_caravan.IsValid)
-				{
+
+				if (dest_caravan.IsValid)
+                {
 					toil.GetActor().CurJob.SetTarget(TargetIndex.B, dest_caravan);
 				}
 				else
-				{
-					//Log.Message("Toil FindBabyDestination initAction failed to find valid destination");
-					pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
-				}
+                {
+					if (reason == BabyMoveReason.None && !pawn.jobs.curJob.playerForced)
+                    {
+						pawn.jobs.EndCurrentJob(JobCondition.Succeeded);
+					}
+					else if (dest_default.IsValid)
+                    {
+						toil.GetActor().CurJob.SetTarget(TargetIndex.B, dest_default);
+					}
+                    else
+                    {
+						Log.Message("Toil FindBabyDestination initAction failed to find valid destination");
+						pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
+					}
+                }
 			};
-			//toil.FailOn(() => !pawn.IsCarryingPawn(Baby));
 			toil.defaultCompleteMode = ToilCompleteMode.Instant;
+			Log.Message("returning toil: " + toil);
 			return toil;
 		}
 	}

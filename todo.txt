@@ -1,10 +1,18 @@
-High Priority		
+High Priority	
 
+Returning to main screen from world after forming a caravan...		
+	[[RimHUD v1.14.3 Auto-deactivation report]]
+Value cannot be null.
+Parameter name: source
 
-		
-	show toddlers in schedule
-	cancel move toddler if you get there and the toddler has already moved
-	carry toddlers to caravans
+Trace:
+[System.Core] Value cannot be null.
+Parameter name: source
+  at System.Linq.Enumerable.Count[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) 
+  at RimHUD.Access.Patch.RimWorld_InspectPaneUtility_PaneWidthFor.Prefix (System.Single& __result, RimWorld.IInspectPane pane) 
+  at (wrapper dynamic-method) RimWorld.InspectPaneUtility.RimWorld.InspectPaneUtility.PaneWidthFor_Patch1(RimWorld.IInspectPane)
+  at RimHUD.Interface.Screen.InspectPaneTabs.Draw (RimWorld.IInspectPane pane) 
+
 	
 Medium Priority
 	can't unequip apparel if can't undress self yet
