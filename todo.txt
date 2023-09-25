@@ -12,6 +12,7 @@ Parameter name: source
   at RimHUD.Access.Patch.RimWorld_InspectPaneUtility_PaneWidthFor.Prefix (System.Single& __result, RimWorld.IInspectPane pane) 
   at (wrapper dynamic-method) RimWorld.InspectPaneUtility.RimWorld.InspectPaneUtility.PaneWidthFor_Patch1(RimWorld.IInspectPane)
   at RimHUD.Interface.Screen.InspectPaneTabs.Draw (RimWorld.IInspectPane pane) 
+ 
 
 	
 Medium Priority
@@ -45,6 +46,7 @@ Low Priority
 	think about disturbed sleep
 	don't wake them to feed so much
 	hideaway building to protect from raiders
+	zzzs still show on toddlers with mod No ZzZ
 	
 	Capabilities	
 	should manipulation come with an actual manipulation penalty?

@@ -54,8 +54,7 @@ namespace Toddlers
 			//if we wouldn't usually do childcare work as a top priority
 			//still respond to children in urgent danger
 			//but otherwise no
-			if ((autofeedMode != AutofeedMode.Urgent) && !(moveReason == BabyMoveReason.TemperatureDanger
-				|| moveReason == BabyMoveReason.Medical))
+			if ((autofeedMode != AutofeedMode.Urgent) && !(moveReason == BabyMoveReason.TemperatureDanger))
 			{
 				return null;
 			}
@@ -123,13 +122,13 @@ namespace Toddlers
 						text = "{ADULT_labelShort} is moving {BABY_labelShort} to a medical bed.";
 						break;
                     case BabyMoveReason.OutsideZone:
-						//text = "{ADULT_labelShort} is moving {BABY_labelShort} back to {BABY_possessive} allowed zone.";
+						text = "{ADULT_labelShort} is moving {BABY_labelShort} back to {BABY_possessive} allowed zone.";
 						break;
                     case BabyMoveReason.ReturnToBed:
-						//text = "{ADULT_labelShort} is putting {BABY_labelShort} to bed.";
+						text = "{ADULT_labelShort} is putting {BABY_labelShort} to bed.";
 						break;
                     default:
-						//text = "{ADULT_labelShort} is trying to move {BABY_labelShort} for an unknown reason.";
+						text = "{ADULT_labelShort} is trying to move {BABY_labelShort} for an unknown reason.";
 						break;
                 }
 
@@ -177,13 +176,13 @@ namespace Toddlers
 
 		private Toil FindBabyDestination()
 		{
-			Log.Message("Toil FindBabyDestination firing");
+			//Log.Message("Toil FindBabyDestination firing");
 			Toil toil = ToilMaker.MakeToil("FindBabyDestination");
 			toil.initAction = delegate
 			{
-				Log.Message("Toil FindBabyDestination initAction firing");
+				//Log.Message("Toil FindBabyDestination initAction firing");
 				LocalTargetInfo dest_default = SafePlaceForBaby(Baby, pawn, out BabyMoveReason reason);
-				Log.Message("dest_default: " + dest_default + ", reason: " + reason);
+				//Log.Message("dest_default: " + dest_default + ", reason: " + reason);
 
 				LocalTargetInfo dest_caravan = LocalTargetInfo.Invalid;
 				if (CaravanFormingUtility.IsFormingCaravanOrDownedPawnToBeTakenByCaravan(Baby))
@@ -207,13 +206,13 @@ namespace Toddlers
 					}
                     else
                     {
-						Log.Message("Toil FindBabyDestination initAction failed to find valid destination");
+						//Log.Message("Toil FindBabyDestination initAction failed to find valid destination");
 						pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
 					}
                 }
 			};
 			toil.defaultCompleteMode = ToilCompleteMode.Instant;
-			Log.Message("returning toil: " + toil);
+			//Log.Message("returning toil: " + toil);
 			return toil;
 		}
 	}

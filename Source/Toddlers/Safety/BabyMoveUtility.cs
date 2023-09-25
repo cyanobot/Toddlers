@@ -263,6 +263,21 @@ namespace Toddlers
             return result;
         }
 
+        public static bool IsToddlerBusy(Pawn toddler)
+        {
+            if (toddler.Drafted) return true;
+            if (toddler.GetLord() != null) return true;
+            JobDef curJob = toddler.CurJobDef;
+            if ((toddler.needs != null && toddler.needs.food != null
+                    && toddler.needs.food.CurLevelPercentage < toddler.needs.food.PercentageThreshUrgentlyHungry)
+                    && (curJob == JobDefOf.Ingest || (curJob == JobDefOf.TakeFromOtherInventory 
+                    && toddler.CurJob.targetA.HasThing && FoodUtility.WillEat(toddler, toddler.CurJob.targetA.Thing))))
+            {
+                return true;
+            }
+            return false;
+        }
+
         public static bool NeedsMoving_TemperatureDanger(Pawn baby, IntVec3 pos)
         {
             if (!DangerAcceptable(baby, pos)) return true;
@@ -734,6 +749,12 @@ namespace Toddlers
                     continue;
                 }
 
+                //don't move toddlers who are busy eg not starving / being drafted
+                if (NeedsMoving_TemperatureDanger(pawn, pawn.PositionHeld) && pawn.Drafted)
+                    continue;
+                else if (IsToddlerBusy(pawn))
+                    continue;
+
                 //find out if the baby needs to go somewhere 
                 //and that it isn't where they already are
                 LocalTargetInfo localTargetInfo = SafePlaceForBaby(pawn, hauler, out moveReason);
@@ -757,6 +778,7 @@ namespace Toddlers
                         continue;
                     }
                 }
+
 
                 //Log.Message("FindUnsafeBaby returning hauler: "  + hauler + ", baby: " + pawn + ", localTargetInfo: " + localTargetInfo + ", moveReason: " + moveReason);
                 return pawn;
