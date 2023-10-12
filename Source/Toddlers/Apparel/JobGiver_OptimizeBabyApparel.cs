@@ -42,11 +42,18 @@ namespace Toddlers
 			
 			foreach (Pawn baby in hauler.MapHeld.mapPawns.FreeHumanlikesSpawnedOfFaction(hauler.Faction))
 			{
+				//Log.Message("Checking: " + baby);
 				if (!ChildcareUtility.CanSuckle(baby, out var _) || baby.mindState.AutofeedSetting(hauler) != priorityLevel || CaravanFormingUtility.IsFormingCaravanOrDownedPawnToBeTakenByCaravan(baby))
+                {
+					//Log.Message(baby + " not appropriate");
 					continue;
-
+				}
+					
 				if (Find.TickManager.TicksGame < baby.mindState.nextApparelOptimizeTick)
+				{
+					//Log.Message(baby + " still on cooldown");
 					continue;
+				}
 
 				//Log.Message("Found " + baby);
 				return baby;

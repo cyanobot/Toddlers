@@ -6,11 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 using Verse;
 using Verse.AI;
 using Verse.AI.Group;
+using static Toddlers.ToddlerUtility;
 
 namespace Toddlers
 {
@@ -721,7 +723,7 @@ namespace Toddlers
         }
     }
 
-    
+    //treat toddlers (in some ways) as downed pawns when trying to form caravans
     [HarmonyPatch]
     class PrepareCaravan_Patch
     {
@@ -802,6 +804,7 @@ namespace Toddlers
         
     }
 
+    //accept carried toddlers as ready to  leave on caravans
     [HarmonyPatch(typeof(GatherAnimalsAndSlavesForCaravanUtility),nameof(GatherAnimalsAndSlavesForCaravanUtility.CheckArrived))]
     class CheckArrived_Patch
     {
@@ -852,8 +855,7 @@ namespace Toddlers
                 prevInstruction = instruction;
             }
         }
-    }
-    
+    }   
 
     //raiders should ignore toddlers
     [HarmonyPatch(typeof(AttackTargetFinder), "ShouldIgnoreNoncombatant")]
@@ -972,4 +974,188 @@ namespace Toddlers
             return false;
         }
     }
+
+    //corrects scaling of headgear with headsize for babies and toddlers
+    /*
+    [HarmonyPatch(typeof(HumanlikeMeshPoolUtility),nameof(HumanlikeMeshPoolUtility.GetHumanlikeHairSetForPawn))]
+    class GetHumanlikeHairSet_Patch
+    {
+        static bool Prefix(Pawn pawn, out GraphicMeshSet __result)
+        {
+            __result = null;
+            if (pawn.DevelopmentalStage != DevelopmentalStage.Baby) return true;
+
+            Vector2 hairMeshSize = pawn.story.headType.hairMeshSize;
+            if (pawn.ageTracker.CurLifeStage.headSizeFactor.HasValue)
+            {
+                hairMeshSize *= pawn.ageTracker.CurLifeStage.headSizeFactor.Value;
+            }
+
+            if (ModsConfig.BiotechActive && pawn.ageTracker.CurLifeStage.bodyWidth.HasValue)
+            {
+                hairMeshSize /= pawn.ageTracker.CurLifeStage.bodyWidth.Value;
+            }
+            __result = MeshPool.GetMeshSetForWidth(hairMeshSize.x, hairMeshSize.y);
+            return false;
+        }
+    }
+    
+    
+    
+    
+    [HarmonyPatch(typeof(PawnRenderer),"DrawHeadHair")]
+    [HarmonyDebug]
+    class DrawHeadHair_Patch
+    {
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator il)
+        {
+            
+            //foreach (CodeInstruction instruction in instructions)
+            //{
+            //    yield return instruction;
+            //}
+            //yield break;
+            
+
+            //DrawHeadHair(Vector3 rootLoc, Vector3 headOffset, float angle, Rot4 bodyFacing, Rot4 headFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags, bool bodyDrawn)
+
+            string outerName = "DrawHeadHair";
+            string innerName = "DrawApparel";
+
+            string nameStart = "<" + outerName + ">g__" + innerName + "|";
+
+            MethodInfo m_DrawApparel = typeof(PawnRenderer).GetNestedTypes(BindingFlags.NonPublic)
+                .Where(t => t.GetCustomAttribute<CompilerGeneratedAttribute>() != null)
+                .SelectMany(t => t.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance))
+                .Where(x => x.Name.StartsWith(nameStart))
+                .Single();
+            MethodInfo m_DrawApparelFake = AccessTools.Method(typeof(DrawHeadHair_Patch), nameof(DrawHeadHair_Patch.DrawApparelFake));
+            MethodInfo m_IsHumanBaby = AccessTools.Method(typeof(DrawHeadHair_Patch), nameof(DrawHeadHair_Patch.IsHumanBaby));
+
+            bool found = false;
+            int i = -1;
+            List<Label> origLabels = new List<Label>();
+            List<Label> skipLabels = new List<Label>();
+            Label origLabel = il.DefineLabel();
+            Label skipOrigLabel = il.DefineLabel();
+
+            foreach (CodeInstruction instruction in instructions)
+            {
+                if (found)
+                {
+                    instruction.labels.Add(skipLabels[i]);
+                    found = false;
+                }
+
+                if (instruction.Calls(m_DrawApparel))
+                {
+                    found = true;
+                    i++;
+                    origLabels.Add(il.DefineLabel());
+                    skipLabels.Add(il.DefineLabel());
+
+                    yield return new CodeInstruction(OpCodes.Ldarg_0);
+                    yield return new CodeInstruction(OpCodes.Call, m_IsHumanBaby);
+                    yield return new CodeInstruction(OpCodes.Brfalse, origLabels[i]);
+
+                    yield return new CodeInstruction(OpCodes.Ldarg_0);
+                    yield return new CodeInstruction(OpCodes.Ldarg_1);
+                    yield return new CodeInstruction(OpCodes.Ldarg_2);
+                    yield return new CodeInstruction(OpCodes.Ldarg_3);
+                    yield return new CodeInstruction(OpCodes.Ldarg, 4);
+                    yield return new CodeInstruction(OpCodes.Ldarg, 5);
+                    yield return new CodeInstruction(OpCodes.Ldarg, 6);
+                    yield return new CodeInstruction(OpCodes.Ldarg, 7);
+                    yield return new CodeInstruction(OpCodes.Ldarg, 8);
+
+                    yield return new CodeInstruction(OpCodes.Call, m_DrawApparelFake);
+                    yield return new CodeInstruction(OpCodes.Pop);                      //got a stray this on the stack that would be needed by callvirt drawapparell but not by our static fake
+
+                    yield return new CodeInstruction(OpCodes.Br, skipLabels[i]);
+                    instruction.labels.Add(origLabels[i]);
+                    yield return instruction;
+
+                }
+                else
+                {
+                    yield return instruction;
+                }
+            }
+        }
+
+        static Mesh MeshAtFake(Graphic graphic, Rot4 rot)
+        {
+            float babyScaleFactor = (LifeStageDefOf.HumanlikeBaby.headSizeFactor ?? 1.0f) / LifeStageDefOf.HumanlikeBaby.bodySizeFactor;
+            babyScaleFactor = 3.0f;
+
+            Vector2 vector = graphic.drawSize;
+            if (rot.IsHorizontal && !graphic.ShouldDrawRotated)
+            {
+                vector = vector.Rotated();
+            }
+            if ((rot == Rot4.West && graphic.WestFlipped) || (rot == Rot4.East && graphic.EastFlipped))
+            {
+                return MeshPool.GridPlaneFlip(vector);
+            }
+            return MeshPool.GridPlane(vector);
+        }
+
+        //duplicate of vanilla method
+        static void DrawApparelFake(ApparelGraphicRecord apparelRecord, PawnRenderer instance, Vector3 rootLoc, Vector3 headOffset, float angle, Rot4 bodyFacing, Rot4 headFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags, bool bodyDrawn)
+        {
+            //DrawHeadHair(Vector3 rootLoc, Vector3 headOffset, float angle, Rot4 bodyFacing, Rot4 headFacing, RotDrawMode bodyDrawType, PawnRenderFlags flags, bool bodyDrawn)
+            //Vector3 rootLoc = (Vector3)DrawHeadHair_Args[0];
+            //Vector3 headOffset = (Vector3)DrawHeadHair_Args[1];
+            //float angle = (float)DrawHeadHair_Args[2];
+            //Rot4 bodyFacing = (Rot4)DrawHeadHair_Args[3];
+            //Rot4 headFacing = (Rot4)DrawHeadHair_Args[4];
+            //PawnRenderFlags flags = (PawnRenderFlags)DrawHeadHair_Args[6];
+
+            Vector3 onHeadLoc = rootLoc + headOffset;
+            Log.Message("onHeadLoc: " + onHeadLoc);
+            Quaternion quat = Quaternion.AngleAxis(angle, Vector3.up);
+            Pawn pawn = (Pawn)instance.GetType().GetField("pawn", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(instance);
+
+            Mesh mesh3 = instance.graphics.HairMeshSet.MeshAt(headFacing);
+            if (!apparelRecord.sourceApparel.def.apparel.hatRenderedFrontOfFace)
+            {
+                Log.Message("!hatRenderedFrontOfFace");
+                onHeadLoc.y += 0.0289575271f;
+                Material material3 = apparelRecord.graphic.MatAt(bodyFacing);
+                material3 = (flags.FlagSet(PawnRenderFlags.Cache) ? material3 : OverrideMaterialIfNeeded(instance, material3, pawn, flags.FlagSet(PawnRenderFlags.Portrait)));
+                GenDraw.DrawMeshNowOrLater(mesh3, onHeadLoc, quat, material3, flags.FlagSet(PawnRenderFlags.DrawNow));
+            }
+            else
+            {
+                Material material4 = apparelRecord.graphic.MatAt(bodyFacing);
+                material4 = (flags.FlagSet(PawnRenderFlags.Cache) ? material4 : OverrideMaterialIfNeeded(instance, material4, pawn, flags.FlagSet(PawnRenderFlags.Portrait)));
+                if (apparelRecord.sourceApparel.def.apparel.hatRenderedBehindHead)
+                {
+                    Log.Message("hatRenderedFrontOfFace, hatRenderedBehindHead");
+                    onHeadLoc.y += 0.0221660212f;
+                }
+                else
+                {
+                    Log.Message("hatRenderedFrontOfFace, !hatRenderedBehindHead");
+                    onHeadLoc.y += ((bodyFacing == Rot4.North && !apparelRecord.sourceApparel.def.apparel.hatRenderedAboveBody) ? 0.00289575267f : 0.03185328f);
+                }
+                GenDraw.DrawMeshNowOrLater(mesh3, onHeadLoc, quat, material4, flags.FlagSet(PawnRenderFlags.DrawNow));
+            }
+        }
+
+        static Material OverrideMaterialIfNeeded(PawnRenderer instance, Material original, Pawn pawn, bool portrait = false)
+        {
+            MethodInfo origMethod = instance.GetType().GetMethod("OverrideMaterialIfNeeded", BindingFlags.Instance | BindingFlags.NonPublic);
+            return (Material)origMethod.Invoke(instance, new object[] { original, pawn, portrait });
+        }
+
+        static bool IsHumanBaby(PawnRenderer instance)
+        {         
+            Pawn pawn = (Pawn)instance.GetType().GetField("pawn", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(instance);
+            if (pawn.def == ThingDefOf.Human && pawn.DevelopmentalStage == DevelopmentalStage.Baby) return true;
+            return false;
+        }
+    }
+    */
 }

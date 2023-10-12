@@ -420,6 +420,7 @@ namespace Toddlers
 			//Log.Message("bodyDrawType: " + bodyDrawType.ToString());
 			//Log.Message("flags: " + flags.ToString());
 			//don't mess with non-toddlers
+			if (!Toddlers_Settings.customRenderer) return true;
 			if (!ToddlerUtility.IsLiveToddler(___pawn)) return true;
 
 			//leave portraits alone
@@ -480,7 +481,7 @@ namespace Toddlers
     {
 		static void Postfix(Pawn ___pawn)
         {
-			if (ToddlerUtility.IsToddler(___pawn))
+			if (Toddlers_Settings.customRenderer && ToddlerUtility.IsToddler(___pawn))
 				___pawn.Drawer.renderer.graphics.SetAllGraphicsDirty();
 		}
     }
@@ -490,7 +491,7 @@ namespace Toddlers
 	{
 		static void Postfix(Pawn ___pawn)
 		{
-			if (ToddlerUtility.IsToddler(___pawn))
+			if (Toddlers_Settings.customRenderer && ToddlerUtility.IsToddler(___pawn))
 				___pawn.Drawer.renderer.graphics.SetAllGraphicsDirty();
 		}
 	}
@@ -501,7 +502,7 @@ namespace Toddlers
     {
 		static Toil Postfix(Toil toil)
         {
-			if (ToddlerUtility.IsLiveToddler(toil.actor))
+			if (Toddlers_Settings.customRenderer && ToddlerUtility.IsLiveToddler(toil.actor))
             {
 				toil.initAction = () => toil.actor.Drawer.renderer.graphics.SetAllGraphicsDirty();
 				toil.AddFinishAction(() => toil.actor.Drawer.renderer.graphics.SetAllGraphicsDirty());
@@ -509,4 +510,5 @@ namespace Toddlers
 			return toil;
         }
     }
+
 }

@@ -19,6 +19,64 @@ using System.Threading.Tasks;
 
 
 
+public static void DoSettingsWindowContents_Old(Rect rect)
+{
+	Listing_Standard l = new Listing_Standard(GameFont.Small)
+	{
+		ColumnWidth = rect.width
+	};
+
+	l.Begin(rect);
+
+	l.CheckboxLabeled("Custom renderer :", ref customRenderer, "[Default: on] Custom (minor) animations for crawling babies, wiggling, wobbling, etc. Turn off if you are having a compatibility issue with other mods that affect rendering.");
+
+	l.CheckboxLabeled("Can draft toddlers :", ref canDraftToddlers, "[Default: off] Toddlers remain incapable of violence, but with this setting on they can be drafted and given orders.");
+
+	l.Label("Play need fall factor (baby) : " + playFallFactor_Baby.ToString("F1"), tooltip: "[Default: 5.0] How fast the Play need falls");
+	playFallFactor_Baby = l.Slider(playFallFactor_Baby, 0f, 50f);
+
+	l.Label("Play need fall factor (toddler) : " + playFallFactor_Toddler.ToString("F1"), tooltip: "[Default: 5.0] How fast the Play need falls");
+	playFallFactor_Toddler = l.Slider(playFallFactor_Toddler, 0f, 50f);
+
+	l.Label("Loneliness gain rate factor : " + lonelinessGainFactor.ToString("F1"), tooltip: "[Default: 1.0] Controls how often toddlers need adult attention. Turn it up for more attention needed and down for less.");
+	lonelinessGainFactor = l.Slider(lonelinessGainFactor, 0f, 10f);
+
+	l.Label("'No expectations' mood impact : " + expectations.ToString("F0"), tooltip: "[Default: 20]");
+	expectations = l.Slider(expectations, 0f, 100f);
+
+	l.CheckboxLabeled("Baby clothes at tribal tech level :", ref tribalBabyClothes, "[Default: off] Toggles whether baby clothes require industrial tech");
+
+	l.Label("Max Comfortable Temperature (baby) : " + maxComfortableTemperature_Baby.ToStringTemperature(), tooltip: "[Default: 30C / 86F]");
+	maxComfortableTemperature_Baby = l.Slider(maxComfortableTemperature_Baby, 26f, 50f);
+
+	l.Label("Min Comfortable Temperature (baby) : " + minComfortableTemperature_Baby.ToStringTemperature(), tooltip: "[Default: 20C / 68F]");
+	minComfortableTemperature_Baby = l.Slider(minComfortableTemperature_Baby, -30f, 25f);
+
+	l.Label("Max Comfortable Temperature (toddler) : " + maxComfortableTemperature_Toddler.ToStringTemperature(), tooltip: "[Default: 28C / 82F]");
+	maxComfortableTemperature_Toddler = l.Slider(maxComfortableTemperature_Toddler, 26f, 50f);
+
+	l.Label("Min Comfortable Temperature (toddler) : " + minComfortableTemperature_Toddler.ToStringTemperature(), tooltip: "[Default: 18C / 64F]");
+	minComfortableTemperature_Toddler = l.Slider(minComfortableTemperature_Toddler, -30f, 25f);
+
+	l.GapLine();
+
+	l.Label("Time to fully learn (as a % of the toddler lifestage)");
+	l.GapLine();
+
+	l.Label("Walking : " + learningFactor_Walk.ToStringPercent(), tooltip: "[Default: 80%]");
+	learningFactor_Walk = l.Slider(learningFactor_Walk, 0.01f, 1f);
+
+	l.Label("Manipulation : " + learningFactor_Manipulation.ToStringPercent(), tooltip: "[Default: 80%]");
+	learningFactor_Manipulation = l.Slider(learningFactor_Manipulation, 0.01f, 1f);
+
+	l.GapLine();
+
+	l.CheckboxLabeled("Baby talk for toddlers :", ref toddlerBabyTalk, "[Default: off] Whether toddler thoughts should be translated to goo goo ba gee");
+
+	l.End();
+
+	Toddlers_Init.ApplySettings();
+}
 
 
 

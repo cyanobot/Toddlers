@@ -32,8 +32,6 @@ namespace Toddlers
 
 			Job job = JobMaker.MakeJob(JobDefOf.BringBabyToSafetyUnforced, baby);
 			job.count = 1;
-			//JobDriver_BringBabyToSafety driver = (JobDriver_BringBabyToSafety)job.GetCachedDriver(pawn);
-			//driver.moveReason = moveReason;
 
 			return job;
 		}
@@ -48,6 +46,13 @@ namespace Toddlers
 			{
 				return null;
 			}
+
+			//don't interrupt other things we're doing to the baby
+			if (pawn.CurJob != null && pawn.CurJob.AnyTargetIs(baby))
+			{
+				return null;
+			}
+
 			AutofeedMode autofeedMode = baby.mindState.AutofeedSetting(pawn);
 			//Log.Message("JobGiver_BringBabyToSafety for " + pawn + " (" + autofeedMode + ") found unsafe baby " + baby + ", moveReason: " + moveReason);
 
@@ -96,8 +101,15 @@ namespace Toddlers
 			AddFailCondition(() => pawn.Downed);
 			
 			LocalTargetInfo tempSafePlace = SafePlaceForBaby(Baby, pawn, out BabyMoveReason moveReason);
+
 			if (tempSafePlace == Baby.PositionHeld && !pawn.IsCarryingPawn(Baby))
 			{
+				if (job.playerForced)
+                {
+					Messages.Message(
+						"{BABY_labelShort} is already in the best available safe location."
+						.Formatted(Baby.Named("BABY")), new LookTargets(pawn, Baby), MessageTypeDefOf.NeutralEvent);
+				}
 				this.EndJobWith(JobCondition.Succeeded);
 				yield break;
             }

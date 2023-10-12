@@ -38,6 +38,7 @@ namespace Toddlers
         public static ThingDef Apparel_BabyOnesie;
         public static ThingDef Apparel_BabyTuque;
         public static ThingDef Apparel_BabyShadecone;
+        public static ThingDef Apparel_BabyTribal;
 
         public static ThoughtDef BabyNoExpectations;
 

@@ -87,9 +87,11 @@ namespace Toddlers
                 if (findBed.Medical) return findBed;            //medical bed is better than nonmedical
             }
 
-            //if current bed is a bad temperature
+            //scrapped this because it contradicts bed-ownership logic used by other pawns
+            //current bed is a bad temperature
             //and findBed is better
             //then findBed is a more appropriate bed
+            /*
             Map map = p.MapHeld;
             if (!DangerAcceptable(p, currentBed.Position))
             {
@@ -98,6 +100,7 @@ namespace Toddlers
                     return findBed;
                 }
             }
+            */
 
             //in the absence of a compelling reason to move, prefer current bed
             return currentBed;
@@ -275,6 +278,12 @@ namespace Toddlers
             {
                 return true;
             }
+            if (toddler.MapHeld.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer).Any(
+                p => p.CurJob != null && p.CurJob.AnyTargetIs(toddler)
+                ))
+            {
+                return true;
+            }
             return false;
         }
 
@@ -312,13 +321,11 @@ namespace Toddlers
             if (baby.InBed()) return false;
 
             if (baby.Downed) return true;
-            if (!RestUtility.Awake(baby)) return true;
+            if (!RestUtility.Awake(baby) && Toddlers_Settings.careAboutFloorSleep) return true;
 
             if (baby.needs == null || baby.needs.rest == null) return false;
 
-            if (baby.timetable != null && baby.timetable.CurrentAssignment == TimeAssignmentDefOf.Sleep) return true;
-
-            if (baby.needs.rest.CurLevelPercentage < SLEEP_THRESHOLD) return true;
+            if (baby.timetable != null && baby.timetable.CurrentAssignment == TimeAssignmentDefOf.Sleep && Toddlers_Settings.careAboutBedtime) return true;
 
             return false;
         }
@@ -385,7 +392,6 @@ namespace Toddlers
         {
             //Log.Message("Firing BabyNeedsMovingByHauler, baby: " + baby + ", hauler: " + hauler);
 
-            //preferredRegion = null;
 
             IntVec3 pos = baby.PositionHeld;
             Map map = baby.MapHeld;
@@ -397,6 +403,7 @@ namespace Toddlers
             //still try to output a region
             if (!BabyNeedsMoving(baby, out babyMoveReason))
             {
+                //Log.Message("!BabyNeedsMoving");
                 //if the baby can be returned to bed, try that
                 if (bed != null && !bed.IsForbidden(baby) && !bed.IsForbidden(hauler) && DangerAcceptable(baby,bed.Position)
                     && (!baby.Downed || baby.SafeTemperatureAtCell(bed.Position, map)))
@@ -413,14 +420,7 @@ namespace Toddlers
             }
             
 
-            //Log.Message("First pass babyMoveReason: " + babyMoveReason);
-
-            //shouldn't happen but just in case
-            /*
-            if (babyMoveReason == BabyMoveReason.None) 
-                return false;
-            */
-
+           // Log.Message("First pass babyMoveReason: " + babyMoveReason);
 
             //second-pass investigation of each potential move reason
             //in priority order
@@ -693,6 +693,7 @@ namespace Toddlers
 
         public static LocalTargetInfo SafePlaceForBaby(Pawn baby, Pawn hauler, out BabyMoveReason babyMoveReason)
         {
+            //Log.Message("Firing SafePlaceForBaby");
             babyMoveReason = BabyMoveReason.None;
 
             if (!ChildcareUtility.CanSuckle(baby, out var reason) || !CanHaulBabyNow(hauler, baby, false, out var _, true))
@@ -706,6 +707,7 @@ namespace Toddlers
             {
                 return LocalTargetInfo.Invalid;
             }
+            //Log.Message("SafePlaceForBaby called BabyNeedsMovingByHauler, got babyMoveReason: " + babyMoveReason);
 
             if (bed != null && bed.GetRegion() == preferredRegion)
             {

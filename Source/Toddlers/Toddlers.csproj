@@ -17,7 +17,7 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Content\Assemblies\</OutputPath>
+    <OutputPath>..\..\Assemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -51,9 +51,14 @@
       <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Scrapyard.cs" />
+    <Compile Include="BabyApparel.cs" />
     <Compile Include="HAR\BodyAddon.cs" />
     <Compile Include="HAR\AlienRace.LifeStages.cs" />
     <Compile Include="HAR\AlienRace.Graphics.cs" />
@@ -89,6 +94,7 @@
     <Compile Include="Play\ToddlerPlayGiver_PlayDecor.cs" />
     <None Include="TestPatch.cs" />
     <Compile Include="Toddlers_DebugTools.cs" />
+    <Compile Include="Toddlers_Init.cs" />
     <Compile Include="Toddlers_Mod.cs" />
     <Compile Include="ToddlerUtility.cs" />
     <Compile Include="Hediff_LearningManipulation.cs" />
