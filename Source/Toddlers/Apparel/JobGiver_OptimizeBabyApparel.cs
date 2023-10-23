@@ -99,7 +99,17 @@ namespace Toddlers
 			List<Apparel> wornApparel = baby.apparel.WornApparel;
 			//Log.Message("currentOutfit: " + baby.outfits.CurrentOutfit.ToString());
 			//Log.Message("wornApparel: " + wornApparel.ToString());
-			
+			for (int i = 0; i < wornApparel.Count; i++)
+			{
+				wornApparelScores.Add(JobGiver_OptimizeApparel.ApparelScoreRaw(baby, wornApparel[i]));
+				if (!currentOutfit.filter.Allows(wornApparel[i]) && baby.outfits.forcedHandler.AllowedToAutomaticallyDrop(wornApparel[i]) && !baby.apparel.IsLocked(wornApparel[i]))
+				{
+					Job job2 = JobMaker.MakeJob(Toddlers_DefOf.UndressBaby, baby, wornApparel[i]);
+					job2.haulDroppedApparel = true;
+					return job2;
+				}
+			}
+
 			Thing thing = null;
 			float num2 = 0f;
 			List<Thing> list = hauler.Map.listerThings.ThingsInGroup(ThingRequestGroup.Apparel);
@@ -124,8 +134,8 @@ namespace Toddlers
 				//Log.Message("apparel.IsInAnyStorage(): " + apparel.IsInAnyStorage());
 				//Log.Message("apparel.IsForbidden(hauler): " + apparel.IsForbidden(hauler));
 				//Log.Message("apparel.IsForbidden(baby): " + apparel.IsForbidden(baby));
-				//removed currentOutfit.filter.Allows(apparel)
-				if (apparel.IsInAnyStorage() 
+				if (currentOutfit.filter.Allows(apparel)
+					&& apparel.IsInAnyStorage() 
 					&& !apparel.IsForbidden(hauler) && !apparel.IsForbidden(baby)
 					&& !apparel.IsBurning())
 				{

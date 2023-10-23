@@ -23,6 +23,7 @@ namespace Toddlers
     {
         public static bool careAboutBedtime = true;
         public static bool careAboutFloorSleep = true;
+        public static bool feedCapableToddlers = true;
 
         public static bool customRenderer = true;
         public static bool canDraftToddlers = false;
@@ -56,6 +57,7 @@ namespace Toddlers
 
             Scribe_Values.Look(ref careAboutBedtime, "careAboutBedtime", careAboutBedtime, true);
             Scribe_Values.Look(ref careAboutFloorSleep, "careAboutFloorSleep", careAboutFloorSleep, true);
+            Scribe_Values.Look(ref feedCapableToddlers, "feedCapableToddlers", feedCapableToddlers, true);
             Scribe_Values.Look(ref customRenderer, "customRenderer", customRenderer, true);
             Scribe_Values.Look(ref canDraftToddlers, "canDraftToddlers", canDraftToddlers, true);
             Scribe_Values.Look(ref playFallFactor_Baby, "playFallFactor_Baby", playFallFactor_Baby, true);
@@ -102,6 +104,7 @@ namespace Toddlers
 
             l.CheckboxLabeled("Pawns care about baby's Sleep schedue :", ref careAboutBedtime, "[Default: on] Pawns will return babies/toddlers to their cribs when they're scheduled to Sleep");
             l.CheckboxLabeled("Pawns care about babies sleeping on floor :", ref careAboutFloorSleep, "[Default: on] Pawns will return babies/toddlers to their cribs if they notice them sleeping on the floor");
+            l.CheckboxLabeled("Pawns feed toddlers who could feed themselves :", ref feedCapableToddlers, "[Defaut: on] Pawns will feed toddlers even if they are able to feed themselves");
 
             //l.CheckboxLabeled("Baby clothes at tribal tech level :", ref tribalBabyClothes, "[Default: off] Toggles whether baby clothes require industrial tech");
 
@@ -115,7 +118,7 @@ namespace Toddlers
                     floatMenuOptions.Add(new FloatMenuOption(ApparelSettingLabel(a), delegate ()
                     {
                         apparelSetting = a;
-                        BabyApparel.ApplyApparelSettings();
+                        ApparelSettings.ApplyApparelSettings();
                     })
                     {
                         tooltip = ApparelSettingTooltip(a)

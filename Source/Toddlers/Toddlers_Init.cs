@@ -30,7 +30,7 @@ namespace Toddlers
             harmony.PatchAll();
 
             ApplySettings();
-            BabyApparel.ApplyApparelSettings();
+            ApparelSettings.ApplyApparelSettings();
 
             //Toddlers_Mod.televisionDefs = DefDatabase<JoyGiverDef>.GetNamed("WatchTelevision").thingDefs;
             //Toddlers_Mod.televisionMaxParticipants = DefDatabase<JobDef>.GetNamed("WatchTelevision").joyMaxParticipants;

@@ -101,6 +101,7 @@ namespace Toddlers
 			AddFailCondition(() => pawn.Downed);
 			
 			LocalTargetInfo tempSafePlace = SafePlaceForBaby(Baby, pawn, out BabyMoveReason moveReason);
+			//Log.Message("tempSafePlace: " + tempSafePlace);
 
 			if (tempSafePlace == Baby.PositionHeld && !pawn.IsCarryingPawn(Baby))
 			{
@@ -139,6 +140,10 @@ namespace Toddlers
                     case BabyMoveReason.ReturnToBed:
 						text = "{ADULT_labelShort} is putting {BABY_labelShort} to bed.";
 						break;
+					case BabyMoveReason.Held:
+						//text = "{ADULT_labelShort} is putting {BABY_labelShort} down.";
+						text = null;
+						break;
                     default:
 						text = "{ADULT_labelShort} is trying to move {BABY_labelShort} for an unknown reason.";
 						break;
@@ -167,10 +172,22 @@ namespace Toddlers
 				toil_GoToDest.FailOnForbidden(TargetIndex.B);
 			}
 
+			Toil toil_interruptBaby = ToilMaker.MakeToil("InterruptBaby")
+				.FailOnInvalidOrDestroyed(TargetIndex.A);
+			toil_interruptBaby.initAction = delegate
+			{
+				Pawn baby = this.job.targetA.Pawn;
+				if (baby.Awake())
+				{
+					baby.jobs.StartJob(JobMaker.MakeJob(JobDefOf.Wait_MaintainPosture, null, 600), JobCondition.InterruptForced);
+				}
+			};
+
 
 			yield return Toils_Jump.JumpIf(toil_FindBabyDestination, () => pawn.IsCarryingPawn(Baby));
 			yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch).FailOnSomeonePhysicallyInteracting(TargetIndex.A);
 
+			yield return toil_interruptBaby;
 			yield return toil_FindBabyDestination;
 			yield return Toils_Reserve.ReserveDestinationOrThing(TargetIndex.B);
 

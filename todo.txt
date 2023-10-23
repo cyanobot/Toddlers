@@ -1,16 +1,8 @@
 High Priority	
-	apparel 
-		*modded texture support
-		*multi textures
-		*styles
-		*make shield belt/cloth mask/gas mask always-possible for babies
-	don't feed toddler so urgently if toddler can feed themselves
 	less putting toddler to bed
-		-no new bed if toddler has assigned bed
 		unknown reason to remove toddler from crib when coming to feed/play
-		*reduce drive to put toddlers to bed
-		*toggle for whether pawns should care about putting sleepy toddlers to bed
 		pawns failing to pick toddler up
+		pawns viewing floor as best place for sleepy toddlers
 		
 		
 
@@ -43,9 +35,7 @@ Low Priority
 	toddlers make mess while feeding themselves
 	toddlers interact with each other
 	think about disturbed sleep
-	don't wake them to feed so much
 	hideaway building to protect from raiders
-	zzzs still show on toddlers with mod No ZzZ
 	
 	Capabilities	
 	should manipulation come with an actual manipulation penalty?

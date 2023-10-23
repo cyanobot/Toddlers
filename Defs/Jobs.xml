@@ -58,6 +58,12 @@
 	</JobDef>
 	
 	<JobDef>
+		<defName>UndressBaby</defName>
+		<driverClass>Toddlers.JobDriver_UndressBaby</driverClass>
+		<reportString>undressing TargetA.</reportString>
+	</JobDef>
+	
+	<JobDef>
 		<defName>KidnapToddler</defName>
 		<driverClass>Toddlers.JobDriver_KidnapToddler</driverClass>
 		<reportString>kidnapping TargetA.</reportString>

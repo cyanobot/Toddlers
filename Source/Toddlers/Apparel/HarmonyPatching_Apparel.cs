@@ -85,4 +85,14 @@ namespace Toddlers
             }
         }
     }
+
+    [HarmonyPatch(typeof(JobGiver_OptimizeApparel),"TryGiveJob")]
+    class OptimizeApparel_Patch
+    {
+        static void Postfix(Job __result, Pawn pawn)
+        {
+            if (ToddlerUtility.IsToddler(pawn) && __result != null)
+                __result.haulDroppedApparel = false;
+        }
+    }
 }

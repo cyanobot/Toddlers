@@ -26,7 +26,8 @@ namespace Toddlers
             OutsideZone,
             Medical,
             TemperatureNonUrgent,
-            ReturnToBed
+            ReturnToBed,
+            Held
         }
 
         public static bool IsSleepy(Pawn pawn)
@@ -70,9 +71,20 @@ namespace Toddlers
         //bit of logic to compare current bed also
         public static Building_Bed BestBedFor(Pawn p, Pawn traveler, bool checkSocialProperness, bool ignoreOtherReservations = false, GuestStatus? guestStatus = null)
         {
-            Building_Bed findBed = RestUtility.FindBedFor(p, traveler, checkSocialProperness, ignoreOtherReservations, guestStatus);
             Building_Bed currentBed = p.CurrentBed();
+            Building_Bed findBed = RestUtility.FindBedFor(p, traveler, checkSocialProperness, ignoreOtherReservations, guestStatus);
+   
+            Building_Bed findBed_reserveIgnored = RestUtility.FindBedFor(p, traveler, checkSocialProperness, true, guestStatus);
 
+            //Log.Message("Called FindBedFor, p: " + p + ", currentBed: " + currentBed + ", findBed: " + findBed 
+             //   + ", findBed_ri: " + findBed_reserveIgnored + ", reserved by?: " + p.MapHeld.reservationManager.ReservedBy(findBed_reserveIgnored, p));
+
+            if (findBed != findBed_reserveIgnored
+                && p.MapHeld.reservationManager.ReservedBy(findBed_reserveIgnored,p))
+            {
+                findBed = findBed_reserveIgnored;
+            }
+            
             if (currentBed == null) return findBed;         //if not in bed, use findbed (which could also be null, but we'll just return that)
             
             //if in bed:
@@ -318,12 +330,15 @@ namespace Toddlers
 
         public static bool NeedsMoving_ReturnToBed(Pawn baby)
         {
+            //Log.Message("NeedsMoving_ReturnToBed, baby: " + baby + ", Spawned: " + baby.Spawned);
             if (baby.InBed()) return false;
 
             if (baby.Downed) return true;
             if (!RestUtility.Awake(baby) && Toddlers_Settings.careAboutFloorSleep) return true;
 
             if (baby.needs == null || baby.needs.rest == null) return false;
+
+            //if (!baby.Spawned) return true;
 
             if (baby.timetable != null && baby.timetable.CurrentAssignment == TimeAssignmentDefOf.Sleep && Toddlers_Settings.careAboutBedtime) return true;
 
@@ -383,6 +398,12 @@ namespace Toddlers
                 return true;
             }
 
+            if (baby.Spawned)
+            {
+                babyMoveReason = BabyMoveReason.Held;
+                return true;
+            }
+
             return false;
         }
 
@@ -397,6 +418,7 @@ namespace Toddlers
             Map map = baby.MapHeld;
             //find baby's bed as a default to return them to
             Building_Bed bed = BestBedFor(baby, hauler, true);
+            //Log.Message("bed: " + bed);
 
             //if there's no pressing reason to move the baby
             //woulld usually happen because the player gave the order to return baby to a safe place
@@ -420,7 +442,7 @@ namespace Toddlers
             }
             
 
-           // Log.Message("First pass babyMoveReason: " + babyMoveReason);
+            //Log.Message("First pass babyMoveReason: " + babyMoveReason);
 
             //second-pass investigation of each potential move reason
             //in priority order
@@ -583,10 +605,13 @@ namespace Toddlers
             }
 
             //return helpless babies and sleepy toddlers to their beds
-            if (NeedsMoving_ReturnToBed(baby))
+            if (NeedsMoving_ReturnToBed(baby) || hauler.IsCarryingPawn(baby))
             {
                 //Log.Message("Baby is downed or sleepy");
-                babyMoveReason = BabyMoveReason.ReturnToBed;
+                if (NeedsMoving_ReturnToBed(baby))
+                    babyMoveReason = BabyMoveReason.ReturnToBed;
+                else
+                    babyMoveReason = BabyMoveReason.Held;
                 if (bed != null && !bed.IsForbidden(baby) && !bed.IsForbidden(hauler))
                 {
                     //check if the temperature at the bed is okay before moving them there
@@ -698,6 +723,7 @@ namespace Toddlers
 
             if (!ChildcareUtility.CanSuckle(baby, out var reason) || !CanHaulBabyNow(hauler, baby, false, out var _, true))
             {
+                //Log.Message("!CanSuckle or !CanHaulBabyNow");
                 return LocalTargetInfo.Invalid;
             }
 
@@ -705,9 +731,10 @@ namespace Toddlers
 
             if (!BabyNeedsMovingByHauler(baby, hauler, out Region preferredRegion, out babyMoveReason))
             {
+                //Log.Message("SafePlaceForBaby called BabyNeedsMovingByHauler, got babyMoveReason: " + babyMoveReason);
                 return LocalTargetInfo.Invalid;
             }
-            //Log.Message("SafePlaceForBaby called BabyNeedsMovingByHauler, got babyMoveReason: " + babyMoveReason);
+           
 
             if (bed != null && bed.GetRegion() == preferredRegion)
             {

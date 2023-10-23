@@ -13,17 +13,24 @@ using System.IO;
 
 namespace Toddlers
 {
-    class BabyApparel
+    class ApparelSettings
     {
+        //public static List<ThingCategoryDef> categoryDefs_Apparel = new List<ThingCategoryDef>() { Toddlers_DefOf.ApparelBaby };
+
 
         public static void ApplyApparelSettings()
         {
-            List<ThingDef> babyClothes = new List<ThingDef>
-                { Toddlers_DefOf.Apparel_BabyOnesie, Toddlers_DefOf.Apparel_BabyTuque, Toddlers_DefOf.Apparel_BabyShadecone, Toddlers_DefOf.Apparel_BabyTribal };
+            List<ThingDef> babyClothes = DefDatabase<ThingDef>.AllDefs.Where(x =>
+                x.IsApparel && x.apparel.developmentalStageFilter.Has(DevelopmentalStage.Baby) 
+                && !x.apparel.developmentalStageFilter.Has(DevelopmentalStage.Child) 
+                && !x.apparel.developmentalStageFilter.Has(DevelopmentalStage.Adult)).ToList();
+            babyClothes.RemoveAll(x => x == null);
             List<ThingDef> childClothes = DefDatabase<ThingDef>.AllDefs.Where(x =>
                 x.IsApparel && x.apparel.developmentalStageFilter.Has(DevelopmentalStage.Child)).ToList();
+            childClothes.RemoveAll(x => x == null);
             List<ThingDef> specialClothes = new List<ThingDef>
                 { ThingDefOf.Apparel_GasMask, ThingDefOf.Apparel_ShieldBelt, DefDatabase<ThingDef>.AllDefsListForReading.Find(x => x.defName == "Apparel_ClothMask") };
+            specialClothes.RemoveAll(x => x == null);
 
             List<ThingDef> industrialRecipeUsers = new List<ThingDef>
                 { DefDatabase<ThingDef>.GetNamed("ElectricTailoringBench"), DefDatabase<ThingDef>.GetNamed("HandTailoringBench") };
@@ -45,6 +52,7 @@ namespace Toddlers
                     {
                         //Log.Message("babyClothe: " + babyClothe);
                         SetRecipesHidden(babyClothe);
+                        SetGameVisibility(babyClothe, false);
                     }
 
                     foreach (ThingDef clothe in childClothes.Concat(specialClothes))
@@ -62,10 +70,12 @@ namespace Toddlers
                         if (babyClothe == Toddlers_DefOf.Apparel_BabyTribal)
                         {
                             SetRecipesHidden(babyClothe);
+                            SetGameVisibility(babyClothe, false);
                         }
                         else
                         {
                             SetRecipesMedieval(babyClothe);
+                            SetGameVisibility(babyClothe, true);
                         }
                     }
 
@@ -87,6 +97,7 @@ namespace Toddlers
                     {
                         //Log.Message("babyClothe: " + babyClothe);
                         SetRecipesNeolithic(babyClothe);
+                        SetGameVisibility(babyClothe, true);
                     }
 
                     foreach (ThingDef childClothe in childClothes)
@@ -115,15 +126,17 @@ namespace Toddlers
                             SetRecipesMedieval(babyClothe);
                         }
 
-                        foreach (ThingDef childClothe in childClothes)
-                        {
-                            //Log.Message("childClothe: " + childClothe);
-                            childClothe.apparel.developmentalStageFilter &= ~DevelopmentalStage.Baby;
-                        }
-                        foreach (ThingDef specialClothe in specialClothes)
-                        {
-                            specialClothe.apparel.developmentalStageFilter |= DevelopmentalStage.Baby;
-                        }
+                        SetGameVisibility(babyClothe, true);
+                    }
+
+                    foreach (ThingDef childClothe in childClothes)
+                    {
+                        //Log.Message("childClothe: " + childClothe);
+                        childClothe.apparel.developmentalStageFilter &= ~DevelopmentalStage.Baby;
+                    }
+                    foreach (ThingDef specialClothe in specialClothes)
+                    {
+                        specialClothe.apparel.developmentalStageFilter |= DevelopmentalStage.Baby;
                     }
                     break;
 
@@ -135,10 +148,8 @@ namespace Toddlers
                     foreach (ThingDef babyClothe in babyClothes)
                     {
                         //Log.Message("babyClothe: " + babyClothe);
-                        foreach (RecipeDef recipe in DefDatabase<RecipeDef>.AllDefs.Where((RecipeDef x) => x.ProducedThingDef == babyClothe))
-                        {
-                            SetRecipesHidden(babyClothe);
-                        }
+                        SetRecipesHidden(babyClothe);
+                        SetGameVisibility(babyClothe, false);
                     }
 
                     foreach (ThingDef childClothe in childClothes)
@@ -262,6 +273,20 @@ namespace Toddlers
             if (def.apparel.wornGraphicPath == BaseContent.PlaceholderGearImagePath) return false;
 
             return true;
+        }
+
+        public static void SetGameVisibility(ThingDef def, bool visible)
+        {
+            if (visible)
+            {
+                //def.thingCategories = categoryDefs_Apparel;
+                def.tradeability = Tradeability.All;
+            }
+            else
+            {
+                //def.thingCategories.Clear();
+                def.tradeability = Tradeability.Sellable;
+            }
         }
 
         public static void SetRecipesHidden(ThingDef apparel)

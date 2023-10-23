@@ -58,7 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Scrapyard.cs" />
-    <Compile Include="BabyApparel.cs" />
+    <Compile Include="Apparel\ApparelSettings.cs" />
+    <Compile Include="Apparel\JobDriver_UndressBaby.cs" />
     <Compile Include="HAR\BodyAddon.cs" />
     <Compile Include="HAR\AlienRace.LifeStages.cs" />
     <Compile Include="HAR\AlienRace.Graphics.cs" />
