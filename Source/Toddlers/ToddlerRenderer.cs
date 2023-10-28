@@ -229,7 +229,7 @@ namespace Toddlers
 			{
 				AlienRace alienRace = Patch_HAR.GetAlienRaceWrapper(pawn);
 				//Log.Message("alienRace: " + alienRace + ", tweak: " + alienRace.crawlingTweak);
-				if (alienRace.crawlingTweak != null)
+				if (alienRace != null && alienRace.crawlingTweak != null)
 				{
 					Vector2 tweakOffset = alienRace.crawlingTweak.HeadOffset(bodyFacing);
 					//Log.Message("tweakOffset(" + bodyFacing + "): " + tweakOffset);

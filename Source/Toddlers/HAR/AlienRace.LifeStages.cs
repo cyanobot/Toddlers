@@ -173,7 +173,7 @@ namespace Toddlers
             {
                 LifeStageAge lsa = def.race.lifeStageAges[i];
                 //Log.Message("Life stage: " + i + ", def: " + lsa.def.defName
-                //    + ", minAge: " + lsa.minAge);
+                 //   + ", minAge: " + lsa.minAge);
             }
 
             lifeStageToddler = (LifeStageAge)lsaa_Toddler;

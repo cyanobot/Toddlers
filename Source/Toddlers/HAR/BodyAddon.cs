@@ -43,6 +43,19 @@ namespace Toddlers
 
         public BodyAddon(object orig)
         {
+            /*
+            Log.Message("field_alignWithHead: " + field_alignWithHead);
+            Log.Message("field_inFrontOfBody: " + field_inFrontOfBody);
+            Log.Message("field_layerInvert: " + field_layerInvert);
+            Log.Message("field_ageGraphics: " + field_ageGraphics);
+            Log.Message("field_defaultOffsets: " + field_defaultOffsets);
+            Log.Message("field_offsets: " + field_offsets);
+            Log.Message("field_femaleOffsets: " + field_femaleOffsets);
+            Log.Message("property_Name: " + property_Name);
+            Log.Message("method_GetRotationOffset: " + method_GetRotationOffset);
+            Log.Message("method_GetOffset_ByTypes: " + method_GetOffset_ByTypes);
+            */
+
             name = (string)property_Name.GetValue(orig);
             if (name == null)
             {
@@ -55,17 +68,34 @@ namespace Toddlers
             if (!HARClasses["BodyAddon"].IsAssignableFrom(orig.GetType()))
                 Log.Error("Toddlers.BodyAddon attempted to initialise wrapper for a non-BodyAddon object " + orig);
             this.orig = orig;
+            //Log.Message("orig: " + orig);
 
             ageGraphics = field_ageGraphics.GetValue(orig);
+            //Log.Message("ageGraphics: " + ageGraphics);
 
             object defaultOffsets = field_defaultOffsets.GetValue(orig);
-            defaultOffsets_north = method_GetRotationOffset.Invoke(defaultOffsets, new object[] { Rot4.North });
+            //Log.Message("defaultOffsets: " + defaultOffsets);
+            if (defaultOffsets != null)
+                defaultOffsets_north = method_GetRotationOffset.Invoke(defaultOffsets, new object[] { Rot4.North });
+            else
+                defaultOffsets_north = null;
+            //Log.Message("defaultOffsets_north: " + defaultOffsets_north);
 
             object offsets = field_offsets.GetValue(orig);
-            offsets_north = method_GetRotationOffset.Invoke(offsets, new object[] { Rot4.North });
+            //Log.Message("offsets: " + offsets);
+            if (offsets != null)
+                offsets_north = method_GetRotationOffset.Invoke(offsets, new object[] { Rot4.North });
+            else
+                offsets_north = null;
+            //Log.Message("offsets_north: " + offsets_north);
 
             object femaleOffsets = field_offsets.GetValue(orig);
-            femaleOffsets_north = method_GetRotationOffset.Invoke(femaleOffsets, new object[] { Rot4.North });
+            //Log.Message("femaleOffsets: " + femaleOffsets);
+            if (femaleOffsets != null)
+                femaleOffsets_north = method_GetRotationOffset.Invoke(femaleOffsets, new object[] { Rot4.North });
+            else
+                femaleOffsets_north = null;
+            //Log.Message("femaleOffsets_north: " + femaleOffsets_north);
 
             alignWithHead = (bool)field_alignWithHead.GetValue(orig);
             inFrontOfBody = (bool)field_inFrontOfBody.GetValue(orig);
