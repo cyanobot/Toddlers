@@ -1,6 +1,10 @@
 High Priority	
-	unknown reason to remove toddler from crib when coming to feed/play
-	pawns failing to pick toddler up	
+	less putting toddler to bed
+		unknown reason to remove toddler from crib when coming to feed/play
+		pawns failing to pick toddler up
+		pawns viewing floor as best place for sleepy toddlers
+		
+		
 
 	
 Medium Priority

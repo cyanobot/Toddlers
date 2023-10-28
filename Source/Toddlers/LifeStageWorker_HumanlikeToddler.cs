@@ -49,7 +49,7 @@ namespace Toddlers
             {
 				if (Toddlers_Mod.HARLoaded)
                 {
-					if (Patch_HAR.GetAlienRaceWrapper(pawn) != null && Patch_HAR.GetAlienRaceWrapper(pawn).humanlikeGait)
+					if (Patch_HAR.GetAlienRaceWrapper(pawn).humanlikeGait)
 						pawn.health.AddHediff(HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, pawn));
 				}
                 else

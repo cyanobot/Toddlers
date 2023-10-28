@@ -278,17 +278,17 @@ namespace Toddlers
             return result;
         }
 
-        public static bool IsToddlerBusy(Pawn toddler, bool urgent=true)
+        public static bool IsToddlerBusy(Pawn toddler)
         {
             if (toddler.Drafted) return true;
             if (toddler.GetLord() != null) return true;
             JobDef curJob = toddler.CurJobDef;
-            if (toddler.needs != null && toddler.needs.food != null
+            if ((toddler.needs != null && toddler.needs.food != null
+                    && toddler.needs.food.CurLevelPercentage < toddler.needs.food.PercentageThreshUrgentlyHungry)
                     && (curJob == JobDefOf.Ingest || (curJob == JobDefOf.TakeFromOtherInventory 
                     && toddler.CurJob.targetA.HasThing && FoodUtility.WillEat(toddler, toddler.CurJob.targetA.Thing))))
             {
-                if (!urgent || toddler.needs.food.CurLevelPercentage < toddler.needs.food.PercentageThreshUrgentlyHungry)
-                    return true;
+                return true;
             }
             if (toddler.MapHeld.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer).Any(
                 p => p.CurJob != null && p.CurJob.AnyTargetIs(toddler)
@@ -357,8 +357,7 @@ namespace Toddlers
                 return false;
 
             //don't move drafted babies to avoid conflict with player intention
-            //also don't move babies who are feeding themselves to avoid starvation
-            if (IsToddlerBusy(baby,true))
+            if (baby.Drafted)
                 return false;
 
             //don't move babies too often
@@ -385,12 +384,6 @@ namespace Toddlers
             {
                 babyMoveReason = BabyMoveReason.Medical;
                 return true;
-            }
-
-            //if there's not an important reason, don't move babies who are busy eating
-            if (IsToddlerBusy(baby, false))
-            {
-                return false;
             }
 
             if (NeedsMoving_TemperatureNonUrgent(baby, pos))
@@ -786,12 +779,10 @@ namespace Toddlers
                 }
 
                 //don't move toddlers who are busy eg not starving / being drafted
-                /*
                 if (NeedsMoving_TemperatureDanger(pawn, pawn.PositionHeld) && pawn.Drafted)
                     continue;
-                else if (IsToddlerBusy(pawn,true))
+                else if (IsToddlerBusy(pawn))
                     continue;
-                */
 
                 //find out if the baby needs to go somewhere 
                 //and that it isn't where they already are

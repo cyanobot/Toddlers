@@ -25,10 +25,7 @@ namespace Toddlers
             else
             {
                 AlienRace alienRace = Patch_HAR.GetAlienRaceWrapper(p);
-                if (alienRace != null)
-                    return alienRace.toddlerMinAge;
-                else
-                    return BASE_MIN_AGE;
+                return alienRace.toddlerMinAge;
             }
         }
 
@@ -41,10 +38,7 @@ namespace Toddlers
             else
             {
                 AlienRace alienRace = Patch_HAR.GetAlienRaceWrapper(p);
-                if (alienRace != null)
-                    return alienRace.lifeStageChild.minAge;
-                else
-                    return BASE_MAX_AGE;
+                return alienRace.lifeStageChild.minAge;
             }
         }
 
@@ -95,7 +89,7 @@ namespace Toddlers
             hediff_LearningManipulation.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Manipulation);
             p.health.AddHediff(hediff_LearningManipulation);
 
-            if (Toddlers_Mod.HARLoaded && Patch_HAR.GetAlienRaceWrapper(p) != null && !Patch_HAR.GetAlienRaceWrapper(p).humanlikeGait) return;
+            if (Toddlers_Mod.HARLoaded && !Patch_HAR.GetAlienRaceWrapper(p).humanlikeGait) return;
 
             Hediff_LearningToWalk hediff_LearningToWalk = (Hediff_LearningToWalk)HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, p);
             hediff_LearningToWalk.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Walk);

@@ -29,7 +29,7 @@ namespace Toddlers
 
         public AlienRace(ThingDef thingDef)
         {
-            Log.Message("Toddlers Mod initialising AlienRace wrapper for: " + thingDef.defName);
+            //Log.Message("Toddlers Mod initialising AlienRace wrapper for: " + thingDef.defName);
 
             def = thingDef;
 
@@ -38,7 +38,7 @@ namespace Toddlers
             {
                 LifeStageAge lsa = def.race.lifeStageAges[i];
                 //Log.Message("Life stage: " + i + ", def: " + lsa.def.defName
-               //     + ", minAge: " + lsa.minAge);
+                //    + ", minAge: " + lsa.minAge);
             }
 
             InitLifeStageFields();
@@ -58,7 +58,7 @@ namespace Toddlers
             if (!CanCreateToddlerLifeStage()) return;
 
             humanlikeGait = HasHumanlikeGait();
-            //Log.Message("humanlikeGait: " + humanlikeGait);
+            Log.Message("humanlikeGait: " + humanlikeGait);
 
             alienSettings = field_ThingDef_AlienRace_alienRace.GetValue(def);
             //Log.Message("alienSettings: " + alienSettings);
@@ -77,11 +77,8 @@ namespace Toddlers
             //Log.Message("crawlingTweak: " + crawlingTweak);
 
             CreateToddlerLifeStage();
-            //Log.Message("Finished CreateToddlerLifeStage");
             UpdateAgeGraphics();
-            //Log.Message("Finished UpdateAgeGraphics");
             UpdateBodyTypeGraphics();
-            //Log.Message("Finished UpdateBodyTypeGraphics");
         }
 
         public bool HasHumanlikeGait()
