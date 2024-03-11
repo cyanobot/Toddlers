@@ -64,6 +64,11 @@ namespace Toddlers
             float toddlerStageInTicks = (ToddlerMaxAge(p) - ToddlerMinAge(p)) * 60f * 60000f;
             //age up at 1 yearold
             float ticksSinceBaby = (float)p.ageTracker.AgeBiologicalTicks - (ToddlerMinAge(p) * 60f * 60000f);
+<<<<<<< Updated upstream
+=======
+            //Log.Message("MaxAge: " + ToddlerMaxAge(p) + ", MinAge: " + ToddlerMinAge(p) + ", toddlerStageInTicks: " + toddlerStageInTicks
+            //    + ", ticksSinceBaby: " + ticksSinceBaby + ", PercentGrowth: " + (ticksSinceBaby / toddlerStageInTicks));
+>>>>>>> Stashed changes
             return (ticksSinceBaby / toddlerStageInTicks);
         }
 

@@ -145,7 +145,8 @@ namespace Toddlers
 						text = null;
 						break;
                     default:
-						text = "{ADULT_labelShort} is trying to move {BABY_labelShort} for an unknown reason.";
+						//text = "{ADULT_labelShort} is trying to move {BABY_labelShort} for an unknown reason.";
+						text = null;
 						break;
                 }
 

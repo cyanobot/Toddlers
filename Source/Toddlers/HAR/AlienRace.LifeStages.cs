@@ -65,6 +65,11 @@ namespace Toddlers
                     toddlerMinAge = lsa.minAge;
                     lifeStageBaby = def.race.lifeStageAges[i - 1];
                     lifeStageChild = def.race.lifeStageAges[i + 1];
+<<<<<<< Updated upstream
+=======
+                    //Log.Message("def: " + def.defName + ", hasToddler: " + hasToddler + ", lifeStageToddler: " + lifeStageToddler + ", lifeStageChild: " + lifeStageChild
+                    //    + ", minAge: " + toddlerMinAge + ", maxAge: " + lifeStageChild.minAge);
+>>>>>>> Stashed changes
                     return;
                 }
             }
@@ -78,7 +83,7 @@ namespace Toddlers
                 //    + ", alwaysDowned: " + lsa.def.alwaysDowned);
 
                 //several checks to try and identify the life stage that best corresponds to baby
-                //if already motile, either this is not the baby lifestage or the race is born precocious
+                //if already mobile, either this is not the baby lifestage or the race is born precocious
                 //either way we don't need a toddler stage
                 if (lsa.def == LifeStageDefOf.HumanlikeBaby
                     || ((lsa.def.defName.Contains("Baby") || lsa.def.developmentalStage == DevelopmentalStage.Baby)
@@ -106,7 +111,27 @@ namespace Toddlers
 
         public bool CanCreateToddlerLifeStage()
         {
-            return !hasToddler && lifeStageBaby != null && lifeStageChild != null && toddlerMinAge != -1f;
+            if (hasToddler)
+            {
+                Log.Message("[Toddlers] " + def.defName + " already has a toddler life stage, skipping");
+                return false;
+            }
+            if (lifeStageBaby == null)
+            {
+                Log.Message("[Toddlers] " + def.defName + ": cannot identify Baby life stage, skipping");
+                return false;
+            }
+            if (lifeStageChild == null)
+            {
+                Log.Message("[Toddlers] " + def.defName + ": cannot identify Child life stage, skipping");
+                return false;
+            }
+            if (toddlerMinAge == -1f)
+            {
+                Log.Message("[Toddlers] " + def.defName + ": no room for at least a year of toddlerhood between Baby and Child, skipping");
+                return false;
+            }
+            return true;
         }
 
         public void CreateToddlerLifeStage()
@@ -137,6 +162,7 @@ namespace Toddlers
             if (ls_Baby == LifeStageDefOf.HumanlikeBaby)
             {
                 ls_Toddler = Toddlers_DefOf.HumanlikeToddler;
+                Log.Message("[Toddlers] " + def.defName + ": inserting HumanlikeToddler life stage for ages " + toddlerMinAge + "-" + lifeStageChild.minAge);
             }
             else
             {
@@ -162,19 +188,27 @@ namespace Toddlers
                 }
 
                 DefDatabase<LifeStageDef>.Add(ls_Toddler);
+
+                Log.Message("[Toddlers] " + def.defName + ": created new toddler life stage for ages " + toddlerMinAge + "-" + lifeStageChild.minAge);
             }
 
             (lsaa_Toddler as LifeStageAge).def = ls_Toddler;
 
             def.race.lifeStageAges.Insert(babyIndex + 1, (LifeStageAge)lsaa_Toddler);
 
+<<<<<<< Updated upstream
             //Log.Message("New life stages for " + def.defName + ":");
+=======
+            /*
+            Log.Message("New life stages for " + def.defName + ":");
+>>>>>>> Stashed changes
             for (int i = 0; i < def.race.lifeStageAges.Count; i++)
             {
                 LifeStageAge lsa = def.race.lifeStageAges[i];
                 //Log.Message("Life stage: " + i + ", def: " + lsa.def.defName
                 //    + ", minAge: " + lsa.minAge);
             }
+            */
 
             lifeStageToddler = (LifeStageAge)lsaa_Toddler;
             hasToddler = true;

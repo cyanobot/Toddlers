@@ -20,6 +20,8 @@ namespace Toddlers
         public const string HARNamespace = "AlienRace";
         public const string HARHarmonyID = "rimworld.erdelf.alien_race.main";
 
+        public const bool VERBOSE_LOGGING_ALIENRACE = false;
+
         public static ConstructorInfo constructor_LifeStageAgeAlien;
 
         public static MethodInfo method_AbstractExtendedGraphic_GetPath;
@@ -84,12 +86,22 @@ namespace Toddlers
 
             alienRaces = LoadRaces().ToDictionary(x => x.def.defName);
 
+<<<<<<< Updated upstream
             //Log.Message("Finished Init");
+=======
+                //Log.Message("Finished Init");
+            }
+            catch (Exception e)
+            {
+                Log.Error("[Toddlers] Patch for Humanoid Alien Races failed: " + e.Message + ", StackTrace: " + e.StackTrace);
+                HARLoaded = false;
+            }
+>>>>>>> Stashed changes
         }
 
         static IEnumerable<AlienRace> LoadRaces()
         {
-            //Log.Message("LoadRaces");
+            Log.Message("]Toddlers] Reading HAR races for compatibility...");
 
             IEnumerable<ThingDef> raceDefs = (from def in DefDatabase<ThingDef>.AllDefsListForReading
                                               where def.GetType() == HARClasses["ThingDef_AlienRace"]
@@ -99,24 +111,41 @@ namespace Toddlers
             {
                 Log.Message(def.ToString());
 
+<<<<<<< Updated upstream
                 AlienRace alienRace = new AlienRace(def);
 
                 yield return alienRace;
+=======
+                    races.Add(alienRace);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("[Toddlers] Init for alien race " + def.defName + " threw an error: " + e.Message + ", StackTrace: " + e.StackTrace);
+                }
+>>>>>>> Stashed changes
             }
         }
 
         public static AlienRace GetAlienRaceWrapper(Pawn pawn)
         {
+            if (pawn == null) return null;
             if (!HARClasses["ThingDef_AlienRace"].IsAssignableFrom(pawn.def.GetType())) return null;
+            if (!alienRaces.ContainsKey(pawn.def.defName))
+            {
+                Log.Error("[Toddlers] Could not determine alien race for pawn: " + pawn);
+                return null;
+            }
 
             return alienRaces[pawn.def.defName];
         }
 
         public static BodyAddon GetBodyAddonWrapper(Pawn pawn, object addon_orig)
         {
+            if (addon_orig == null) return null;
             if (!HARClasses["BodyAddon"].IsAssignableFrom(addon_orig.GetType())) return null;
             AlienRace alienRace = GetAlienRaceWrapper(pawn);
-            if (alienRace == null) return null;
+            if (alienRace == null || alienRace.bodyAddons.NullOrEmpty()) return null;
+            if (!alienRace.bodyAddons.ContainsKey(addon_orig)) return null;
             return alienRace.bodyAddons[addon_orig];
         }
 

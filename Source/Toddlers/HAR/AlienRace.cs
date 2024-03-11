@@ -32,6 +32,7 @@ namespace Toddlers
             //Log.Message("Toddlers Mod initialising AlienRace wrapper for: " + thingDef.defName);
 
             def = thingDef;
+<<<<<<< Updated upstream
 
             //Log.Message("Original life stages:");
             for (int i = 0; i < def.race.lifeStageAges.Count; i++)
@@ -39,26 +40,39 @@ namespace Toddlers
                 LifeStageAge lsa = def.race.lifeStageAges[i];
                 //Log.Message("Life stage: " + i + ", def: " + lsa.def.defName
                 //    + ", minAge: " + lsa.minAge);
+=======
+            humanlikeGait = HasHumanlikeGait();
+
+            if (VERBOSE_LOGGING_ALIENRACE)
+            {
+                Log.Message("[Toddlers] Processing alien race: " + def.defName + "...");
+                Log.Message("Has humanlike gait: " + humanlikeGait);
+                string s = "Original life stages: ";
+                for (int i = 0; i < def.race.lifeStageAges.Count; i++)
+                {
+                    if (i > 0) s += ", ";
+                    LifeStageAge lsa = def.race.lifeStageAges[i];
+                    s += lsa.minAge + ":" + lsa.def.defName;
+                }
+                Log.Message(s);
+>>>>>>> Stashed changes
             }
 
             InitLifeStageFields();
-            /*
-            if (lifeStageBaby == null)
-                Log.Message("lifeStageBaby == null");
-            else
-                Log.Message("Baby = life stage with def: " + lifeStageBaby.def.defName
-                    + ", minAge: " + lifeStageBaby.minAge);
-            if (lifeStageChild == null)
-                Log.Message("lifeStageChild == null");
-            else
-                Log.Message("Child = life stage with def: " + lifeStageChild.def.defName
-                    + ", minAge: " + lifeStageChild.minAge);
-            */
 
+<<<<<<< Updated upstream
             if (!CanCreateToddlerLifeStage()) return;
 
             humanlikeGait = HasHumanlikeGait();
             Log.Message("humanlikeGait: " + humanlikeGait);
+=======
+            if (VERBOSE_LOGGING_ALIENRACE)
+            {
+                Log.Message("Identified key life stages Baby: " + (lifeStageBaby?.def.defName ?? "null") + ", Child: " + lifeStageChild?.def.defName ?? "null");
+            }
+>>>>>>> Stashed changes
+
+            if (!CanCreateToddlerLifeStage()) return;
 
             alienSettings = field_ThingDef_AlienRace_alienRace.GetValue(def);
             //Log.Message("alienSettings: " + alienSettings);
@@ -79,6 +93,11 @@ namespace Toddlers
             CreateToddlerLifeStage();
             UpdateAgeGraphics();
             UpdateBodyTypeGraphics();
+<<<<<<< Updated upstream
+=======
+
+            //Log.Message("ToddlersMod completed init for " + def.defName);
+>>>>>>> Stashed changes
         }
 
         public bool HasHumanlikeGait()
@@ -118,12 +137,32 @@ namespace Toddlers
             object bodyAddons_obj = alienPartGenerator.GetType().GetField("bodyAddons", BindingFlags.Public | BindingFlags.Instance).GetValue(alienPartGenerator);
             //Log.Message("bodyAddons_obj: " + bodyAddons_obj + ", Count: " + (bodyAddons_obj as IEnumerable).EnumerableCount());
 
+            string s = "Initialising body addons: ";
+
             foreach (object bodyAddon_origType in bodyAddons_obj as IEnumerable)
             {
                 //Log.Message("bodyAddon_origType: " + bodyAddon_origType + ", Type: " + bodyAddon_origType.GetType());
                 BodyAddon bodyAddon = new BodyAddon(bodyAddon_origType);
                 bodyAddons.Add(bodyAddon_origType, bodyAddon);
                // Log.Message("Adding BodyAddon " + bodyAddon.name + " to list for " + def.defName);
+               
+                if (VERBOSE_LOGGING_ALIENRACE)
+                {
+                    s += (bodyAddon.name ?? "unnamed") + ", ";
+                }
+            }
+
+            if (VERBOSE_LOGGING_ALIENRACE)
+            {
+                if (s.EndsWith(", "))
+                {
+                    s = s.Remove(s.Length - 2, 2);
+                }
+                else
+                {
+                    s += "none found";
+                }
+                Log.Message(s);
             }
         }
     }

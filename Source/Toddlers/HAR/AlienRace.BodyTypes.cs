@@ -48,13 +48,16 @@ namespace Toddlers
                 bodyTypes.Add(BodyTypeDefOf.Baby);
                 bodyType_Baby = BodyTypeDefOf.Baby;
                 bodyTypeAdded_Baby = true;
+                if (VERBOSE_LOGGING_ALIENRACE) Log.Message("Adding body type for life stage Baby");
             }
             if (bodyType_Child == null)
             {
                 bodyTypes.Add(BodyTypeDefOf.Child);
                 bodyType_Child = BodyTypeDefOf.Child;
                 bodyTypeAdded_Child = true;
+                if (VERBOSE_LOGGING_ALIENRACE) Log.Message("Adding body type for life stage Child");
             }
+            if (VERBOSE_LOGGING_ALIENRACE) Log.Message("Body types - Baby: " + bodyType_Baby + ", Child: " + bodyType_Child);
             //Log.Message("new bodyTypes_obj: " + (bodyTypes_obj as IEnumerable).ToStringSafeEnumerable());
 
         }
