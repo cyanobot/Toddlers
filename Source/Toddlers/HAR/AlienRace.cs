@@ -19,8 +19,8 @@ namespace Toddlers
     {
         public ThingDef def;
 
-        public CrawlingTweak crawlingTweak;
-        public bool humanlikeGait;
+        public CrawlingTweak crawlingTweak = null;
+        public bool humanlikeGait = true;
 
         public object graphicPaths;
         public object alienSettings;
@@ -29,18 +29,8 @@ namespace Toddlers
 
         public AlienRace(ThingDef thingDef)
         {
-            //Log.Message("Toddlers Mod initialising AlienRace wrapper for: " + thingDef.defName);
 
             def = thingDef;
-<<<<<<< Updated upstream
-
-            //Log.Message("Original life stages:");
-            for (int i = 0; i < def.race.lifeStageAges.Count; i++)
-            {
-                LifeStageAge lsa = def.race.lifeStageAges[i];
-                //Log.Message("Life stage: " + i + ", def: " + lsa.def.defName
-                //    + ", minAge: " + lsa.minAge);
-=======
             humanlikeGait = HasHumanlikeGait();
 
             if (VERBOSE_LOGGING_ALIENRACE)
@@ -55,22 +45,14 @@ namespace Toddlers
                     s += lsa.minAge + ":" + lsa.def.defName;
                 }
                 Log.Message(s);
->>>>>>> Stashed changes
             }
 
             InitLifeStageFields();
 
-<<<<<<< Updated upstream
-            if (!CanCreateToddlerLifeStage()) return;
-
-            humanlikeGait = HasHumanlikeGait();
-            Log.Message("humanlikeGait: " + humanlikeGait);
-=======
             if (VERBOSE_LOGGING_ALIENRACE)
             {
                 Log.Message("Identified key life stages Baby: " + (lifeStageBaby?.def.defName ?? "null") + ", Child: " + lifeStageChild?.def.defName ?? "null");
             }
->>>>>>> Stashed changes
 
             if (!CanCreateToddlerLifeStage()) return;
 
@@ -93,11 +75,8 @@ namespace Toddlers
             CreateToddlerLifeStage();
             UpdateAgeGraphics();
             UpdateBodyTypeGraphics();
-<<<<<<< Updated upstream
-=======
 
             //Log.Message("ToddlersMod completed init for " + def.defName);
->>>>>>> Stashed changes
         }
 
         public bool HasHumanlikeGait()

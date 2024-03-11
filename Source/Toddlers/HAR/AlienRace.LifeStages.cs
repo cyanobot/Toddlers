@@ -65,11 +65,8 @@ namespace Toddlers
                     toddlerMinAge = lsa.minAge;
                     lifeStageBaby = def.race.lifeStageAges[i - 1];
                     lifeStageChild = def.race.lifeStageAges[i + 1];
-<<<<<<< Updated upstream
-=======
                     //Log.Message("def: " + def.defName + ", hasToddler: " + hasToddler + ", lifeStageToddler: " + lifeStageToddler + ", lifeStageChild: " + lifeStageChild
                     //    + ", minAge: " + toddlerMinAge + ", maxAge: " + lifeStageChild.minAge);
->>>>>>> Stashed changes
                     return;
                 }
             }
@@ -196,17 +193,13 @@ namespace Toddlers
 
             def.race.lifeStageAges.Insert(babyIndex + 1, (LifeStageAge)lsaa_Toddler);
 
-<<<<<<< Updated upstream
-            //Log.Message("New life stages for " + def.defName + ":");
-=======
             /*
             Log.Message("New life stages for " + def.defName + ":");
->>>>>>> Stashed changes
             for (int i = 0; i < def.race.lifeStageAges.Count; i++)
             {
                 LifeStageAge lsa = def.race.lifeStageAges[i];
-                //Log.Message("Life stage: " + i + ", def: " + lsa.def.defName
-                //    + ", minAge: " + lsa.minAge);
+                Log.Message("Life stage: " + i + ", def: " + lsa.def.defName
+                    + ", minAge: " + lsa.minAge);
             }
             */
 

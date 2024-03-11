@@ -1,15 +1,6 @@
 High Priority	
-<<<<<<< Updated upstream
-	less putting toddler to bed
-		unknown reason to remove toddler from crib when coming to feed/play
-		pawns failing to pick toddler up
-		pawns viewing floor as best place for sleepy toddlers
-		
-		
-=======
 	HAR errors
 	vat learning not working
->>>>>>> Stashed changes
 
 	
 Medium Priority
@@ -19,14 +10,11 @@ Medium Priority
 	neater settings menu
 	modded mental states (eg psycasts) may not affect toddlers correctly
 	more mood modifiers for toddlers
-<<<<<<< Updated upstream
-	
-=======
 	modded cribs
 	tribalwear setting respects vfet
 	baby refugee pod event
-	more races (mincho, dragonina prime)
->>>>>>> Stashed changes
+	more races (mincho, dragonian prime, teressa)
+	learn to Translate - opl516@naver.com
 	
 Low Priority
 	Misc
@@ -34,7 +22,6 @@ Low Priority
 	crib objects that shelter from elements
 	play builds relationships
 	comfort crying baby interaction
-	learn to Translate - opl516@naver.com
 	simple floordrawings only
 	hold toddlers still while being stripped
 	sitting sideways at tables
