@@ -16,7 +16,7 @@ namespace Toddlers
         protected override Job TryGiveJob(Pawn pawn)
         {
             //Log.Message("Fired JobGiver_ToddlerPlayInCrib.TryGiveJob");
-            if (pawn.needs.play.CurLevelPercentage >= 0.95f || pawn.CurJob == null || !pawn.Awake())
+            if (pawn.needs?.TryGetNeed<Need_Play>() == null || pawn.needs.play.CurLevelPercentage >= 0.95f || pawn.CurJob == null || !pawn.Awake())
             {
                 return null;
             }

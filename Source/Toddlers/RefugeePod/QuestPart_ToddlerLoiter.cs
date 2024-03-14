@@ -19,7 +19,7 @@ namespace Toddlers
 
 		protected override Lord MakeLord()
 		{
-			Log.Message("Calling QuestPart_ToddlerLoiter.MakeLord, pawns: " + pawns.ToStringSafeEnumerable());
+			//Log.Message("Calling QuestPart_ToddlerLoiter.MakeLord, pawns: " + pawns.ToStringSafeEnumerable());
 
 			IntVec3 loc = LeadToddler.PositionHeld;
 	
@@ -43,7 +43,7 @@ namespace Toddlers
                 {
 					if (arg.label == SignalArgsNames.Subject && pawns.Contains(arg.arg))
                     {
-						Log.Message("Notify_QuestSignalReceived found relevant pawn: " + arg.arg);
+						//Log.Message("Notify_QuestSignalReceived found relevant pawn: " + arg.arg);
 						foundPawn = true;
 						break;
                     }

@@ -23,20 +23,21 @@ namespace Toddlers
 			return Find.Storyteller.difficulty.ChildrenAllowed;
 		}
 
-		//AS VANILLA
 		public override Pawn GeneratePawn()
 		{
 			Find.FactionManager.TryGetRandomNonColonyHumanlikeFaction(out var faction, tryMedievalOrBetter: true);
 			PawnGenerationRequest request = new PawnGenerationRequest(PawnKindDefOf.SpaceRefugee, faction, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, allowDead: false, allowDowned: true, canGeneratePawnRelations: true, mustBeCapableOfViolence: false, 1f, forceAddFreeWarmLayerIfNeeded: false, allowGay: true, allowPregnant: false, allowFood: true, allowAddictions: true, inhabitant: false, certainlyBeenInCryptosleep: false, forceRedressWorldPawnIfFormerColonist: false, worldPawnFactionDoesntMatter: false, 0f, 0f, null, 1f, null, null, null, null, null, null, null, null, null, null, null, null, forceNoIdeo: false, forceNoBackstory: false, forbidAnyTitle: false, forceDead: false, null, null, null, null, null, 0f, DevelopmentalStage.Adult, null, null, null, forceRecruitable: true);
 			request.AllowedDevelopmentalStages = DevelopmentalStage.Baby;
 			Pawn pawn = PawnGenerator.GeneratePawn(request);
+			PawnComponentsUtility.AddComponentsForSpawn(pawn);       //calling this early in the spawn process, so as to initialise mood, etc
+			pawn.needs?.mood?.thoughts?.memories.TryGainMemory(Toddlers_DefOf.Toddlers_TraumaticCrash);
 			pawn.ageTracker.AgeChronologicalTicks = pawn.ageTracker.AgeBiologicalTicks;
 			return pawn;
 		}
 
 		protected override void AddSpawnPawnQuestParts(Quest quest, Map map, Pawn pawn)
 		{
-			Log.Message("Calling AddSpawnPawnQuestParts");
+			//Log.Message("Calling AddSpawnPawnQuestParts");
 
 			bool deadParent = false;
 			Pawn parent = null;
@@ -52,7 +53,7 @@ namespace Toddlers
 				{
 					deadParent = true;
 					QuestGen.slate.Set("hasParent", var: true);
-					PawnGenerationRequest request = new PawnGenerationRequest(PawnKindDefOf.SpaceRefugee, pawn.Faction, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, allowDead: true, allowDowned: false, canGeneratePawnRelations: true, mustBeCapableOfViolence: false, 1f, forceAddFreeWarmLayerIfNeeded: false, allowGay: true, allowPregnant: false, allowFood: true, allowAddictions: true, inhabitant: false, certainlyBeenInCryptosleep: false, forceRedressWorldPawnIfFormerColonist: false, worldPawnFactionDoesntMatter: false, 0f, 0f, null, 1f, null, null, null, null, null, null, null, null, null, null, null, null, forceNoIdeo: false, forceNoBackstory: false, forbidAnyTitle: false, forceDead: true);
+					PawnGenerationRequest request = new PawnGenerationRequest(PawnKindDefOf.SpaceRefugee, pawn.Faction, PawnGenerationContext.NonPlayer, -1, forceGenerateNewPawn: true, allowDead: true, allowDowned: false, canGeneratePawnRelations: true, mustBeCapableOfViolence: false, 1f, forceAddFreeWarmLayerIfNeeded: false, allowGay: true, allowPregnant: false, allowFood: true, allowAddictions: true, inhabitant: false, certainlyBeenInCryptosleep: false, forceRedressWorldPawnIfFormerColonist: false, worldPawnFactionDoesntMatter: false, 0f, 0f, null, 1f, null, null, null, null, null, null, null, null, null, null, null, forcedXenotype: pawn.genes?.Xenotype ?? null, forceNoIdeo: false, forceNoBackstory: false, forbidAnyTitle: false, forceDead: true);
 					if (flag_motherless && !flag_fatherless)
 					{
 						request.FixedGender = Gender.Female;
@@ -79,27 +80,8 @@ namespace Toddlers
 
 			if (ToddlerUtility.IsLiveToddler(pawn))
 			{
-				Log.Message("Calling toddler code");
-				ToddlerLoiter(quest, map.Parent, new Pawn[] { pawn }, pawn.Faction, null);
-
-				quest.Delay(120, delegate
-				{
-					Log.Message("Calling 120 delayed code");
-					
-					/*
-					QuestPart_ToddlerLoiter questPart_ToddlerLoiter = new QuestPart_ToddlerLoiter();
-					questPart_ToddlerLoiter.pawns.Add(pawn);
-					questPart_ToddlerLoiter.inSignal = QuestGen.slate.Get<string>("inSignal");
-					Log.Message("inSignal: " + QuestGen.slate.Get<string>("inSignal"));
-					questPart_ToddlerLoiter.deadParent = deadParent;
-					if (deadParent)
-					{
-						questPart_ToddlerLoiter.parent = parent;
-					}
-					quest.AddPart(questPart_ToddlerLoiter);
-					*/
-				});
-				
+				//Log.Message("Calling toddler code");
+				ToddlerLoiter(quest, map.Parent, new Pawn[] { pawn }, pawn.Faction, null);				
 			}
 
 		}

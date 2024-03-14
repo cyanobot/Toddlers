@@ -23,13 +23,12 @@ namespace Toddlers
 
         public LordJob_ToddlerLoiter(Pawn toddler, IntVec3 root)
         {
-			Log.Message("Calling LordJob_ToddlerLoiter");
+			//Log.Message("Calling LordJob_ToddlerLoiter");
 
 			this.toddler = toddler;
-			Log.Message("toddler: " + toddler + ", def.race.FenceBlocked: " + toddler.def.race.FenceBlocked + ", roping: " + toddler.roping);
+			//Log.Message("toddler: " + toddler + ", def.race.FenceBlocked: " + toddler.def.race.FenceBlocked + ", roping: " + toddler.roping);
 			if (toddler.SpawnedOrAnyParentSpawned)
 			{
-				PawnComponentsUtility.AddComponentsForSpawn(toddler);		//calling this slightly early in the spawn process, so as to be able to do traverse parms
 				this.loc = RCellFinder.RandomWanderDestFor(toddler,root,12,null,Danger.Deadly);
 			}
 			else this.loc = root;
@@ -37,7 +36,7 @@ namespace Toddlers
 
 		public override StateGraph CreateGraph()
 		{
-			Log.Message("Calling LordJob_ToddlerLoiter.CreateGraph");
+			//Log.Message("Calling LordJob_ToddlerLoiter.CreateGraph");
 
 			StateGraph stateGraph = new StateGraph();
 

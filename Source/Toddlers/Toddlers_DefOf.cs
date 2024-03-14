@@ -46,6 +46,7 @@ namespace Toddlers
         public static ThingDef Apparel_BabyTribal;
 
         public static ThoughtDef BabyNoExpectations;
+        public static ThoughtDef Toddlers_TraumaticCrash;
 
         public static ToddlerPlayDef ToddlerSkydreaming;
         public static ToddlerPlayDef ToddlerWatchTelevision;

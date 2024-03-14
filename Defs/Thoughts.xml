@@ -32,5 +32,20 @@
 	  </li>
     </stages>
   </ThoughtDef>
+  
+  <ThoughtDef>
+	<defName>Toddlers_TraumaticCrash</defName>
+	<durationDays>6</durationDays>
+	<stackLimit>1</stackLimit>
+	<validWhileDespawned>true</validWhileDespawned>
+	<developmentalStageFilter>Baby</developmentalStageFilter>
+	<stages>
+		<li>
+			<label>traumatic crash</label>
+			<description>I don't understand what has happened to me and nothing here is familiar.</description>
+			<baseMoodEffect>-20</baseMoodEffect>
+		</li>
+	</stages>
+  </ThoughtDef>
 
 </Defs>
