@@ -14,6 +14,8 @@ namespace Toddlers
     [DefOf]
     static class Toddlers_DefOf
     {
+        public static DutyDef ToddlerLoiter;
+
         public static HediffDef LearningToWalk;
         public static HediffDef LearningManipulation;
         public static HediffDef ToddlerLonely;

@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="RefugeePod\WanderDestDebug.cs" />
     <None Include="Scrapyard.cs" />
     <Compile Include="Apparel\ApparelSettings.cs" />
     <Compile Include="Apparel\JobDriver_UndressBaby.cs" />
@@ -68,9 +69,13 @@
     <Compile Include="HAR\Harmony.cs" />
     <Compile Include="HAR\Patch_HAR.cs" />
     <Compile Include="HAR\AlienRace.cs" />
+    <Compile Include="RefugeePod\LordToil_ToddlerLoiter.cs" />
+    <Compile Include="RefugeePod\LordJob_ToddlerLoiter.cs" />
     <Compile Include="Play\JobDriver_BePlayedWith.cs" />
     <Compile Include="Play\JobDriver_PlayCrib.cs" />
     <Compile Include="Play\BabyPlayGiver_PlayCrib.cs" />
+    <Compile Include="RefugeePod\QuestNode_Root_RefugeePodCrash_Baby.cs" />
+    <Compile Include="RefugeePod\QuestPart_ToddlerLoiter.cs" />
     <Compile Include="Safety\BabyMoveUtility.cs" />
     <Compile Include="Safety\ThinkNode_ConditionalNoTemperatureInjury.cs" />
     <Compile Include="Crib\JobDriver_LeaveCrib.cs" />
@@ -98,9 +103,9 @@
     <Compile Include="Toddlers_Init.cs" />
     <Compile Include="Toddlers_Mod.cs" />
     <Compile Include="ToddlerUtility.cs" />
-    <Compile Include="Hediff_LearningManipulation.cs" />
-    <Compile Include="Hediff_LearningToWalk.cs" />
-    <Compile Include="Hediff_ToddlerLearning.cs" />
+    <Compile Include="Learning\Hediff_LearningManipulation.cs" />
+    <Compile Include="Learning\Hediff_LearningToWalk.cs" />
+    <Compile Include="Learning\Hediff_ToddlerLearning.cs" />
     <Compile Include="Play\Hediff_ToddlerLonely.cs" />
     <Compile Include="Crib\JobDriver_WiggleInCrib.cs" />
     <Compile Include="Crib\JobDriver_RestIdleInCrib.cs" />
