@@ -63,7 +63,6 @@ namespace Toddlers
             Scribe_Values.Look(ref playFallFactor_Baby, "playFallFactor_Baby", playFallFactor_Baby, true);
             Scribe_Values.Look(ref playFallFactor_Toddler, "playFallFactor_Toddler", playFallFactor_Toddler, true);
             Scribe_Values.Look(ref lonelinessGainFactor, "lonelinessGainFactor", lonelinessGainFactor, true);
-            //Scribe_Values.Look(ref tribalBabyClothes, "tribalBabyClothes", tribalBabyClothes, true);
             Scribe_Values.Look(ref apparelSetting, "apparelSetting", apparelSetting, true);
             Scribe_Values.Look(ref maxComfortableTemperature_Baby, "maxComfortableTemperature_Baby", maxComfortableTemperature_Baby, true);
             Scribe_Values.Look(ref maxComfortableTemperature_Toddler, "maxComfortableTemperature_Toddler", maxComfortableTemperature_Toddler, true);
@@ -98,19 +97,22 @@ namespace Toddlers
 
             l.Begin(viewRect);
 
-            l.CheckboxLabeled("Custom renderer :", ref customRenderer, "[Default: on] Custom (minor) animations for crawling babies, wiggling, wobbling, etc. Turn off if you are having a compatibility issue with other mods that affect rendering.");
+            l.CheckboxLabeled("SettingLabelCustomRenderer".Translate() + " :", ref customRenderer,
+               tooltip: "[" + "Default".Translate() + ": " + "On".Translate() + "] " + "SettingTooltipCustomRenderer".Translate());
 
-            l.CheckboxLabeled("Can draft toddlers :", ref canDraftToddlers, "[Default: off] Toddlers remain incapable of violence, but with this setting on they can be drafted and given orders.");
+            l.CheckboxLabeled("SettingLabelCanDraftToddlers".Translate() + " :", ref canDraftToddlers,
+               tooltip: "[" + "Default".Translate() + ": " + "Off".Translate() + "] " + "SettingTooltipCanDraftToddlers".Translate());
 
-            l.CheckboxLabeled("Pawns care about baby's Sleep schedue :", ref careAboutBedtime, "[Default: on] Pawns will return babies/toddlers to their cribs when they're scheduled to Sleep");
-            l.CheckboxLabeled("Pawns care about babies sleeping on floor :", ref careAboutFloorSleep, "[Default: on] Pawns will return babies/toddlers to their cribs if they notice them sleeping on the floor");
-            l.CheckboxLabeled("Pawns feed toddlers who could feed themselves :", ref feedCapableToddlers, "[Defaut: on] Pawns will feed toddlers even if they are able to feed themselves");
+            l.CheckboxLabeled("SettingLabelCareAboutBedtime".Translate() + " :", ref careAboutBedtime,
+               tooltip: "[" + "Default".Translate() + ": " + "On".Translate() + "] " + "SettingTooltipCareAboutBedtime".Translate());
+            l.CheckboxLabeled("SettingLabelCareAboutFloorSleep".Translate() + " :", ref careAboutFloorSleep,
+               tooltip: "[" + "Default".Translate() + ": " + "On".Translate() + "] " + "SettingTooltipCareAboutFloorSleep".Translate());
+            l.CheckboxLabeled("SettingLabelFeedCapableToddlers".Translate() + " :", ref feedCapableToddlers,
+               tooltip: "[" + "Default".Translate() + ": " + "On".Translate() + "] " + "SettingTooltipFeedCapableToddlers".Translate());
+            l.CheckboxLabeled("SettingLabelBabyTalk".Translate() + " :", ref toddlerBabyTalk, 
+                tooltip: "[" + "Default".Translate() + ": " + "Off".Translate() + "] " + "SettingTooltipBabyTalk".Translate());
 
-            //l.CheckboxLabeled("Baby clothes at tribal tech level :", ref tribalBabyClothes, "[Default: off] Toggles whether baby clothes require industrial tech");
-
-            l.CheckboxLabeled("Baby talk for toddlers :", ref toddlerBabyTalk, "[Default: off] Whether toddler thoughts should be translated to goo goo ba gee");
-
-            if (l.ButtonTextLabeled("Baby clothes : ", ApparelSettingLabel(apparelSetting), tooltip: "[Default: Tribalwear For Babies]"))
+            if (l.ButtonTextLabeled(Toddlers_DefOf.ApparelBaby.LabelCap + " : ", ApparelSettingLabel(apparelSetting)))
             {
                 List<FloatMenuOption> floatMenuOptions = new List<FloatMenuOption>();
                 foreach (ApparelSetting a in Enum.GetValues(typeof(ApparelSetting)))
@@ -131,43 +133,53 @@ namespace Toddlers
             l.GapLine();
             l.Gap();
 
-            l.Label("Play need fall factor (baby) : " + playFallFactor_Baby.ToString("F1"), tooltip: "[Default: 5.0] How fast the Play need falls");
+            l.Label("SettingLabelPlayFallFactor".Translate() + " (" + LifeStageDefOf.HumanlikeBaby.label + ") : " + playFallFactor_Baby.ToString("F1"),
+                tooltip: "[" + "Default".Translate() + ": 5.0] " + "SettingTooltipPlayFallFactor".Translate());
             playFallFactor_Baby = l.Slider(playFallFactor_Baby, 0f, 50f);
 
-            l.Label("Play need fall factor (toddler) : " + playFallFactor_Toddler.ToString("F1"), tooltip: "[Default: 5.0] How fast the Play need falls");
+            l.Label("SettingLabelPlayFallFactor".Translate() + " (" + Toddlers_DefOf.HumanlikeToddler.label + ") : " + playFallFactor_Toddler.ToString("F1"), 
+                tooltip: "[" + "Default".Translate() + ": 5.0] " + "SettingTooltipPlayFallFactor".Translate());
             playFallFactor_Toddler = l.Slider(playFallFactor_Toddler, 0f, 50f);
 
-            l.Label("Loneliness gain rate factor : " + lonelinessGainFactor.ToString("F1"), tooltip: "[Default: 1.0] Controls how often toddlers need adult attention. Turn it up for more attention needed and down for less.");
+            l.Label("SettingLabelLonelinessFactor".Translate() + " : " + lonelinessGainFactor.ToString("F1"), 
+                tooltip: "[" + "Default".Translate() + ": 1.0] " + "SettingTooltipLonelinessFactor".Translate());
             lonelinessGainFactor = l.Slider(lonelinessGainFactor, 0f, 10f);
 
-            l.Label("'No expectations' mood impact : " + expectations.ToString("F0"), tooltip: "[Default: 20]");
+            l.Label("SettingLabelMoodImpact".Translate(Toddlers_DefOf.BabyNoExpectations.LabelCap) + " : " + expectations.ToString("F0"), 
+                tooltip: "[" + "Default".Translate() + ": 20]");
             expectations = l.Slider(expectations, 0f, 100f);
 
             l.GapLine();
             l.Gap();
 
-            l.Label("Max Comfortable Temperature (baby) : " + maxComfortableTemperature_Baby.ToStringTemperature(), tooltip: "[Default: 30C / 86F]");
+            l.Label(StatDefOf.ComfyTemperatureMax.LabelCap + " (" + LifeStageDefOf.HumanlikeBaby.label + ") : " + maxComfortableTemperature_Baby.ToStringTemperature(), 
+                tooltip: "[" + "Default".Translate() + ": " + 30f.ToStringTemperature() + "]");
             maxComfortableTemperature_Baby = l.Slider(maxComfortableTemperature_Baby, 26f, 50f);
 
-            l.Label("Min Comfortable Temperature (baby) : " + minComfortableTemperature_Baby.ToStringTemperature(), tooltip: "[Default: 20C / 68F]");
+            l.Label(StatDefOf.ComfyTemperatureMin.LabelCap + " (" + LifeStageDefOf.HumanlikeBaby.label + ") : " + minComfortableTemperature_Baby.ToStringTemperature(),
+                tooltip: "[" + "Default".Translate() + ": " + 20f.ToStringTemperature() + "]");
             minComfortableTemperature_Baby = l.Slider(minComfortableTemperature_Baby, -30f, 25f);
 
-            l.Label("Max Comfortable Temperature (toddler) : " + maxComfortableTemperature_Toddler.ToStringTemperature(), tooltip: "[Default: 28C / 82F]");
+            l.Label(StatDefOf.ComfyTemperatureMax.LabelCap + " (" + Toddlers_DefOf.HumanlikeToddler.label + ") : " + maxComfortableTemperature_Toddler.ToStringTemperature(),
+                tooltip: "[" + "Default".Translate() + ": " + 28f.ToStringTemperature() + "]");
             maxComfortableTemperature_Toddler = l.Slider(maxComfortableTemperature_Toddler, 26f, 50f);
 
-            l.Label("Min Comfortable Temperature (toddler) : " + minComfortableTemperature_Toddler.ToStringTemperature(), tooltip: "[Default: 18C / 64F]");
+            l.Label(StatDefOf.ComfyTemperatureMin.LabelCap + " (" + Toddlers_DefOf.HumanlikeToddler.label + ") : " + minComfortableTemperature_Toddler.ToStringTemperature(),
+                tooltip: "[" + "Default".Translate() + ": " + 18f.ToStringTemperature() + "]");
             minComfortableTemperature_Toddler = l.Slider(minComfortableTemperature_Toddler, -30f, 25f);
 
             l.GapLine();
             l.Gap();
 
-            l.Label("Time to fully learn (as a % of the toddler lifestage)");
+            l.Label("SettingLabelTimeToLearn".Translate());
             l.GapLine();
 
-            l.Label("Walking : " + learningFactor_Walk.ToStringPercent(), tooltip: "[Default: 80%]");
+            l.Label("walking".Translate().CapitalizeFirst() + " : " + learningFactor_Walk.ToStringPercent(), 
+                tooltip: "[" + "Default".Translate() + ": 80%]");
             learningFactor_Walk = l.Slider(learningFactor_Walk, 0.01f, 1f);
 
-            l.Label("Manipulation : " + learningFactor_Manipulation.ToStringPercent(), tooltip: "[Default: 80%]");
+            l.Label(PawnCapacityDefOf.Manipulation.LabelCap + " : " + learningFactor_Manipulation.ToStringPercent(), 
+                tooltip: "[" + "Default".Translate() + ": 80%]");
             learningFactor_Manipulation = l.Slider(learningFactor_Manipulation, 0.01f, 1f);
 
             l.End();
@@ -180,6 +192,8 @@ namespace Toddlers
 
         public static string ApparelSettingLabel(ApparelSetting setting)
         {
+            return ("ApparelSettingLabel" + setting.ToString()).Translate();
+            /*
             switch (setting)
             {
                 case ApparelSetting.NoBabyApparel:
@@ -195,10 +209,13 @@ namespace Toddlers
                 default:
                     return "";
             }
+            */
         }
 
         public static string ApparelSettingTooltip(ApparelSetting setting)
         {
+            return ("ApparelSettingTooltip" + setting.ToString()).Translate();
+            /*
             switch (setting)
             {
                 case ApparelSetting.NoBabyApparel:
@@ -214,6 +231,7 @@ namespace Toddlers
                 default:
                     return "";
             }
+            */
         }
     }
 }

@@ -136,8 +136,7 @@ namespace Toddlers
                                 }
                                 if (building_Bed == null)
                                 {
-                                    string t = (!toddler.RaceProps.Animal) ? ((string)"NoNonPrisonerBed".Translate()) : ((string)"NoAnimalBed".Translate());
-                                    Messages.Message("CannotRescue".Translate() + ": " + "No bed", toddler, MessageTypeDefOf.RejectInput, historical: false);
+                                    Messages.Message("CannotRescue".Translate() + ": " + "NoCrib".Translate(), toddler, MessageTypeDefOf.RejectInput, historical: false);
                                 }
                                 else
                                 {
@@ -148,7 +147,7 @@ namespace Toddlers
                             }, MenuOptionPriority.RescueOrCapture, null, toddler);
                             if (RestUtility.FindBedFor(toddler, pawn, checkSocialProperness: false, ignoreOtherReservations: true) == null)
                             {
-                                putInCrib.Label += " : No crib available";
+                                putInCrib.Label += " : " + "NoCrib".Translate();
                                 putInCrib.Disabled = true;
                             }
                             opts.Add(FloatMenuUtility.DecoratePrioritizedTask(putInCrib, pawn, toddler));
@@ -187,7 +186,7 @@ namespace Toddlers
                             continue;
 
                         //option to dress baby
-                        FloatMenuOption dressBaby = new FloatMenuOption("Dress " + baby.Label, delegate ()
+                        FloatMenuOption dressBaby = new FloatMenuOption("DressBaby".Translate(baby), delegate ()
                         {
                             Find.Targeter.BeginTargeting(ForApparel(baby), (LocalTargetInfo targetApparel) =>
                             {
@@ -230,7 +229,7 @@ namespace Toddlers
                             //if it's already disabled, leave it alone
                             if (wear.Disabled) continue;
 
-                            wear.Label = text += " : Not old enough to dress self";
+                            wear.Label = text += " : " + "NotOldEnoughToDressSelf".Translate();
                             wear.Disabled = true;
                         }
                     }
@@ -255,7 +254,7 @@ namespace Toddlers
                             //if it's already disabled, leave it alone
                             if (consume.Disabled) continue;
 
-                            consume.Label = text += " : Not old enough to feed self";
+                            consume.Label = text += " : " + "NotOldEnoughToFeedSelf".Translate();
                             consume.Disabled = true;
                         }
                     }

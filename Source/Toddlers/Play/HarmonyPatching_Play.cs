@@ -30,8 +30,8 @@ namespace Toddlers
             if (!IsToddler(pawn)) return result;
 
             string header = (__instance.LabelCap + ": " + __instance.CurLevelPercentage.ToStringPercent()).Colorize(ColoredText.TipSectionTitleColor);
-            string body = "Toddlers can entertain themselves for a while, but without regular attention they become lonely and unable to fulfil their own need for play.";
-            string lonelyReport = "Loneliness: " + GetLoneliness(pawn).ToStringPercent();
+            string body = "NeedTipStringPlay".Translate();
+            string lonelyReport = "Loneliness".Translate() + ": " + GetLoneliness(pawn).ToStringPercent();
 
 
             return header + "\n" + body + "\n\n" + lonelyReport;

@@ -35,11 +35,11 @@ namespace Toddlers
 				{
 					pawn.jobs.posture = PawnPosture.InBedMask;
 					pawn.Rotation = Rot4.South;
-					job.reportStringOverride = "wiggling.";
+					job.reportStringOverride = "JobStringWiggling".Translate();
 				});
 				wiggletoil.AddFinishAction(delegate ()
 				{
-					job.reportStringOverride = "climbing out of crib.";
+					job.reportStringOverride = "JobStringClimbingOutOfCrib".Translate();
 				});
 				wiggletoil.handlingFacing = true;
 				yield return wiggletoil;

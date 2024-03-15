@@ -42,16 +42,16 @@ namespace Toddlers
 			AddFailCondition(() => Baby.DestroyedOrNull() || !Baby.Spawned || Baby.DevelopmentalStage != DevelopmentalStage.Baby || !ChildcareUtility.CanSuckle(Baby, out var _));
 			AddFailCondition(() => Apparel.DestroyedOrNull());
 
-			Log.Message("MakeNewToils for UndressBaby, TargetA: " + TargetA + ", TargetB: " + TargetB);
+			//Log.Message("MakeNewToils for UndressBaby, TargetA: " + TargetA + ", TargetB: " + TargetB);
 
 			yield return Toils_Goto.GotoThing(BabyIndex, PathEndMode.ClosestTouch).FailOnForbidden(BabyIndex);
 			Toil wait = Toils_General.Wait(duration).WithProgressBarToilDelay(BabyIndex, true);
 			wait.AddPreInitAction(delegate
 			{
-				Log.Message("wait.PreInitAction");
+				//Log.Message("wait.PreInitAction");
 				if (Baby.Awake() && ToddlerUtility.IsLiveToddler(Baby) && !ToddlerUtility.InCrib(Baby))
 				{
-					Log.Message("Attempting to force BeDressed job on " + Baby);
+					//Log.Message("Attempting to force BeDressed job on " + Baby);
 					Job beDressedJob = JobMaker.MakeJob(Toddlers_DefOf.BeDressed, wait.actor);
 					job.count = 1;
 					Baby.jobs.StartJob(beDressedJob, JobCondition.InterruptForced);
@@ -59,7 +59,7 @@ namespace Toddlers
 			});
 			wait.AddFinishAction(delegate
 			{
-				Log.Message("wait.FinishAction");
+				//Log.Message("wait.FinishAction");
 				if (Baby.CurJobDef == Toddlers_DefOf.BeDressed)
 				{
 					Baby.jobs.EndCurrentJob(JobCondition.Succeeded);
@@ -70,16 +70,16 @@ namespace Toddlers
 			{
 				defaultCompleteMode = ToilCompleteMode.Instant,
 				initAction = delegate {
-					Log.Message("strip.initAction");
+					//Log.Message("strip.initAction");
 					if (Baby.apparel.WornApparel.Contains(Apparel))
 					{
 						if (Baby.apparel.TryDrop(Apparel, out var resultingAp))
 						{
-							Log.Message("Success at TryDrop");
+							//Log.Message("Success at TryDrop");
 							job.targetB = resultingAp;
 							if (job.haulDroppedApparel)
 							{
-								Log.Message("job wants to haul dropped apparel");
+								//Log.Message("job wants to haul dropped apparel");
 								resultingAp.SetForbidden(value: false, warnOnFail: false);
 								StoragePriority currentPriority = StoreUtility.CurrentStoragePriorityOf(resultingAp);
 								if (StoreUtility.TryFindBestBetterStoreCellFor(resultingAp, pawn, base.Map, currentPriority, pawn.Faction, out var foundCell))
@@ -94,19 +94,19 @@ namespace Toddlers
 							}
 							else
 							{
-								Log.Message("job doesn't want to haul dropped apparel");
+								//Log.Message("job doesn't want to haul dropped apparel");
 								EndJobWith(JobCondition.Succeeded);
 							}
 						}
 						else
 						{
-							Log.Message("Fail at TryDrop");
+							//Log.Message("Fail at TryDrop");
 							EndJobWith(JobCondition.Incompletable);
 						}
 					}
 					else
 					{
-						Log.Message("baby no longer wearing target apparel");
+						//Log.Message("baby no longer wearing target apparel");
 						EndJobWith(JobCondition.Incompletable);
 					}
 
@@ -124,7 +124,7 @@ namespace Toddlers
 				yield return Toils_Haul.PlaceHauledThingInCell(StorageIndex, carryToCell, storageMode: true);
 			}
 
-			Log.Message("Ending MakeNewToils");
+			//Log.Message("Ending MakeNewToils");
 		}
 	}
 }

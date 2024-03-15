@@ -39,7 +39,7 @@ namespace Toddlers
         {
             if (newStageIndex == 1 && !(pawn.ParentHolder is Building_GrowthVat))
             {
-                Find.LetterStack.ReceiveLetter("first steps", "{PAWN_labelShort} is ready to take {PAWN_possessive} first steps. {PAWN_pronoun} can now open doors and escape from {PAWN_possessive} crib.".Formatted(pawn.Named("PAWN")), LetterDefOf.NeutralEvent, pawn);
+                Find.LetterStack.ReceiveLetter("LetterTitleFirstSteps".Translate(), "LetterTextFirstSteps".Translate(pawn.Named("PAWN")), LetterDefOf.NeutralEvent, pawn);
             }
         }
 

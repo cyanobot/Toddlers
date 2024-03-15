@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+<SettingLabelCustomRenderer>Custom renderer</SettingLabelCustomRenderer>
+<SettingTooltipCustomRenderer>Custom (minor) animations for crawling babies, wiggling, wobbling, etc. Turn off if you are having a compatibility issue with other mods that affect rendering.</SettingTooltipCustomRenderer>
+<SettingLabelCanDraftToddlers>Can draft toddlers</SettingLabelCanDraftToddlers>
+<SettingTooltipCanDraftToddlers>Toddlers remain incapable of violence, but with this setting on they can be drafted and given orders.</SettingTooltipCanDraftToddlers>
+
+<SettingLabelCareAboutBedtime>Pawns care about babies' Sleep schedue</SettingLabelCareAboutBedtime>
+<SettingTooltipCareAboutBedtime>Pawns will return babies/toddlers to their cribs when they're scheduled to Sleep.</SettingTooltipCareAboutBedtime>
+<SettingLabelCareAboutFloorSleep>Pawns care about babies sleeping on floor</SettingLabelCareAboutFloorSleep>
+<SettingTooltipCareAboutFloorSleep>Pawns will return babies/toddlers to their cribs if they notice them sleeping on the floor.</SettingTooltipCareAboutFloorSleep>
+<SettingLabelFeedCapableToddlers>Pawns feed toddlers who could feed themselves</SettingLabelFeedCapableToddlers>
+<SettingTooltipFeedCapableToddlers>Pawns will feed toddlers even if they are able to feed themselves.</SettingTooltipFeedCapableToddlers>
+<SettingLabelBabyTalk>Baby talk for toddlers</SettingLabelBabyTalk>
+<SettingTooltipBabyTalk>Whether toddler thoughts should be translated to "goo goo ba gee".</SettingTooltipBabyTalk>
+
+<ApparelSettingLabelNoBabyApparel>No Baby Apparel</ApparelSettingLabelNoBabyApparel>
+<ApparelSettingLabelNoTribal>Onesies Only</ApparelSettingLabelNoTribal>
+<ApparelSettingLabelAllTribal>All Baby Apparel Neolithic</ApparelSettingLabelAllTribal>
+<ApparelSettingLabelBabyTribalwear>Default</ApparelSettingLabelBabyTribalwear>
+<ApparelSettingLabelAnyChildApparel>Babies Wear Child Apparel</ApparelSettingLabelAnyChildApparel>
+
+<ApparelSettingTooltipNoBabyApparel>Babies and toddlers must go naked.</ApparelSettingTooltipNoBabyApparel>
+<ApparelSettingTooltipNoTribal>Onesies are a medieval tech. Tribal babies go naked.</ApparelSettingTooltipNoTribal>
+<ApparelSettingTooltipAllTribal>Baby clothes including onesies require no tech.</ApparelSettingTooltipAllTribal>
+<ApparelSettingTooltipBabyTribalwear>Baby tribalwear for tribals, onesies for medieval and up.</ApparelSettingTooltipBabyTribalwear>
+<ApparelSettingTooltipAnyChildApparel>Babies can wear any apparel children can.</ApparelSettingTooltipAnyChildApparel>
+
+<SettingLabelPlayFallFactor>Play need fall factor</SettingLabelPlayFallFactor>
+<SettingTooltipPlayFallFactor>How fast the Play need falls</SettingTooltipPlayFallFactor>
+<SettingLabelLonelinessFactor>Loneliness gain rate factor</SettingLabelLonelinessFactor>
+<SettingTooltipLonelinessFactor>Controls how often toddlers need adult attention. Turn it up for more attention needed and down for less.</SettingTooltipLonelinessFactor>
+<SettingLabelMoodImpact>Mood impact of '{0}'</SettingLabelMoodImpact>
+<SettingLabelTimeToLearn>Time to fully learn (as a % of the toddler lifestage)</SettingLabelTimeToLearn>
+
+</LanguageData>

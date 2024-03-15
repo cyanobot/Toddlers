@@ -107,9 +107,8 @@ namespace Toddlers
 			{
 				if (job.playerForced)
                 {
-					Messages.Message(
-						"{BABY_labelShort} is already in the best available safe location."
-						.Formatted(Baby.Named("BABY")), new LookTargets(pawn, Baby), MessageTypeDefOf.NeutralEvent);
+					Messages.Message("MessageBabySafetyAlreadyBestLocation".Translate(Baby.Named("BABY")), 
+						new LookTargets(pawn, Baby), MessageTypeDefOf.NeutralEvent);
 				}
 				this.EndJobWith(JobCondition.Succeeded);
 				yield break;
@@ -126,26 +125,26 @@ namespace Toddlers
                 switch (moveReason)
                 {
                     case BabyMoveReason.TemperatureDanger:
-						text = "{ADULT_labelShort} is moving {BABY_labelShort} away from dangeous temperature.";
+						text = "MessageBabySafetyTemperatureDanger".Translate(pawn.Named("ADULT"), Baby.Named("BABY"));
 						break;
                     case BabyMoveReason.TemperatureNonUrgent:
-						text = "{ADULT_labelShort} is moving {BABY_labelShort} to a safer temperature.";
+						text = "MessageBabySafetyTemperatureNonUrgent".Translate(pawn.Named("ADULT"), Baby.Named("BABY"));
 						break;
                     case BabyMoveReason.Medical:
-						text = "{ADULT_labelShort} is moving {BABY_labelShort} to a medical bed.";
+						text = "MessageBabySafetyMedical".Translate(pawn.Named("ADULT"), Baby.Named("BABY"));
 						break;
                     case BabyMoveReason.OutsideZone:
-						text = "{ADULT_labelShort} is moving {BABY_labelShort} back to {BABY_possessive} allowed zone.";
+						text = "MessageBabySafetyOutsideZone".Translate(pawn.Named("ADULT"), Baby.Named("BABY"));
 						break;
                     case BabyMoveReason.ReturnToBed:
-						text = "{ADULT_labelShort} is putting {BABY_labelShort} to bed.";
+						text = "MessageBabySafetyReturnToBed".Translate(pawn.Named("ADULT"), Baby.Named("BABY"));
 						break;
 					case BabyMoveReason.Held:
-						//text = "{ADULT_labelShort} is putting {BABY_labelShort} down.";
+						//text = "MessageBabySafetyHeld".Translate(pawn.Named("ADULT"), Baby.Named("BABY");
 						text = null;
 						break;
                     default:
-						//text = "{ADULT_labelShort} is trying to move {BABY_labelShort} for an unknown reason.";
+						//text = "MesssageBabySafetyUnknown".Translate(pawn.Named("ADULT"), Baby.Named("BABY");
 						text = null;
 						break;
                 }
@@ -153,7 +152,7 @@ namespace Toddlers
 				Toil toil_Message = Toils_General.Do(delegate
 				{
 					if (text != null)
-						Messages.Message(text.Formatted(pawn.Named("ADULT"), Baby.Named("BABY")), new LookTargets(pawn, Baby), MessageTypeDefOf.NeutralEvent);
+						Messages.Message(text, new LookTargets(pawn, Baby), MessageTypeDefOf.NeutralEvent);
 				});
 				//toil_Message.AddPreInitAction(() => Log.Message("PreInit for toil_Message"));
 				yield return toil_Message;

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+<LetterTitleBecameToddler>{PAWN_labelShort} became a toddler</LetterTitleBecameToddler>
+<LetterTextBecameToddler>{PAWN_nameFull} is ready to start exploring the world. {PAWN_pronoun} can't work yet, but {PAWN_pronoun} needs less adult attention and over time {PAWN_pronoun} will become more mobile and more capable of attending to {PAWN_possessive} own needs.</LetterTextBecameToddler>
+<LetterTitleFirstSteps>First Steps</LetterTitleFirstSteps>
+<LetterTextFirstSteps>{PAWN_labelShort} is ready to take {PAWN_possessive} first steps. {PAWN_pronoun} can now open doors and escape from {PAWN_possessive} crib.</LetterTextFirstSteps>
+
+<MessageBabySafetyAlreadyBestLocation>{BABY_labelShort} is already in the best available safe location.</MessageBabySafetyAlreadyBestLocation>
+<MessageBabySafetyTemperatureDanger>{ADULT_labelShort} is moving {BABY_labelShort} away from dangeous temperature.</MessageBabySafetyTemperatureDanger>
+<MessageBabySafetyTemperatureNonUrgent>{ADULT_labelShort} is moving {BABY_labelShort} to a safer temperature.</MessageBabySafetyTemperatureNonUrgent>
+<MessageBabySafetyMedical>{ADULT_labelShort} is moving {BABY_labelShort} to a medical bed.</MessageBabySafetyMedical>
+<MessageBabySafetyOutsideZone>{ADULT_labelShort} is moving {BABY_labelShort} back to {BABY_possessive} allowed zone.</MessageBabySafetyOutsideZone>
+<MessageBabySafetyReturnToBed>{ADULT_labelShort} is putting {BABY_labelShort} to bed.</MessageBabySafetyReturnToBed>
+<MessageBabySafetyHeld>{ADULT_labelShort} is putting {BABY_labelShort} down.</MessageBabySafetyHeld>
+<MesssageBabySafetyUnknown>{ADULT_labelShort} is trying to move {BABY_labelShort} for an unknown reason.</MesssageBabySafetyUnknown>
+
+</LanguageData>

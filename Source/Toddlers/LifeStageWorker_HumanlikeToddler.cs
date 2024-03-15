@@ -12,8 +12,8 @@ namespace Toddlers
 {
     public class LifeStageWorker_HumanlikeToddler : LifeStageWorker
     {
-		public static string LetterTitle = "{PAWN_labelShort} became a toddler";
-		public static string LetterText = "{PAWN_nameFull} is ready to start exploring the world. {PAWN_pronoun} can't work yet, but {PAWN_pronoun} needs less adult attention and over time {PAWN_pronoun} will become more mobile and more capable of attending to {PAWN_possessive} own needs.";
+		//public static string LetterTitle = "{PAWN_labelShort} became a toddler";
+		//public static string LetterText = "{PAWN_nameFull} is ready to start exploring the world. {PAWN_pronoun} can't work yet, but {PAWN_pronoun} needs less adult attention and over time {PAWN_pronoun} will become more mobile and more capable of attending to {PAWN_possessive} own needs.";
 
 		private static readonly List<BackstoryCategoryFilter> ToddlerBackstoryFilters = new List<BackstoryCategoryFilter>
 		{
@@ -63,7 +63,7 @@ namespace Toddlers
 			}
 			if (PawnUtility.ShouldSendNotificationAbout(pawn))
             {
-				ChoiceLetter let = LetterMaker.MakeLetter(LetterTitle.Formatted(pawn.Named("PAWN")), LetterText.Formatted(pawn.Named("PAWN")), LetterDefOf.PositiveEvent, pawn, null, null, null);
+				ChoiceLetter let = LetterMaker.MakeLetter("LetterTitleBecameToddler".Translate(pawn.Named("PAWN")), "LetterTextBecameToddler".Translate(pawn.Named("PAWN")), LetterDefOf.PositiveEvent, pawn, null, null, null);
 				Find.LetterStack.ReceiveLetter(let, null);
 
 				if (pawn.Spawned)
