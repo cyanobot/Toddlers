@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<AnimationDef>
+	<defName>LayAngleInCrib</defName>
+	<label>lay angle in crib</label>
+	<durationTicks>60</durationTicks>
+	<startOnRandomTick>false</startOnRandomTick>
+	<playWhenDowned>false</playWhenDowned>
+	<animationParts>
+		<li>
+			<key>Root</key>
+			<value>
+				<workerClass>Toddlers.AnimationWorker_LayAngleInCrib</workerClass>
+			</value>			
+		</li>
+	</animationParts>
+</AnimationDef>
+
+<AnimationDef>
+	<defName>WiggleInCrib</defName>
+	<label>wiggle in crib</label>
+	<durationTicks>120</durationTicks>
+	<startOnRandomTick>false</startOnRandomTick>
+	<playWhenDowned>false</playWhenDowned>
+	<animationParts>
+		<li>
+			<key>Root</key>
+			<value>
+				<pivot>(0.5,0.3)</pivot>
+				<workerClass>Toddlers.AnimationWorker_WiggleInCrib</workerClass>
+			</value>			
+		</li>
+	</animationParts>
+</AnimationDef>
+
+<AnimationDef>
+	<defName>Bugwatch</defName>
+	<label>bugwatching</label>
+	<durationTicks>60</durationTicks>
+	<startOnRandomTick>false</startOnRandomTick>
+	<playWhenDowned>false</playWhenDowned>
+	<animationParts>
+		<li>
+			<key>Root</key>
+			<value>
+				<workerClass>Toddlers.AnimationWorker_Bugwatch</workerClass>
+			</value>			
+		</li>
+	</animationParts>
+</AnimationDef>
+
+<AnimationDef>
+	<defName>ToddlerCrawl</defName>
+	<label>toddler crawl</label>
+	<durationTicks>60</durationTicks>
+	<startOnRandomTick>false</startOnRandomTick>
+	<playWhenDowned>false</playWhenDowned>
+	<animationParts>
+		<li>
+			<key>Root</key>
+			<value>
+				<workerClass>Toddlers.AnimationWorker_ToddlerCrawl_Root</workerClass>
+			</value>			
+		</li>
+		<li>
+			<key>Head</key>
+			<value>
+				<workerClass>Toddlers.AnimationWorker_ToddlerCrawl_Head</workerClass>
+			</value>
+		</li>
+	</animationParts>
+</AnimationDef>
+
+<AnimationDef>
+	<defName>ToddlerWobble</defName>
+	<label>toddler wobble</label>
+	<durationTicks>60</durationTicks>
+	<startOnRandomTick>false</startOnRandomTick>
+	<playWhenDowned>false</playWhenDowned>
+	<animationParts>
+		<li>
+			<key>Root</key>
+			<value>
+				<pivot>(0.5,0.3)</pivot>
+				<workerClass>Toddlers.AnimationWorker_ToddlerWobble</workerClass>
+			</value>			
+		</li>
+	</animationParts>
+</AnimationDef>
+
+</Defs>

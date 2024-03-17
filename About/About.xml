@@ -5,6 +5,7 @@
     <packageId>cyanobot.toddlers</packageId>
     <supportedVersions>
         <li>1.4</li>
+		<li>1.5</li>
     </supportedVersions>
     <description>New life stage: Toddler
 - 1- and 2-year-old pawns are no longer completely passive objects

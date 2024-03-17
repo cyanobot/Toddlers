@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<ThinkTreeDef>
+	<defName>HumanlikeToddler</defName>
+	<thinkRoot Class="ThinkNode_Priority">
+		<subNodes>
+			<!--If we're being carried-->
+			<li Class="ThinkNode_ConditionalSpawned">
+				<invert>true</invert>
+				<subNodes>
+					<li Class="JobGiver_IdleForever"/>
+				</subNodes>
+			</li>
+			
+			<!-- If we HAVE to keep lying down... -->
+			<li Class="ThinkNode_ConditionalMustKeepLyingDown">
+				<subNodes>
+					<!-- Do a queued job if possible (e.g. watch tv in bed) -->
+					<li Class="ThinkNode_QueuedJob">
+						<inBedOnly>true</inBedOnly>
+					</li>
+				
+					<!-- play eg tv, skydreaming that can happen lying down goes here -->
+					<li Class="Toddlers.JobGiver_ToddlerPlayInCrib" />
+				
+					<!-- Keep lying down -->
+					<li Class="JobGiver_KeepLyingDown" />
+				
+				</subNodes>	
+			</li>
+			
+			<li Class="ThinkNode_Subtree">
+				<treeDef>Downed</treeDef>
+			</li>
+			
+			<li Class="ThinkNode_Subtree">
+				<treeDef>BurningResponse</treeDef>
+			</li>
+			
+			<!--MentalStateCritical goes here but toddlers can't have critical mental states-->
+			
+			<!-- Escaping threats -->
+			<li Class="ThinkNode_Subtree" MayRequire="Ludeon.RimWorld.Biotech">
+				<treeDef>Abilities_Escape</treeDef>
+			</li>
+        
+			<!-- React to close melee threat -->
+			<li Class="JobGiver_ReactToCloseMeleeThreat" />
+
+			<!-- Behavior when roped -->
+			<li Class="ThinkNode_Subtree">
+				<treeDef>RopedPawn</treeDef>
+			</li>
+        
+			<!-- Do a queued job -->
+			<li Class="ThinkNode_QueuedJob" />
+
+			<!-- Wait if drafted -->
+			<li Class="ThinkNode_ConditionalColonist">
+				<subNodes>
+					<li Class="ThinkNode_Tagger">
+						<tagToGive>DraftedOrder</tagToGive>
+						<subNodes>
+							<li Class="JobGiver_MoveToStandable" />
+							<li Class="JobGiver_Orders" />
+						</subNodes>
+					</li>
+				</subNodes>
+			</li>
+						
+
+			<!-- Lord directives (high priority) -->
+			<li Class="ThinkNode_JoinVoluntarilyJoinableLord">
+				<dutyHook>HighPriority</dutyHook>
+				<subNodes>
+					<li Class="ThinkNode_Subtree">
+						<treeDef>LordDuty</treeDef>
+					</li>
+				</subNodes>
+			</li>
+           
+			<li Class="ThinkNode_Tagger">
+				<tagToGive>InMentalState</tagToGive>
+				<subNodes>
+					<li Class="ThinkNode_ConditionalMentalState">
+						<state>RemoveClothes</state>
+						<subNodes>
+							<li Class="Toddlers.JobGiver_RemoveClothes"/>
+						</subNodes>
+					</li>
+				</subNodes>
+			</li>			
+			
+			<li Class="Toddlers.ThinkNode_ConditionalInCrib">
+				<subNodes>
+					<li Class="ThinkNode_PrioritySorter">
+						<subNodes>
+							<li Class="JobGiver_GetRest"/>
+							<li Class="Toddlers.JobGiver_LeaveCrib"/>
+							<li Class="Toddlers.JobGiver_ToddlerPlayInCrib"/>
+							<li Class="Toddlers.JobGiver_IdleInCrib" />
+						</subNodes>
+					</li>
+				</subNodes>
+			</li>
+			
+			<!-- Prisoner -->
+			<li Class="ThinkNode_ConditionalPrisoner">
+				<leaveJoinableLordIfIssuesJob>true</leaveJoinableLordIfIssuesJob>
+				
+				<subNodes>
+					<!-- stuff about escape goes here, but toddlers should not escape -->
+				
+					<!-- Exit map if released -->
+					<li Class="ThinkNode_ConditionalReleased">
+						<subNodes>
+							<li Class="ThinkNode_Tagger">
+								<tagToGive>Misc</tagToGive>
+								<subNodes>
+									<li Class="JobGiver_ExitMapBest">
+										<defaultLocomotion>Walk</defaultLocomotion>
+									</li>
+								</subNodes>
+							</li>
+						</subNodes>
+					</li>
+				
+					<li Class="ThinkNode_Tagger">
+						<tagToGive>RestingForMedicalReasons</tagToGive>
+						<subNodes>
+							<li Class="JobGiver_PatientGoToBed" />
+						</subNodes>
+					</li>
+            
+					<li Class="ThinkNode_Tagger">
+						<tagToGive>ChangingApparel</tagToGive>
+						<subNodes>
+							<li Class="JobGiver_PrisonerGetDressed" />
+						</subNodes>
+					</li>
+				
+					<li Class="ThinkNode_Tagger">
+						<tagToGive>SatisfyingNeeds</tagToGive>
+						<subNodes>
+							<li Class="JobGiver_GetFood"/>
+							<li Class="JobGiver_GetRest"/>
+							<li Class="Toddlers.JobGiver_ToddlerPlay"/>
+						</subNodes>
+					</li>
+				
+					<!-- more stuff about escaping from non-PlayerHomeMap, but irrelevant-->
+				
+					<li Class="ThinkNode_Tagger">
+						<tagToGive>Idle</tagToGive>
+						<subNodes>
+							<li Class="JobGiver_WanderCurrentRoom">
+								<maxDanger>Deadly</maxDanger>
+							</li>
+						</subNodes>
+					</li>
+            
+					<li Class="JobGiver_IdleError" />
+				</subNodes>
+			</li>
+			
+			<!-- Colonist -->
+			<li Class="ThinkNode_ConditionalColonist">
+				<subNodes>				
+					<!-- Seek safe temperatures -->
+					<li Class="Toddlers.JobGiver_ToddlerSeekSafeTemperature" />
+					
+					<!-- Seek allowed area -->
+					<li Class="JobGiver_SeekAllowedArea" />
+					
+					<!-- Drop unnused inventory -->
+					<li Class="JobGiver_DropUnusedInventory" />
+            
+					<!-- Get food (only if starving) -->
+					<li Class="ThinkNode_ConditionalStarving">
+						<subNodes>
+							<li Class="ThinkNode_Tagger">
+								<tagToGive>SatisfyingNeeds</tagToGive>
+								<subNodes>
+									<li Class="JobGiver_GetFood">
+										<leaveJoinableLordIfIssuesJob>true</leaveJoinableLordIfIssuesJob>
+									</li>
+								</subNodes>
+							</li>
+						</subNodes>
+					</li>
+				
+					<li Class="ThinkNode_Tagger">
+						<tagToGive>RestingForMedicalReasons</tagToGive>
+						<subNodes>
+							<li Class="JobGiver_PatientGoToBed" />
+						</subNodes>
+					</li>
+					
+					<!-- Lord directives (medium priority) -->
+					<li Class="ThinkNode_JoinVoluntarilyJoinableLord">
+						<dutyHook>MediumPriority</dutyHook>
+						<subNodes>
+							<li Class="ThinkNode_Subtree">
+								<treeDef>LordDuty</treeDef>
+							</li>
+						</subNodes>
+					</li>
+
+					<!-- Optimize apparel -->
+					<li Class="Toddlers.ThinkNode_ConditionalCanDressSelf">
+						<subNodes>
+							<li Class="ThinkNode_Tagger">
+								<tagToGive>ChangingApparel</tagToGive>
+								<subNodes>
+									<li Class="JobGiver_OptimizeApparel">
+										<leaveJoinableLordIfIssuesJob>true</leaveJoinableLordIfIssuesJob>
+									</li>
+								</subNodes>
+							</li>
+						</subNodes>					
+					</li>
+					
+
+					<!-- Unload your inventory -->
+					<li Class="ThinkNode_Tagger">
+						<tagToGive>UnloadingOwnInventory</tagToGive>
+						<subNodes>
+							<li Class="JobGiver_UnloadYourInventory" />
+						</subNodes>
+					</li>
+        
+					<!-- Main behavior core -->
+					<li Class="ThinkNode_ConditionalColonist">
+						<subNodes>
+							<li Class="ThinkNode_Tagger">
+								<tagToGive>SatisfyingNeeds</tagToGive>
+								<leaveJoinableLordIfIssuesJob>true</leaveJoinableLordIfIssuesJob>
+								<subNodes>
+									<li Class = "ThinkNode_PrioritySorter">
+										<subNodes>
+											<li Class="Toddlers.ThinkNode_Priority_ToddlerGetFood">
+												<subNodes>
+													<li Class="JobGiver_GetFood"/>	
+												</subNodes>
+											</li>				
+											<!--<li Class="Toddlers.JobGiver_ToddlerGetRest"/>-->
+											<li Class="JobGiver_GetRest"/>
+											<li Class="Toddlers.JobGiver_ToddlerPlay"/>
+												
+										</subNodes>
+									</li>
+								</subNodes>
+							</li>
+						</subNodes>
+					</li>
+
+					<!-- Idle colonist -->
+					<li Class="ThinkNode_ConditionalColonist">
+						<subNodes>
+							<li Class="ThinkNode_Tagger">
+								<tagToGive>Idle</tagToGive>
+								<subNodes>
+									<!-- Idle joy goes here, could have an idle play node-->
+							
+									<!-- Wander -->
+									<li Class="JobGiver_WanderColony">
+										<maxDanger>None</maxDanger>
+									</li>
+								</subNodes>
+							</li>
+						</subNodes> 
+					</li>
+				</subNodes>
+			</li>
+					
+
+			<!-- If you're a neutral guest, if you're not hurt exit the map, otherwise use a medical bed -->
+			<li Class="ThinkNode_ConditionalGuest">
+				<subNodes>
+					<li Class="ThinkNode_ConditionalNonPlayerNonHostileFactionOrFactionless">
+						<subNodes>
+							<li Class="ThinkNode_Tagger">
+								<tagToGive>RestingForMedicalReasons</tagToGive>
+								<subNodes>
+									<li Class="JobGiver_PatientGoToBed" />
+								</subNodes>
+							</li>
+                
+							<li Class="ThinkNode_Tagger">
+								<tagToGive>Misc</tagToGive>
+								<subNodes>
+									<li Class="JobGiver_ExitMapBest">
+										<defaultLocomotion>Walk</defaultLocomotion>
+									</li>
+								</subNodes>
+							</li>
+						</subNodes>
+					</li>
+				</subNodes>
+			</li>
+
+			<!-- Final backup: If you're just here for no apparent reason, and not a colonist, leave the map
+				e.g. This happens for pawns who are downed during combat, then later self-heal -->
+			<li Class="ThinkNode_ConditionalColonist">
+				<invert>true</invert>
+				<subNodes>
+					<li Class="ThinkNode_Tagger">
+						<tagToGive>Misc</tagToGive>
+						<subNodes>
+							<li Class="JobGiver_ExitMapBest">
+								<defaultLocomotion>Walk</defaultLocomotion>
+							</li>
+						</subNodes>
+					</li>
+				</subNodes>
+			</li>
+
+			<!-- If you can't leave, just wander -->
+			<li Class="ThinkNode_Tagger">
+				<tagToGive>Idle</tagToGive>
+				<subNodes>
+					<li Class="JobGiver_WanderAnywhere">
+						<maxDanger>Deadly</maxDanger>
+					</li>
+				</subNodes>
+			</li>
+
+			<li Class="JobGiver_IdleError" />
+		
+		</subNodes>
+	</thinkRoot>
+</ThinkTreeDef>
+
+
+
+<ThinkTreeDef>
+	<defName>HumanlikeToddlerConstant</defName>
+    <thinkRoot Class="ThinkNode_Priority">
+      <subNodes>
+        <!-- Despawned -->
+        <li Class="ThinkNode_Subtree">
+          <treeDef>Despawned</treeDef>
+        </li>
+
+        <li Class="ThinkNode_ConditionalCanDoConstantThinkTreeJobNow">
+          <subNodes>
+            <!-- Flee explosion -->
+            <li Class="JobGiver_FleePotentialExplosion" />
+
+            <!-- Join auto joinable caravan -->
+            <li Class="ThinkNode_Subtree">
+              <treeDef>JoinAutoJoinableCaravan</treeDef>
+            </li>
+
+            <!-- Hostility response -->
+            <li Class="JobGiver_ConfigurableHostilityResponse" />
+          </subNodes>
+        </li>
+
+        <li Class="ThinkNode_ConditionalCanDoLordJobNow">
+          <subNodes>
+            <!-- Lord directives -->
+            <li Class="ThinkNode_Subtree">
+              <treeDef>LordDutyConstant</treeDef>
+            </li>
+          </subNodes>
+        </li>
+      </subNodes>
+    </thinkRoot>
+ </ThinkTreeDef>
+ 
+
+ 
+
+</Defs>

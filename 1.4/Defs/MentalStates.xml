@@ -10,8 +10,8 @@
 	<workerClass>Toddlers.MentalStateWorker_RemoveClothes</workerClass>
     <category>Misc</category>
     <blockNormalThoughts>false</blockNormalThoughts>
-    <!--<nameColor>(0.65, 0.9, 0.93)</nameColor>-->
-	<!--<baseInspectLine>Mental state: Confused and wandering</baseInspectLine>-->
+    <nameColor>(1, 1, 1)</nameColor>
+	<baseInspectLine>Mental state: shedding clothes!</baseInspectLine>
     <inCaravanCanDo>false</inCaravanCanDo>
   </MentalStateDef>
 </Defs>
