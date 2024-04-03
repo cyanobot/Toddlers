@@ -12,7 +12,7 @@
 		<subNodes>
 			<li Class = "ThinkNode_PrioritySorter">
 				<subNodes>
-					<li Class="Toddlers.ThinkNode_Priority_ToddlerGetFood">
+					<li Class="Toddlers.ThinkNode_ConditionalToddlerCanFeedSelf">
 						<subNodes>
 							<li Class="JobGiver_GetFood"/>	
 						</subNodes>

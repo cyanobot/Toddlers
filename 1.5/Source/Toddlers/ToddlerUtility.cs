@@ -148,7 +148,7 @@ namespace Toddlers
 
         public static bool CanFeedSelf(Pawn p)
         {
-            Hediff hediff = p.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.LearningManipulation) as Hediff_LearningManipulation;
+            Hediff hediff = p.health?.hediffSet?.GetFirstHediffOfDef(Toddlers_DefOf.LearningManipulation) as Hediff_LearningManipulation;
             if (hediff == null || hediff.CurStageIndex >= 1) return true;
             return false;
         }

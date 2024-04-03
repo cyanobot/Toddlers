@@ -143,7 +143,11 @@
 					<li Class="ThinkNode_Tagger">
 						<tagToGive>SatisfyingNeeds</tagToGive>
 						<subNodes>
-							<li Class="JobGiver_GetFood"/>
+							<li Class="Toddlers.ThinkNode_ConditionalToddlerCanFeedSelf">
+								<subNodes>
+									<li Class="JobGiver_GetFood"/>	
+								</subNodes>
+							</li>	
 							<li Class="JobGiver_GetRest"/>
 							<li Class="Toddlers.JobGiver_ToddlerPlay"/>
 						</subNodes>
@@ -182,8 +186,12 @@
 							<li Class="ThinkNode_Tagger">
 								<tagToGive>SatisfyingNeeds</tagToGive>
 								<subNodes>
-									<li Class="JobGiver_GetFood">
-										<leaveJoinableLordIfIssuesJob>true</leaveJoinableLordIfIssuesJob>
+									<li Class="Toddlers.ThinkNode_ConditionalToddlerCanFeedSelf">
+										<subNodes>
+											<li Class="JobGiver_GetFood">	
+												<leaveJoinableLordIfIssuesJob>true</leaveJoinableLordIfIssuesJob>
+											</li>
+										</subNodes>
 									</li>
 								</subNodes>
 							</li>
@@ -239,11 +247,11 @@
 								<subNodes>
 									<li Class = "ThinkNode_PrioritySorter">
 										<subNodes>
-											<li Class="Toddlers.ThinkNode_Priority_ToddlerGetFood">
+											<li Class="Toddlers.ThinkNode_ConditionalToddlerCanFeedSelf">
 												<subNodes>
 													<li Class="JobGiver_GetFood"/>	
 												</subNodes>
-											</li>				
+											</li>			
 											<!--<li Class="Toddlers.JobGiver_ToddlerGetRest"/>-->
 											<li Class="JobGiver_GetRest"/>
 											<li Class="Toddlers.JobGiver_ToddlerPlay"/>

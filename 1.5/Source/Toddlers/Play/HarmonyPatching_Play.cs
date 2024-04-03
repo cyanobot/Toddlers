@@ -102,7 +102,19 @@ namespace Toddlers
         }
     }
 
-    //don't put babies/toddlers on the floor to play with them if they're downed for medical reasons
+    //don't remove babies/toddlers from bed to play with them if they should be resting for medical reasons
+    //and if they're downed for medical reasons but there's no bed, still don't put them on the floor to play that's weird
+    [HarmonyPatch(typeof(BabyPlayGiver_PlayWalking), nameof(BabyPlayGiver_PlayWalking.CanDo))]
+    class BabyPlayGiver_PlayWalking_Patch
+    {
+        static void Postfix(ref bool __result, Pawn __1)
+        {
+            if (__result && HealthAIUtility.ShouldSeekMedicalRest(__1) && __1.InBed())
+            {
+                __result = false;
+            }
+        }
+    }
     [HarmonyPatch()]
     class BabyPlayGiver_Patch
     {
@@ -114,7 +126,8 @@ namespace Toddlers
 
         static void Postfix(ref bool __result, Pawn __1)
         {
-            if (__result && __1.Downed && HealthAIUtility.ShouldSeekMedicalRest(__1))
+            if (__result && HealthAIUtility.ShouldSeekMedicalRest(__1)
+                && (__1.InBed() || __1.Downed))
             {
                 __result = false;
             }

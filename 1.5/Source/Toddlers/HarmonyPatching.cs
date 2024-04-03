@@ -1010,4 +1010,48 @@ namespace Toddlers
             return __result;
         }
     }
+
+    [HarmonyPatch(typeof(PawnBioAndNameGenerator), "GetBackstoryCategoryFiltersFor")]
+    class GetBackstoryCategoryFiltersFor_Patch
+    {
+        public static BackstoryCategoryFilter ToddlerCategoryGroup = new BackstoryCategoryFilter
+        {
+            categories = new List<string> { "Toddler" },
+            commonality = 1f
+        };
+
+        static List<BackstoryCategoryFilter> Postfix(List<BackstoryCategoryFilter> __result, Pawn pawn)
+        {
+            if (IsToddler(pawn))
+            {
+                return new List<BackstoryCategoryFilter> { ToddlerCategoryGroup };
+            }
+            return __result;
+        }
+    }
+
+    [HarmonyPatch]
+    class CombatJobGiver_MultiPatch
+    {
+        static IEnumerable<MethodBase> TargetMethods()
+        {
+            foreach (Type type in new Type[] {
+                typeof(JobGiver_AIFightEnemy),
+                typeof(JobGiver_AIGotoNearestHostile),
+                typeof(JobGiver_AISapper),
+                typeof(JobGiver_AIWaitAmbush),
+                typeof(JobGiver_ManTurrets)
+            })
+            {
+                MethodInfo method = type.GetMethod("TryGiveJob", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (method != null) yield return method;
+            }
+        }
+
+        static Job Postfix(Job __result, Pawn pawn)
+        {
+            if (IsToddler(pawn)) return null;
+            return __result;
+        }
+    }
 }

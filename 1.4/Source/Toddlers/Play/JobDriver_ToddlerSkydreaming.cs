@@ -24,8 +24,8 @@ namespace Toddlers
 		protected override IEnumerable<Toil> MakeNewToils()
 		{
 			this.FailOnChildLearningConditions();
-			if (pawn.Position != TargetLocA) 
-				yield return Toils_Goto.GotoCell(TargetIndex.A, PathEndMode.OnCell);
+			//if (pawn.Position != TargetLocA) 
+			yield return Toils_Goto.GotoCell(TargetIndex.A, PathEndMode.OnCell);
 			Toil toil = ToilMaker.MakeToil("MakeNewToils");
 			toil.initAction = delegate ()
 			{

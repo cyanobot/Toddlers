@@ -1,27 +1,15 @@
-Could not reserve Thing_Crib38694 (layer: null) for Derkacz for job LayDown (Job_30155) A = Thing_Crib38694 (now doing job LayDown (Job_30155) A = Thing_Crib38694(curToil=-1)) for maxPawns 1 and stackCount 0.
-Existing reservers:
-   [0] Will (job: BringBabyToSafetyUnforced (Job_29354) A = Thing_Human16819 B = Thing_Crib38694 Giver = JobGiver_Work (workGiverDef: ), toil: 9, maxPawns: 1, stackCount: -1)
-
 
 High Priority	
 	1.4 HAR errors
-	bugfix both versions
-		starvation food seeking doesn't check manipulation
-		toddlers spawned as toddlers getting newborn backstory not toddler
-	bugfix check 1.4
-		hostile toddler attacking pawns
-		adults removing sick babies from bed for play
-		skydreaming toil number issue due  to checking current loc
-		bringbabytosafetyunforced reserving crib so that baby/toddler cannot reserve for laydown
-		heatstroke+flu baby left on floor rather than taken to non-medical safe temp bed
-		removing downed baby from uncomfy temperature not obviously working
+	bugfix both
+		trying to play with non-spawned babies (eg gene extractor)
 	small changes 1.5 only
 		rocking horse anim
 	small changes both
+		let babies wear psychic foil helmet
 		adjust default play/loneliness slider values
 		slightly reduce rate at which adult attention reduces loneliness
 		baby downed in crib should continue to count as in crib
-	
 	1.5 update
 		repatch for HAR
 		repatch for FA
@@ -29,6 +17,9 @@ High Priority
 	
 	
 Medium Priority
+	bugfix both versions
+		heatstroke+flu baby left on floor rather than taken to non-medical safe temp bed
+		removing downed baby from uncomfy temperature not obviously working
 	can't unequip apparel if can't undress self yet
 	better dubs bad hygiene compatibility
 	what happens to kidnapped toddlers?

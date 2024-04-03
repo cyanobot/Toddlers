@@ -52,6 +52,7 @@ namespace Toddlers
 			foreach (Pawn baby in adult.MapHeld.mapPawns.FreeHumanlikesOfFaction(adult.Faction))
 			{
 				if (!baby.Suspended && ChildcareUtility.CanSuckle(baby, out var _)
+					&& (baby.Spawned || baby.CarriedBy == null)
 					&& adult.CanReserveAndReach(baby, PathEndMode.ClosestTouch, adult.NormalMaxDanger())
 					&& !baby.IsForbidden(adult)
 					&& baby.needs != null && baby.needs.play != null

@@ -10,6 +10,7 @@ using System.Text;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using static Toddlers.ToddlerUtility;
 using static Toddlers.BabyMoveUtility;
 
 namespace Toddlers
@@ -225,7 +226,8 @@ namespace Toddlers
 				}
 				else
                 {
-					if (reason == BabyMoveReason.None && !pawn.jobs.curJob.playerForced)
+					if ((reason == BabyMoveReason.None && !pawn.jobs.curJob.playerForced)
+						|| dest_default.Thing == GetCurrentCrib(Baby))
                     {
 						pawn.jobs.EndCurrentJob(JobCondition.Succeeded);
 					}

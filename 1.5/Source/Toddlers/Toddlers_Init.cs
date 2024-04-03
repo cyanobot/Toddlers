@@ -23,8 +23,8 @@ namespace Toddlers
 
             var harmony = new Harmony("cyanobot.toddlers");
 
-            if (Toddlers_Mod.DBHLoaded) Patch_DBH.GeneratePatches(harmony);
-            if (Toddlers_Mod.facialAnimationLoaded) Patch_FacialAnimation.Init();
+            //if (Toddlers_Mod.DBHLoaded) Patch_DBH.GeneratePatches(harmony);
+            //if (Toddlers_Mod.facialAnimationLoaded) Patch_FacialAnimation.Init();
             //if (Toddlers_Mod.HARLoaded) Patch_HAR.Init();
 
             harmony.PatchAll();

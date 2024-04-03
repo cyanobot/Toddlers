@@ -18,7 +18,7 @@ namespace Toddlers
 		{
 			Thing crib = FindCrib(pawn, baby);
 			if (crib == null) return false;
-			if (!(baby.Downed && HealthAIUtility.ShouldSeekMedicalRest(baby)))
+			if (!HealthAIUtility.ShouldSeekMedicalRest(baby))
 				return false;
 			if (!pawn.IsCarryingPawn(baby) && !pawn.CanReserveAndReach(baby, PathEndMode.Touch, Danger.Some))
 				return false;
