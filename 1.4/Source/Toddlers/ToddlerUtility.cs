@@ -174,6 +174,7 @@ namespace Toddlers
 
         public static Building_Bed GetCurrentCrib(Pawn p)
         {
+            if (!p.Spawned) return null;
             Building_Bed bed = null;
             List<Thing> thingList = p.Position.GetThingList(p.Map);
             for (int i = 0; i < thingList.Count; i++)
