@@ -128,7 +128,11 @@ namespace Toddlers
             }
 
             Region startRegion = baby.GetRegionHeld() ?? hauler.GetRegion();
-            if (startRegion == null) return null;    //something funky going on
+            if (startRegion == null)
+            {
+                Log.Error("ClosestAllowedRegion could not find starting region for baby: " + baby + ", and hauler: " + hauler);
+                return null;
+            }                
 
             TraverseParms traverseParms = TraverseParms.For(hauler, maxDanger: Danger.Some);
             RegionEntryPredicate entryCondition = (Region from, Region r)
@@ -398,11 +402,13 @@ namespace Toddlers
                 return true;
             }
 
+            /*
             if (baby.Spawned)
             {
                 babyMoveReason = BabyMoveReason.Held;
                 return true;
             }
+            */
 
             return false;
         }

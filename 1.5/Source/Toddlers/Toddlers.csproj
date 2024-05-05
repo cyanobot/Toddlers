@@ -86,7 +86,7 @@
     <Compile Include="Safety\BabyMoveUtility.cs" />
     <Compile Include="Safety\ThinkNode_ConditionalNoTemperatureInjury.cs" />
     <Compile Include="Crib\JobDriver_LeaveCrib.cs" />
-    <None Include="Patch_DBH.cs" />
+    <Compile Include="Patch_DBH.cs" />
     <None Include="Patch_FacialAnimation.cs" />
     <Compile Include="Apparel\HarmonyPatching_Apparel.cs" />
     <Compile Include="HarmonyPatching_FloatMenu.cs" />
