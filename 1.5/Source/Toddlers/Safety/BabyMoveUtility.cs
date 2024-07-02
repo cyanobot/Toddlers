@@ -11,6 +11,7 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 using Verse.AI.Group;
+using static Toddlers.Toddlers_Mod;
 
 
 namespace Toddlers
@@ -284,8 +285,13 @@ namespace Toddlers
 
         public static bool IsToddlerBusy(Pawn toddler)
         {
+            //busy if drafted
             if (toddler.Drafted) return true;
+            
+            //busy if attending a ceremony/etc
             if (toddler.GetLord() != null) return true;
+            
+            //busy if eating urgently
             JobDef curJob = toddler.CurJobDef;
             if ((toddler.needs != null && toddler.needs.food != null
                     && toddler.needs.food.CurLevelPercentage < toddler.needs.food.PercentageThreshUrgentlyHungry)
@@ -294,12 +300,16 @@ namespace Toddlers
             {
                 return true;
             }
+            
+            //busy if another pawn has already targeted toddler
             if (toddler.MapHeld.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer).Any(
                 p => p.CurJob != null && p.CurJob.AnyTargetIs(toddler)
                 ))
             {
                 return true;
             }
+
+            //otherwise not busy
             return false;
         }
 
@@ -484,7 +494,7 @@ namespace Toddlers
 
                 //then look for just a safe, allowed spot
                 FloatRange tempRange = MaxDangerTemperataureRange(baby);
-                preferredRegion = ClosestRegionWithinTemperatureRange(baby,hauler,tempRange);
+                preferredRegion = ClosestRegionWithinTemperatureRange(baby, hauler, tempRange);
                 if (preferredRegion != null && preferredRegion != baby.GetRegionHeld())
                 {
                     //Log.Message("Found safe allowed region, returning");
@@ -785,9 +795,7 @@ namespace Toddlers
                 }
 
                 //don't move toddlers who are busy eg not starving / being drafted
-                if (NeedsMoving_TemperatureDanger(pawn, pawn.PositionHeld) && pawn.Drafted)
-                    continue;
-                else if (IsToddlerBusy(pawn))
+                if (IsToddlerBusy(pawn))
                     continue;
 
                 //find out if the baby needs to go somewhere 
@@ -802,14 +810,14 @@ namespace Toddlers
                 }
                 if (pawn.Spawned && pawn.Position == localTargetInfo.Cell)
                 {
-                    Log.Message("Position == localTargetInfo");
+                    //Log.Message("Position == localTargetInfo");
                     continue;
                 }
                 else if (localTargetInfo.Thing is Building_Bed building_Bed)
                 {
                     if (pawn.CurrentBed() == building_Bed || ToddlerUtility.GetCurrentCrib(pawn) == building_Bed)
                     {
-                        Log.Message("Already in target bed");
+                        //Log.Message("Already in target bed");
                         continue;
                     }
                 }

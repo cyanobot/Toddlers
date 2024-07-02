@@ -11,11 +11,11 @@ namespace Toddlers
     {
         public static ModContentPack mcp;
 
-        public static bool facialAnimationLoaded;
         public static bool injuredCarryLoaded;
         public static bool dressPatientsLoaded;
         public static bool DBHLoaded;
         public static bool HARLoaded;
+        public static bool celsiusLoaded;
 
         public Toddlers_Mod(ModContentPack mcp) : base(mcp)
         {

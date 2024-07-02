@@ -1,8 +1,14 @@
+temperature behaviour revision
+	FindUnsafeBaby: 
+		remove redundant if (NeedsMoving_TemperatureDanger(pawn, pawn.PositionHeld) && pawn.Drafted)
+		comment out Log.Message x2
+	IsToddlerBusy: add comments for clarity
+
+
+
 
 High Priority	
 	1.4 HAR errors
-	bugfix both
-		trying to play with non-spawned babies (eg gene extractor)
 	small changes 1.5 only
 		rocking horse anim
 	small changes both
@@ -10,10 +16,13 @@ High Priority
 		adjust default play/loneliness slider values
 		slightly reduce rate at which adult attention reduces loneliness
 		baby downed in crib should continue to count as in crib
+		meditation spot needed for toddler?
 	1.5 update
 		repatch for HAR
-		repatch for FA
-
+	both
+		compatibility for Celsius
+	rereport raiders trying to wear baby hats
+	check learning compat against aging rate, also consider including global learning rate factor
 	
 	
 Medium Priority

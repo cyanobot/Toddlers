@@ -17,14 +17,14 @@ namespace Toddlers
         {
             Toddlers_Mod.dressPatientsLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Dress Patients (1.4)");
             Toddlers_Mod.DBHLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Dubs Bad Hygiene" || x.Name == "Dubs Bad Hygiene Lite");
-            Toddlers_Mod.facialAnimationLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "[NL] Facial Animation - WIP");
             Toddlers_Mod.injuredCarryLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Injured Carry");
             Toddlers_Mod.HARLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Humanoid Alien Races");
+            Toddlers_Mod.celsiusLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Celsius");
+
 
             var harmony = new Harmony("cyanobot.toddlers");
 
             if (Toddlers_Mod.DBHLoaded) Patch_DBH.GeneratePatches(harmony);
-            //if (Toddlers_Mod.facialAnimationLoaded) Patch_FacialAnimation.Init();
             //if (Toddlers_Mod.HARLoaded) Patch_HAR.Init();
 
             harmony.PatchAll();

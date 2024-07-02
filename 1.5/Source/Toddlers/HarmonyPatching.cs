@@ -1030,6 +1030,8 @@ namespace Toddlers
         }
     }
 
+    //make sure toddlers never initiate violence
+    //for some reason being incapable of it is insufficient 
     [HarmonyPatch]
     class CombatJobGiver_MultiPatch
     {
