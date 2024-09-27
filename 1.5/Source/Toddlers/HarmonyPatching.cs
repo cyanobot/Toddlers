@@ -676,8 +676,8 @@ namespace Toddlers
     {
         static bool Postfix(bool result, Pawn pawn, bool cellTarget)
         {
-            //only care about toddlers in mental states
-            if (ToddlerUtility.IsToddler(pawn))
+            //only care about babies/toddlers in mental states
+            if (pawn.DevelopmentalStage == DevelopmentalStage.Baby)
             {
                 if (pawn.HostFaction != null 
                     && (pawn.HostFaction != Faction.OfPlayer || !pawn.Spawned 
@@ -988,6 +988,7 @@ namespace Toddlers
         {
             if (!result) return false;
             if (!IsToddler(baby)) return result;
+            if (IsToddlerEatingUrgently(baby)) return false;
             if (!Toddlers_Settings.feedCapableToddlers && CanFeedSelf(baby) && FoodUtility.TryFindBestFoodSourceFor(baby, baby, false, out var _, out var _)) return false;
             return result;
         }
@@ -1056,4 +1057,6 @@ namespace Toddlers
             return __result;
         }
     }
+
+    
 }

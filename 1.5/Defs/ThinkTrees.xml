@@ -171,11 +171,10 @@
 			<!-- Colonist -->
 			<li Class="ThinkNode_ConditionalColonist">
 				<subNodes>				
-					<!-- Seek safe temperatures -->
-					<li Class="Toddlers.JobGiver_ToddlerSeekSafeTemperature" />
 					
 					<!-- Seek allowed area -->
 					<li Class="JobGiver_SeekAllowedArea" />
+					<li Class="JobGiver_SeekSafeTemperature" />
 					
 					<!-- Drop unnused inventory -->
 					<li Class="JobGiver_DropUnusedInventory" />

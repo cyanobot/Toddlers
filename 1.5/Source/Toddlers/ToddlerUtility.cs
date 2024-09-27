@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Verse.AI.Group;
 
 namespace Toddlers
 {
@@ -188,5 +189,40 @@ namespace Toddlers
             return bed.def == DefDatabase<ThingDef>.GetNamed("Crib");
         }
 
+        public static bool IsToddlerEatingUrgently(Pawn baby)
+        {
+            JobDef curJob = baby.CurJobDef;
+            if ((baby.needs != null && baby.needs.food != null
+                    && baby.needs.food.CurLevelPercentage < baby.needs.food.PercentageThreshUrgentlyHungry)
+                    && (curJob == JobDefOf.Ingest || (curJob == JobDefOf.TakeFromOtherInventory
+                    && baby.CurJob.targetA.HasThing && FoodUtility.WillEat(baby, baby.CurJob.targetA.Thing))))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool IsBabyBusy(Pawn baby)
+        {
+            //busy if drafted
+            if (baby.Drafted) return true;
+
+            //busy if attending a ceremony/caravan/etc
+            if (baby.GetLord() != null) return true;
+
+            //busy if eating urgently
+            if (IsToddlerEatingUrgently(baby)) return true;
+
+            //busy if another pawn has already targeted baby
+            if (baby.MapHeld.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer).Any(
+                p => p.CurJob != null && p.CurJob.AnyTargetIs(baby)
+                ))
+            {
+                return true;
+            }
+
+            //otherwise not busy
+            return false;
+        }
     }
 }

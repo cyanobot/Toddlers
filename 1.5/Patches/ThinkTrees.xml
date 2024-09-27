@@ -17,11 +17,13 @@
 		</value>
 	</Operation>
 	
+	<!--
 	<Operation Class="PatchOperationReplace">
 		<xpath>Defs/ThinkTreeDef[defName="Humanlike"]/thinkRoot//li[@Class="JobGiver_BringBabyToSafety"]</xpath>
 		<value>
 			<li Class="Toddlers.JobGiver_BringBabyToSafety" />
 		</value>
 	</Operation>
+	-->
 	
 </Patch>

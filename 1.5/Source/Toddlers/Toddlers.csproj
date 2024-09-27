@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\Assemblies\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -76,6 +76,9 @@
     <None Include="HAR\Patch_HAR.cs" />
     <None Include="HAR\AlienRace.cs" />
     <Compile Include="Animation\HarmonyPatching_Animation.cs" />
+    <None Include="Harmony\FloatMenu_Patch_old.cs" />
+    <Compile Include="Harmony\FloatMenu_Patch.cs" />
+    <Compile Include="LogUtil.cs" />
     <Compile Include="RefugeePod\LordToil_ToddlerLoiter.cs" />
     <Compile Include="RefugeePod\LordJob_ToddlerLoiter.cs" />
     <Compile Include="Play\JobDriver_BePlayedWith.cs" />
@@ -83,20 +86,20 @@
     <Compile Include="Play\BabyPlayGiver_PlayCrib.cs" />
     <Compile Include="RefugeePod\QuestNode_Root_RefugeePodCrash_Baby.cs" />
     <Compile Include="RefugeePod\QuestPart_ToddlerLoiter.cs" />
-    <Compile Include="Safety\BabyMoveUtility.cs" />
-    <Compile Include="Safety\ThinkNode_ConditionalNoTemperatureInjury.cs" />
+    <None Include="Safety\BabyMoveUtility_old.cs" />
+    <None Include="Safety\ThinkNode_ConditionalNoTemperatureInjury.cs" />
     <Compile Include="Crib\JobDriver_LeaveCrib.cs" />
     <Compile Include="Patch_DBH.cs" />
     <Compile Include="Apparel\HarmonyPatching_Apparel.cs" />
-    <Compile Include="HarmonyPatching_FloatMenu.cs" />
     <None Include="ReplaceTesting.cs" />
-    <Compile Include="Safety\JobGiver_ToddlerSeekSafeTemperature.cs" />
+    <Compile Include="Safety\BabyMoveUtility.cs" />
+    <None Include="Safety\JobGiver_ToddlerSeekSafeTemperature.cs" />
     <Compile Include="Crib\JobDriver_LetOutOfCrib.cs" />
     <Compile Include="Apparel\JobDriver_BeDressed.cs" />
     <Compile Include="Apparel\JobDriver_ToddlerRemoveApparel.cs" />
-    <Compile Include="Safety\BringBabyToSafety.cs" />
+    <None Include="Safety\BringBabyToSafety.cs" />
     <Compile Include="Play\HarmonyPatching_Play.cs" />
-    <Compile Include="Safety\HarmonyPatching_Temperature.cs" />
+    <None Include="Safety\HarmonyPatching_Temperature_old.cs" />
     <Compile Include="JobDriver_KidnapToddler.cs" />
     <Compile Include="Play\JobDriver_ToddlerPlayDecor.cs" />
     <Compile Include="Apparel\JobDriver_DressBaby.cs" />
@@ -104,6 +107,9 @@
     <Compile Include="Apparel\JobGiver_OptimizeBabyApparel.cs" />
     <Compile Include="Play\JobGiver_PlayWithSadBaby.cs" />
     <Compile Include="Play\ToddlerPlayGiver_PlayDecor.cs" />
+    <Compile Include="Safety\Harmony\FindUnsafeBaby_Patch.cs" />
+    <Compile Include="Safety\Harmony\SafePlaceForBaby_Patch.cs" />
+    <Compile Include="Safety\JobDriver_BringBabyToSafety.cs" />
     <Compile Include="TestPatch.cs" />
     <Compile Include="Animation\Toddlers_AnimationDefOf.cs" />
     <Compile Include="ThinkNode_ConditionalToddlerCanFeedSelf.cs" />
