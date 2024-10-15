@@ -66,7 +66,6 @@ namespace Toddlers
             return messageKey;
         }
         
-        
         public static bool ShouldBeInBed(Pawn baby)
         {
             BabyMoveLog("ShouldBeInBed(" + baby + ") - " 
@@ -106,6 +105,18 @@ namespace Toddlers
             if (baby.PositionHeld.IsForbidden(baby)) return false;
             if (!GenTemperature.SafeTemperatureAtCell(baby, baby.PositionHeld, baby.MapHeld)) return false;
             return true;
+        }
+
+        public static bool AlreadyAtTarget(LocalTargetInfo target, Pawn pawn)
+        {
+            if (target.HasThing && target.Thing is Building_Bed)
+            {
+                return pawn.CurrentBed() == target.Thing;
+            }
+            else
+            {
+                return pawn.Spawned && pawn.Position == target.Cell;
+            }
         }
 
         //Takes the place of FindUnsafeBaby

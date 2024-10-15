@@ -38,8 +38,8 @@ namespace Toddlers
             Toil findMoveReason = ToilMaker.MakeToil("FindMoveReason");
             findMoveReason.initAction = delegate
             {
-                BestPlaceForBaby(Baby, pawn, ref moveReason);
-                if (moveReason == BabyMoveReason.None)
+                LocalTargetInfo bestPlace = BestPlaceForBaby(Baby, pawn, ref moveReason);
+                if (moveReason == BabyMoveReason.None || AlreadyAtTarget(bestPlace,Baby))
                 {
                     if (job.playerForced) Messages.Message("MessageBabySafetyAlreadyBestLocation".Translate(Baby.Named("BABY")), new LookTargets(Baby), MessageTypeDefOf.NeutralEvent);
                     pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
