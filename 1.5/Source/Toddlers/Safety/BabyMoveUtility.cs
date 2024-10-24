@@ -140,25 +140,23 @@ namespace Toddlers
                 }
                 BabyMoveLog("FindBabyNeedsMoving passed basic  - carer: " + carer + ", baby: " + otherPawn);
 
-                LocalTargetInfo localTargetInfo = SafePlaceForBaby(otherPawn, carer);
+                BabyMoveReason moveReason = BabyMoveReason.None;
+                LocalTargetInfo localTargetInfo = BestPlaceForBaby(otherPawn, carer, ref moveReason);
                 if (!localTargetInfo.IsValid)
                 {
                     BabyMoveLog("no better place found for " + otherPawn);
                     continue;
                 }                             
                 
-                if (localTargetInfo.Thing is Building_Bed building_Bed)
+                if (AlreadyAtTarget(localTargetInfo, otherPawn))
                 {
-                    if (otherPawn.CurrentBed() == building_Bed)
-                    {
-                        BabyMoveLog(otherPawn + " already in best bed");
-                        continue;
-                    }
-                    
+                    BabyMoveLog(otherPawn + " already at best location");
+                    continue;
                 }
-                else if (otherPawn.Spawned && otherPawn.Position == localTargetInfo.Cell)
+
+                if (moveReason == BabyMoveReason.None && otherPawn.CarriedBy != carer)
                 {
-                    BabyMoveLog(otherPawn + " already in best location");
+                    BabyMoveLog("moveReason None for baby " + otherPawn + " and carer " + carer);
                     continue;
                 }
 

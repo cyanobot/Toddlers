@@ -27,6 +27,7 @@ namespace Toddlers
             AddFailCondition(() => 
                 pawn.Downed
                 || !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation)
+                || (pawn.Drafted && !job.playerForced)
                 );
             this.FailOnDestroyedNullOrForbidden(TargetIndex.A);
             AddFailCondition(() => 
@@ -39,14 +40,13 @@ namespace Toddlers
             findMoveReason.initAction = delegate
             {
                 LocalTargetInfo bestPlace = BestPlaceForBaby(Baby, pawn, ref moveReason);
-                if (moveReason == BabyMoveReason.None || AlreadyAtTarget(bestPlace,Baby))
+                if (moveReason == BabyMoveReason.None || !bestPlace.IsValid || AlreadyAtTarget(bestPlace,Baby))
                 {
                     if (job.playerForced) Messages.Message("MessageBabySafetyAlreadyBestLocation".Translate(Baby.Named("BABY")), new LookTargets(Baby), MessageTypeDefOf.NeutralEvent);
                     pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
                 }
             };
             findMoveReason.defaultCompleteMode = ToilCompleteMode.Instant;
-            findMoveReason.FailOn(() => pawn.Drafted && !job.playerForced);
             yield return findMoveReason;
 
             //send message if appropriate

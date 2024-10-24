@@ -180,7 +180,7 @@ namespace Toddlers
 
             Widgets.EndScrollView();
 
-           Toddlers_Init.ApplySettings();
+            ApplySettings();
         }
 
 
@@ -193,6 +193,25 @@ namespace Toddlers
         public static string ApparelSettingTooltip(ApparelSetting setting)
         {
             return ("ApparelSettingTooltip" + setting.ToString()).Translate();
+        }
+        public static void ApplySettings()
+        {
+            LifeStageDef babyDef = DefDatabase<LifeStageDef>.GetNamed("HumanlikeBaby");
+            LifeStageDef toddlerDef = DefDatabase<LifeStageDef>.GetNamed("HumanlikeToddler");
+
+            StatModifier maxComfyTempMod_baby = babyDef.statOffsets.Find(x => x.stat == StatDefOf.ComfyTemperatureMax);
+            maxComfyTempMod_baby.value = Toddlers_Settings.maxComfortableTemperature_Baby - 26f;
+
+            StatModifier maxComfyTempMod_toddler = toddlerDef.statOffsets.Find(x => x.stat == StatDefOf.ComfyTemperatureMax);
+            maxComfyTempMod_toddler.value = Toddlers_Settings.maxComfortableTemperature_Toddler - 26f;
+
+            StatModifier minComfyTempMod_baby = babyDef.statOffsets.Find(x => x.stat == StatDefOf.ComfyTemperatureMin);
+            minComfyTempMod_baby.value = Toddlers_Settings.minComfortableTemperature_Baby - 16f;
+
+            StatModifier minComfyTempMod_toddler = toddlerDef.statOffsets.Find(x => x.stat == StatDefOf.ComfyTemperatureMin);
+            minComfyTempMod_toddler.value = Toddlers_Settings.minComfortableTemperature_Toddler - 16f;
+
+            Toddlers_DefOf.BabyNoExpectations.stages[0].baseMoodEffect = Toddlers_Settings.expectations;
         }
     }
 }
