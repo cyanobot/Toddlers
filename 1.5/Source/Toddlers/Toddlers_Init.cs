@@ -24,8 +24,32 @@ namespace Toddlers
 
             var harmony = new Harmony("cyanobot.toddlers");
 
+            /*
+            MethodInfo m_FindUnsafeBaby = AccessTools.Method(typeof(ChildcareUtility), nameof(ChildcareUtility.FindUnsafeBaby), new System.Type[] { typeof(Pawn), typeof(AutofeedMode) });
+            LogUtil.DebugLog("m_FindUnsafeBaby: " + m_FindUnsafeBaby);
+            if (m_FindUnsafeBaby != null)
+            {
+                var patches = Harmony.GetPatchInfo(m_FindUnsafeBaby);
+                LogUtil.DebugLog("all owners: " + patches?.Owners);
+                if (patches != null && patches.Prefixes != null)
+                {
+                    foreach (var patch in patches.Prefixes)
+                    {
+                        LogUtil.DebugLog("index: " + patch.index);
+                        LogUtil.DebugLog("owner: " + patch.owner);
+                        LogUtil.DebugLog("patch method: " + patch.PatchMethod);
+                        LogUtil.DebugLog("priority: " + patch.priority);
+                        LogUtil.DebugLog("before: " + patch.before);
+                        LogUtil.DebugLog("after: " + patch.after);
+                    }
+                }
+                
+            }
+            */
+
             if (Toddlers_Mod.DBHLoaded) Patch_DBH.GeneratePatches(harmony);
             //if (Toddlers_Mod.HARLoaded) Patch_HAR.Init();
+
 
             harmony.PatchAll();
 

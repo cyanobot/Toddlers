@@ -40,6 +40,9 @@ namespace Toddlers
             findMoveReason.initAction = delegate
             {
                 LocalTargetInfo bestPlace = BestPlaceForBaby(Baby, pawn, ref moveReason);
+                BabyMoveLog("Toil findMoveReason - "
+                    + "actor: " + pawn + ", baby: " + Baby
+                    + ", bestPlace: " + bestPlace + ", moveReason: " + moveReason);
                 if (moveReason == BabyMoveReason.None || !bestPlace.IsValid || AlreadyAtTarget(bestPlace,Baby))
                 {
                     if (job.playerForced) Messages.Message("MessageBabySafetyAlreadyBestLocation".Translate(Baby.Named("BABY")), new LookTargets(Baby), MessageTypeDefOf.NeutralEvent);
@@ -123,6 +126,12 @@ namespace Toddlers
                 {
                     toil.GetActor().jobs.EndCurrentJob(JobCondition.InterruptForced);
                 }
+
+                BabyMoveLog("Toil findDestination - "
+                    + "actor: " + toil.GetActor()
+                    + ", baby: " + Baby
+                    + "primarySpot: " + primarySpot
+                    );
             };
 
             toil.FailOn(() => !pawn.IsCarryingPawn(Baby) || pawn.Downed || (pawn.Drafted && !job.playerForced));

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
 
+<SettingLabelDebugBabySafety>DEBUG: Baby safety logging</SettingLabelDebugBabySafety>
+<SettingTooltipDebugBabySafety>Enable writing to log all the debug info for adults trying to "take baby to safety". Be warned, this will dump vast quantities of text into your log. Only turn on if you really need it.</SettingTooltipDebugBabySafety>
+
 <SettingLabelCustomRenderer>Custom renderer</SettingLabelCustomRenderer>
 <SettingTooltipCustomRenderer>Custom (minor) animations for crawling babies, wiggling, wobbling, etc. Turn off if you are having a compatibility issue with other mods that affect rendering.</SettingTooltipCustomRenderer>
 <SettingLabelCanDraftToddlers>Can draft toddlers</SettingLabelCanDraftToddlers>

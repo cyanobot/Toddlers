@@ -19,6 +19,7 @@ namespace Toddlers
         public static bool Prefix(Pawn mom, AutofeedMode priorityLevel, ref Pawn __result)
         {
             __result = FindBabyNeedsMoving(mom, priorityLevel);
+            BabyMoveLog("FindUnsafeBaby - mom: " + mom + ", result: " + __result);
             return false;
         }
     }

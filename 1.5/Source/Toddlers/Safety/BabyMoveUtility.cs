@@ -31,11 +31,12 @@ namespace Toddlers
     public static class BabyMoveUtility
     {
         public const float SLEEPY_THRESHOLD_PERCENT = 0.3f;
-        public const bool LOG_BABY_MOVE = true;
+       
+        public static bool LOG_BABY_MOVE => Toddlers_Settings.debugBabySafety;
 
         public static void BabyMoveLog(string message)
         {
-            if (LOG_BABY_MOVE) LogUtil.DebugLog(message);
+            if (LOG_BABY_MOVE) Log.Message(message);
         }
                 
         public static string MessageKeyForMoveReason(BabyMoveReason reason)
@@ -102,6 +103,10 @@ namespace Toddlers
 
         public static bool IsCurLocationSafe(Pawn baby)
         {
+            BabyMoveLog("IsCurLocationSafe(" + baby + ") - "
+                + "PositionHeld.IsForbidden: " + baby.PositionHeld.IsForbidden(baby)
+                + ", SafeTemperatureAtCell: " + GenTemperature.SafeTemperatureAtCell(baby, baby.PositionHeld, baby.MapHeld)
+                );
             if (baby.PositionHeld.IsForbidden(baby)) return false;
             if (!GenTemperature.SafeTemperatureAtCell(baby, baby.PositionHeld, baby.MapHeld)) return false;
             return true;
@@ -126,25 +131,27 @@ namespace Toddlers
 
             foreach (Pawn otherPawn in carer.MapHeld.mapPawns.FreeHumanlikesSpawnedOfFaction(carer.Faction))
             {
-                BabyMoveLog("FindBabyNeedsMoving checking pawn " + otherPawn);
+                //BabyMoveLog("FindBabyNeedsMoving checking pawn " + otherPawn);
                 if (CanSuckle(otherPawn, out var _))
                 {
-                    BabyMoveLog("AutofeedSetting: " + otherPawn.mindState.AutofeedSetting(carer)
+                    BabyMoveLog(
+                        "FindBabyNeedsMoving checking baby: " + otherPawn + ", carer: " + carer
+                        + ", AutofeedSetting: " + otherPawn.mindState.AutofeedSetting(carer)
                         + ", IsBabyBusy: " + IsBabyBusy(otherPawn));
                 }
-                if (!CanSuckle(otherPawn, out var _) 
-                    || otherPawn.mindState.AutofeedSetting(carer) != priorityLevel 
+                else continue;
+                if (otherPawn.mindState.AutofeedSetting(carer) != priorityLevel 
                     || IsBabyBusy(otherPawn))
                 {
                     continue;
                 }
-                BabyMoveLog("FindBabyNeedsMoving passed basic  - carer: " + carer + ", baby: " + otherPawn);
+                //BabyMoveLog("FindBabyNeedsMoving passed basic checks for carer: " + carer + ", baby: " + otherPawn);
 
                 BabyMoveReason moveReason = BabyMoveReason.None;
                 LocalTargetInfo localTargetInfo = BestPlaceForBaby(otherPawn, carer, ref moveReason);
                 if (!localTargetInfo.IsValid)
                 {
-                    BabyMoveLog("no better place found for " + otherPawn);
+                    BabyMoveLog("no better place found for: " + otherPawn);
                     continue;
                 }                             
                 
@@ -156,11 +163,11 @@ namespace Toddlers
 
                 if (moveReason == BabyMoveReason.None && otherPawn.CarriedBy != carer)
                 {
-                    BabyMoveLog("moveReason None for baby " + otherPawn + " and carer " + carer);
+                    BabyMoveLog("moveReason None for baby: " + otherPawn + " and carer: " + carer);
                     continue;
                 }
 
-                BabyMoveLog("FindBabyNeedsMoving returning " + otherPawn);
+                BabyMoveLog("FindBabyNeedsMoving returning: " + otherPawn);
                 return otherPawn;
             }
             return null;
@@ -218,7 +225,7 @@ namespace Toddlers
                 //we recreate this logic to avoid weird interactions with the vanilla logic
                 if (!baby.Downed && bed.IsForbidden(baby))
                 {
-                    BabyMoveLog("bed " + bed + " is forbidden to " + baby);
+                    BabyMoveLog("bed: " + bed + " is forbidden to " + baby);
                     bedInaccessible = true;
                 }
 
@@ -227,7 +234,7 @@ namespace Toddlers
                 if (baby.CurrentBed() != bed &&
                     !ReservationUtility.CanReserveAndReach(hauler, bed, PathEndMode.ClosestTouch, Danger.Deadly, ignoreOtherReservations: ignoreOtherReservations))
                 {
-                    BabyMoveLog("bed " + bed + " is inaccessible to " + hauler);
+                    BabyMoveLog("bed: " + bed + " is inaccessible to " + hauler);
                     bedInaccessible = true;
                 }
             }
@@ -241,35 +248,42 @@ namespace Toddlers
                 //medical rest is high priority
                 if (HealthAIUtility.ShouldSeekMedicalRest(baby))
                 {
-                    BabyMoveLog(baby + " needs medical rest");
                     //if bed is safe temperature, no other concerns
                     if (safeTemperatureAtBed)
                     {
                         //if already in bed, do not move them
                         if (baby.CurrentBed() == bed)
                         {
-                            BabyMoveLog(baby + " already in best bed, returning Invalid");
+                            BabyMoveLog(
+                                baby + " needs medical rest, already in best bed: "
+                                + bed 
+                                + ", returning Invalid");
                             return LocalTargetInfo.Invalid;
                         }
                         else
                         {
-                            BabyMoveLog("bed at safe temperature, returning bed " + bed);
+                            BabyMoveLog(
+                                baby + " needs medical rest, bed: "
+                                + bed
+                                + " at safe temperature, returning: " + bed);
                             moveReason = BabyMoveReason.Medical;
                             return bed;
                         }
                     }
                     else
                     {
-                        BabyMoveLog("bed " + bed + " not at safe temperature");
+                        BabyMoveLog(
+                             baby + " needs medical rest, bed: "
+                             + bed + " not at safe temperature, checking for temperature industry");
                         //threshold for removing from current bed higher than threshold for not putting into bed
                         //to prevent continuously taking them back and forth
                         if (baby.CurrentBed() == bed)
                         {
-                            BabyMoveLog(baby + " already in bed " + bed);
+                            //BabyMoveLog(baby + " already in bed " + bed);
                             //remove from current medical bed only if temperature injury serious or worse
                             if (baby.health.hediffSet.HasTemperatureInjury(TemperatureInjuryStage.Serious))
                             {
-                                BabyMoveLog(baby + " has serious+ temperature injury, needs removing from bed " + bed);
+                                BabyMoveLog(baby + " has serious+ temperature injury, needs removing from bed: " + bed);
                                 moveReason = BabyMoveReason.UnsafeTemperature;
                                 bedUnsuitableForTemperatureReasons = true;      //mark this for future logic
                                 //do not return here, further logic required
@@ -286,13 +300,13 @@ namespace Toddlers
                             //don't take to an unsafe medical bed if temperature injury minor or worse
                             if (baby.health.hediffSet.HasTemperatureInjury(TemperatureInjuryStage.Minor))
                             {
-                                BabyMoveLog(baby + " has minor+ temperature injury, do not take to unsafe bed " + bed);
+                                BabyMoveLog(baby + " has minor+ temperature injury, do not take to unsafe bed: " + bed);
                                 bedUnsuitableForTemperatureReasons = true;      //mark this for future logic
                                 //do not return here, further logic required 
                             }
                             else
                             {
-                                BabyMoveLog(baby + " does not have minor+ temperature injury, bed " + bed + " is best option despite unsafe temperature, returning bed");
+                                BabyMoveLog(baby + " does not have minor+ temperature injury, bed: " + bed + " is best option despite unsafe temperature, returning bed");
                                 //otherwise bed is best option for them
                                 moveReason = BabyMoveReason.Medical;
                                 return bed;
@@ -316,7 +330,7 @@ namespace Toddlers
                                 }
                                 else
                                 {
-                                    BabyMoveLog("secondary bed at safe temperature, returning secondary bed " + secondaryBed);
+                                    BabyMoveLog("secondary bed at safe temperature, returning secondary bed: " + secondaryBed);
                                     moveReason = BabyMoveReason.Medical;
                                     return secondaryBed;
                                 }
@@ -328,23 +342,25 @@ namespace Toddlers
                 //if not medical rest, unsafe temperature is higher priority than putting them to bed
                 else if (!safeTemperatureAtBed)
                 {
-                    BabyMoveLog(baby + " does not need medical rest, bed " + bed + " is not at a safe temperature, do not take to bed");
+                    BabyMoveLog(baby + " does not need medical rest, bed: " + bed + " is not at a safe temperature, do not take to bed");
                     bedUnsuitableForTemperatureReasons = true;
                 }
 
                 else if (shouldBeInBed)
-                {
-                    BabyMoveLog(baby + " should be in bed, bed " + bed + " is a safe temperature");
-                    
+                {                    
                     //if already in bed, do not move them
                     if (baby.CurrentBed() == bed)
                     {
-                        BabyMoveLog(baby + " already in best bed, returning Invalid");
+                        BabyMoveLog(
+                            baby + " should be in bed, bed: " + bed + " is a safe temperature, "
+                            + "already in best bed, returning Invalid");
                         return LocalTargetInfo.Invalid;
                     }
                     else
                     {
-                        BabyMoveLog("returning bed " + bed);
+                        BabyMoveLog(
+                            baby + " should be in bed, bed: " + bed + " is a safe temperature, "
+                            + "returning " + bed);
                         moveReason = BabyMoveReason.ReturnToBed;
                         return bed;
                     }
@@ -387,7 +403,6 @@ namespace Toddlers
 
                 //find a good nearby standable location instead eg not in a fire/in a wall/etc
                 IntVec3 targetCell = TryFindSpotForBabyInRegion(hauler.GetRegion(), baby, hauler);
-                BabyMoveLog("targetCell: " + targetCell);
 
                 if (targetCell.IsValid)
                 {
@@ -405,18 +420,6 @@ namespace Toddlers
             //if we have a reason to move the baby (current location is no good)
             if (!curLocationGood)
             {
-                BabyMoveLog("looking for a new location for " + baby);
-
-                /*
-                //first check if bed is suitable, even though baby doesn't necessarilly need to go to bed
-                //bed serves as a default return spot for babies that have ended up in unsuitable locations
-                if (bed != null && !bedInaccessible && baby.ComfortableTemperatureAtCell(bed.Position, bed.Map))
-                {
-                    BabyMoveLog("bed " + bed + " is a comfortable temperature for " + baby + ", returning bed");
-                    return bed;
-                }
-                */
-
                 //otherwise we need to find a suitable place on the map
                 FloatRange comfRange = baby.ComfortableTemperatureRange();
                 FloatRange safeRange = baby.SafeTemperatureRange();
@@ -426,49 +429,40 @@ namespace Toddlers
                     TraverseParms.For(hauler, Danger.Some));
                 LocalTargetInfo targetCell = LocalTargetInfo.Invalid;
 
-                BabyMoveLog("search for a comfortable region returned " + region);
+                BabyMoveLog(
+                    "current location of baby " + baby + " deemed bad, looking for a new location.  "
+                    + "search for a comfortable region returned: " + region);
                 
                 //if found a comfortable region
                 if (region != null)
                 {
                     targetCell = TryFindSpotForBabyInRegion(region, baby, hauler);
-                    BabyMoveLog("targetCell: " + targetCell);
+                    //BabyMoveLog("targetCell: " + targetCell);
 
                     if (targetCell.IsValid)
                     {
-                        BabyMoveLog("found an allowed spot in region " + region + " for " + baby + ", returning that spot: " + targetCell);
+                        BabyMoveLog("found an allowed spot in region: " + region + " for " + baby + ", returning that spot: " + targetCell);
                         return (LocalTargetInfo)targetCell;
                     }
                 }
-
-                BabyMoveLog("Couldn't find a suitable place at comfortable temperature for " + baby);
-
-                //no comfortable region, look for safe-but-uncomfy option
-
-                /*
-                //reconsider bed
-                if (bed != null && !bedInaccessible && !bedUnsuitableForTemperatureReasons)
-                {
-                    BabyMoveLog("bed " + bed + " is safe temperature for " + baby + ", returning bed");
-                    return bed;
-                }
-                */
 
                 region = JobGiver_SeekSafeTemperature.ClosestRegionWithinTemperatureRange(
                     baby.PositionHeld, baby.MapHeld, baby, safeRange,
                     TraverseParms.For(hauler, Danger.Some));
 
-                BabyMoveLog("Search for a safe region returned " + region);
+                BabyMoveLog(
+                    "Couldn't find a suitable place at comfortable temperature for " + baby
+                    + ". Search for a safe region returned: " + region);
 
                 //if found a safe region
                 if (region != null)
                 {
                     targetCell = TryFindSpotForBabyInRegion(region, baby, hauler);
-                    BabyMoveLog("targetCell: " + targetCell);
+                    //BabyMoveLog("targetCell: " + targetCell);
 
                     if (targetCell.IsValid)
                     {
-                        BabyMoveLog("found an allowed spot in region " + region + " for " + baby + ", returning that spot: " + targetCell);
+                        BabyMoveLog("found an allowed spot in region: " + region + " for " + baby + ", returning that spot: " + targetCell);
                         return (LocalTargetInfo)targetCell;
                     }
                 }
@@ -488,7 +482,7 @@ namespace Toddlers
                 //look for somewhere allowed to put them regardless of temperature
                 if (baby.PositionHeld.IsForbidden(baby))
                 {
-                    BabyMoveLog("Searching for allowed region for " + baby);
+                    //BabyMoveLog("Searching for allowed region for " + baby);
 
                     Region startRegion = baby.GetRegionHeld();
                     TraverseParms traverseParms = TraverseParms.For(hauler);
@@ -512,17 +506,17 @@ namespace Toddlers
                     };
                     RegionTraverser.BreadthFirstTraverse(startRegion, entryCondition, regionProcessor, 9999);
 
-                    BabyMoveLog("allowed region: " + region);
+                    BabyMoveLog("Search for allowed region for baby " + baby + " found: " + region);
 
                     //if found an allowed region
                     if (region != null)
                     {
-                        targetCell = TryFindSpotForBabyInRegion(region, baby, hauler);
+                        //targetCell = TryFindSpotForBabyInRegion(region, baby, hauler);
                         BabyMoveLog("targetCell: " + targetCell);
 
                         if (targetCell.IsValid)
                         {
-                            BabyMoveLog("found an allowed spot in region " + region + " for " + baby + ", returning that spot: " + targetCell);
+                            BabyMoveLog("found an allowed spot in region: " + region + " for " + baby + ", returning that spot: " + targetCell);
                             return (LocalTargetInfo)targetCell;
                         }
                     }
@@ -536,19 +530,22 @@ namespace Toddlers
             //if we are holding the baby and just need to put them down, do so anyway - right here is as good as anywhere
             if (baby.ParentHolder == hauler)
             {
-                BabyMoveLog(hauler + " is carrying " + baby + ", can't find a good spot but need to put them down anyway");
                 moveReason = BabyMoveReason.Held;
 
                 //find a good nearby standable location instead eg not in a fire/in a wall/etc
                 IntVec3 targetCell = TryFindSpotForBabyInRegion(hauler.GetRegion(), baby, hauler, true);
                 if (targetCell.IsValid)
                 {
-                    BabyMoveLog("found nearby good position " + targetCell + ", returning that");
+                    BabyMoveLog(
+                        hauler + " is carrying " + baby + " and needs to put them down. "
+                        + "found nearby acceptable position: " + targetCell + ", returning that");
                     return targetCell;
                 }
                 else
                 {
-                    BabyMoveLog("could not find anywhere suitable, dropping baby at current location " + hauler.Position);
+                    BabyMoveLog(
+                        hauler + " is carrying " + baby + " and needs to put them down "
+                        + "but could not find a suitable spot, dropping baby at current location: " + hauler.Position);
                     return hauler.Position;
                 }
             }
@@ -592,9 +589,9 @@ namespace Toddlers
                 && RestUtility.IsValidBedFor(sleeper.ownership.OwnedBed, sleeper, traveler, true))
             {
                 Building_Bed ownedBed = sleeper.ownership.OwnedBed;
-                BabyMoveLog("ownedBed: " + ownedBed 
-                    + ", Medical: " + ownedBed.Medical
-                    + ", danger: " + ownedBed.Position.GetDangerFor(sleeper, sleeper.MapHeld));
+                //BabyMoveLog("ownedBed: " + ownedBed 
+                //    + ", Medical: " + ownedBed.Medical
+                //    + ", danger: " + ownedBed.Position.GetDangerFor(sleeper, sleeper.MapHeld));
                 if (ownedBed.Position.GetDangerFor(sleeper, sleeper.MapHeld) == Danger.None)
                     return sleeper.ownership.OwnedBed;
                 else return null;
@@ -619,8 +616,8 @@ namespace Toddlers
             for (int i = 0; i < bedDefsBestToWorst_Medical.Count; i++)
             {
                 ThingDef thingDef = bedDefsBestToWorst_Medical[i];
-                BabyMoveLog("For loop considering def: " + thingDef
-                    + ", CanUseBedEver: " + RestUtility.CanUseBedEver(sleeper, thingDef));
+                //BabyMoveLog("For loop considering def: " + thingDef
+                //    + ", CanUseBedEver: " + RestUtility.CanUseBedEver(sleeper, thingDef));
                 if (!RestUtility.CanUseBedEver(sleeper, thingDef))
                 {
                     continue;

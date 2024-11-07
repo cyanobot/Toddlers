@@ -21,6 +21,8 @@ namespace Toddlers
 
     public class Toddlers_Settings : ModSettings
     {
+        public static bool debugBabySafety = false;
+
         public static bool careAboutBedtime = true;
         public static bool careAboutFloorSleep = true;
         public static bool feedCapableToddlers = true;
@@ -54,6 +56,7 @@ namespace Toddlers
         {
             base.ExposeData();
 
+            Scribe_Values.Look(ref debugBabySafety, "debugBabySafety", debugBabySafety, true);
             Scribe_Values.Look(ref careAboutBedtime, "careAboutBedtime", careAboutBedtime, true);
             Scribe_Values.Look(ref careAboutFloorSleep, "careAboutFloorSleep", careAboutFloorSleep, true);
             Scribe_Values.Look(ref feedCapableToddlers, "feedCapableToddlers", feedCapableToddlers, true);
@@ -175,6 +178,11 @@ namespace Toddlers
             l.Label(PawnCapacityDefOf.Manipulation.LabelCap + " : " + learningFactor_Manipulation.ToStringPercent(), 
                 tooltip: "[" + "Default".Translate() + ": 80%]");
             learningFactor_Manipulation = l.Slider(learningFactor_Manipulation, 0.01f, 1f);
+
+            l.GapLine();
+
+            l.CheckboxLabeled("SettingLabelDebugBabySafety".Translate() + " :", ref debugBabySafety,
+                tooltip: "SettingTooltipDebugBabySafety".Translate());
 
             l.End();
 
