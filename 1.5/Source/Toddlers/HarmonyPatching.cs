@@ -146,6 +146,23 @@ namespace Toddlers
                     return pawn.Downed || ToddlerUtility.IsLiveToddler(pawn);
                 };
             }
+            else if (__originalMethod == typeof(TargetingParameters).GetMethod(nameof(TargetingParameters.ForShuttle)))
+            {
+                Predicate<TargetInfo> oldValidator = __result.validator;
+                __result.validator = delegate (TargetInfo targ)
+                {
+                    if (oldValidator(targ))
+                    {
+                        return true;
+                    }
+                    if (!targ.HasThing || !(targ.Thing is Pawn pawn))
+                    {
+                        return false;
+                    }
+                    // Allow loading toddlers even if not downed.
+                    return ToddlerUtility.IsLiveToddler(pawn);
+                };
+            }
         }
     }
 
