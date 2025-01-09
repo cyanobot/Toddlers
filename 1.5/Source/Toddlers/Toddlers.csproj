@@ -65,7 +65,11 @@
     <Compile Include="Animation\AnimationWorker_WiggleInCrib.cs" />
     <Compile Include="Animation\AnimationWorker_ToddlerWobble.cs" />
     <Compile Include="Animation\AnimationWorker_ToddlerCrawl.cs" />
+    <None Include="Apparel\ApparelSettings_old.cs" />
     <Compile Include="Apparel\ApparelSettings.cs" />
+    <Compile Include="Apparel\Harmony\ForStrip_Patch.cs" />
+    <Compile Include="Apparel\Harmony\CanBeStrippedByColony_Patch.cs" />
+    <Compile Include="Apparel\Harmony\ITab_Pawn_Gear_Patch.cs" />
     <Compile Include="Apparel\JobDriver_UndressBaby.cs" />
     <None Include="HAR\BodyAddon.cs" />
     <None Include="HAR\AlienRace.LifeStages.cs" />
@@ -77,6 +81,7 @@
     <None Include="HAR\AlienRace.cs" />
     <Compile Include="Animation\HarmonyPatching_Animation.cs" />
     <None Include="Harmony\FloatMenu_Patch_old.cs" />
+    <Compile Include="Apparel\Harmony\SwaddleBaby_Patch.cs" />
     <Compile Include="Harmony\FloatMenu_Patch.cs" />
     <Compile Include="LogUtil.cs" />
     <Compile Include="RefugeePod\LordToil_ToddlerLoiter.cs" />
@@ -88,7 +93,7 @@
     <Compile Include="RefugeePod\QuestPart_ToddlerLoiter.cs" />
     <Compile Include="Crib\JobDriver_LeaveCrib.cs" />
     <Compile Include="Patch_DBH.cs" />
-    <Compile Include="Apparel\HarmonyPatching_Apparel.cs" />
+    <Compile Include="Apparel\Harmony\OptimizeApparel_Patch.cs" />
     <None Include="ReplaceTesting.cs" />
     <Compile Include="Safety\BabyMoveUtility.cs" />
     <Compile Include="Crib\JobDriver_LetOutOfCrib.cs" />

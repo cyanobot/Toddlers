@@ -3,8 +3,13 @@
 
   <ThingDef Abstract="True" Name="BabyApparelMakeableBase" ParentName="ApparelMakeableBase">
     <recipeMaker>
-      <researchPrerequisite>ComplexClothing</researchPrerequisite>
+	  <recipeUsers>
+		<li MayRequire="sumghai.MousekinRace">Mousekin_WorkbenchTailor</li>
+	  </recipeUsers>
     </recipeMaker>
+    <researchPrerequisites>
+		<li>ComplexClothing</li>
+	</researchPrerequisites>
     <stuffCategories>
       <li>Fabric</li>
       <li>Leathery</li>
@@ -146,6 +151,7 @@
 	</graphicData>
 	<techLevel>Neolithic</techLevel>
 	<costStuffCount>15</costStuffCount>
+	<researchPrerequisites Inherit="False"/>
 	<stuffCategories>
 		<li>Fabric</li>
 		<li>Leathery</li>
@@ -172,10 +178,7 @@
       <developmentalStageFilter>Baby</developmentalStageFilter>
     </apparel>
     <recipeMaker>
-      <researchPrerequisite Inherit="False" IsNull="True" />
       <recipeUsers>
-        <li>ElectricTailoringBench</li>
-        <li>HandTailoringBench</li>
         <li>CraftingSpot</li>
       </recipeUsers>
       <displayPriority>295</displayPriority>

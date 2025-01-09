@@ -13,157 +13,215 @@ using System.IO;
 
 namespace Toddlers
 {
-    class ApparelSettings
+    static class ApparelSettings
     {
-        //public static List<ThingCategoryDef> categoryDefs_Apparel = new List<ThingCategoryDef>() { Toddlers_DefOf.ApparelBaby };
+        public static MethodInfo m_RemoveThingDef = AccessTools.Method(typeof(DefDatabase<ThingDef>), "Remove");
+        public static MethodInfo m_RemoveRecipeDef = AccessTools.Method(typeof(DefDatabase<RecipeDef>), "Remove");
 
+        public static List<ThingDef> babyClothes;
+        public static Dictionary<ThingDef,List<RecipeDef>> babyClotheRecipes;
+        public static Dictionary<ThingDef, Tradeability> babyClotheTradeabilities;
 
-        public static void ApplyApparelSettings()
+        public static List<ThingDef> childClothes;
+        public static List<ThingDef> specialClothes;
+
+        public static List<ThingDef> standardBabyClothes;
+        public static List<ThingDef> tribalBabyClothes;
+
+        public static List<ThingDef> medievalRecipeUsers;
+        public static List<ThingDef> neolithicRecipeUsers;
+
+        public static List<ResearchProjectDef> medievalResearch;
+        public static List<ResearchProjectDef> neolithicResearch;
+
+        public static void InitializeApparelLists()
         {
-            List<ThingDef> babyClothes = DefDatabase<ThingDef>.AllDefs.Where(x =>
-                x.IsApparel && x.apparel.developmentalStageFilter.Has(DevelopmentalStage.Baby) 
-                && !x.apparel.developmentalStageFilter.Has(DevelopmentalStage.Child) 
+            babyClothes = DefDatabase<ThingDef>.AllDefs.Where(x =>
+                x.IsApparel && x.apparel.developmentalStageFilter.Has(DevelopmentalStage.Baby)
+                && !x.apparel.developmentalStageFilter.Has(DevelopmentalStage.Child)
                 && !x.apparel.developmentalStageFilter.Has(DevelopmentalStage.Adult)).ToList();
             babyClothes.RemoveAll(x => x == null);
-            List<ThingDef> childClothes = DefDatabase<ThingDef>.AllDefs.Where(x =>
+
+            babyClotheRecipes = new Dictionary<ThingDef, List<RecipeDef>>();
+            foreach (RecipeDef recipe in DefDatabase<RecipeDef>.AllDefs)
+            {
+                ThingDef producedThing = recipe.ProducedThingDef;
+                if (babyClothes.Contains(producedThing))
+                {
+                    if (!babyClotheRecipes.ContainsKey(producedThing))
+                    {
+                        babyClotheRecipes.Add(producedThing, new List<RecipeDef>());
+                    }
+                    babyClotheRecipes[producedThing].Add(recipe);
+                }
+            }
+
+            babyClotheTradeabilities = new Dictionary<ThingDef, Tradeability>();
+            foreach (ThingDef babyClothe in babyClothes)
+            {
+                babyClotheTradeabilities.Add(babyClothe, babyClothe.tradeability);
+            }
+
+            childClothes = DefDatabase<ThingDef>.AllDefs.Where(x =>
                 x.IsApparel && x.apparel.developmentalStageFilter.Has(DevelopmentalStage.Child)).ToList();
             childClothes.RemoveAll(x => x == null);
-            List<ThingDef> specialClothes = new List<ThingDef>
+            
+            specialClothes = new List<ThingDef>
                 { ThingDefOf.Apparel_GasMask, ThingDefOf.Apparel_ShieldBelt, DefDatabase<ThingDef>.AllDefsListForReading.Find(x => x.defName == "Apparel_ClothMask") };
             specialClothes.RemoveAll(x => x == null);
 
-            List<ThingDef> industrialRecipeUsers = new List<ThingDef>
-                { DefDatabase<ThingDef>.GetNamed("ElectricTailoringBench"), DefDatabase<ThingDef>.GetNamed("HandTailoringBench") };
-            List<ThingDef> neolithicRecipeUsers = new List<ThingDef>
-                { DefDatabase<ThingDef>.GetNamed("ElectricTailoringBench"), DefDatabase<ThingDef>.GetNamed("HandTailoringBench"),
-                    DefDatabase<ThingDef>.GetNamed("CraftingSpot")};
+            tribalBabyClothes = babyClothes.Where(t => t.techLevel == TechLevel.Neolithic).ToList();
+            standardBabyClothes = babyClothes.Where(t => t.techLevel != TechLevel.Neolithic).ToList();
 
-            //Log.Message("babyClothes: " + babyClothes.ToStringSafeEnumerable());
-            //Log.Message("childClothes: " + childClothes.ToStringSafeEnumerable());
-            //Log.Message("industrialRecipeUsers: " + industrialRecipeUsers.ToStringSafeEnumerable());
-            //Log.Message("neolithicRecipeUsers: " + neolithicRecipeUsers.ToStringSafeEnumerable());
+            medievalRecipeUsers = Toddlers_DefOf.Apparel_BabyOnesie.recipeMaker.recipeUsers;
+            neolithicRecipeUsers = Toddlers_DefOf.Apparel_BabyTribal.recipeMaker.recipeUsers;
 
+            medievalResearch = Toddlers_DefOf.Apparel_BabyOnesie.researchPrerequisites;
+            neolithicResearch = Toddlers_DefOf.Apparel_BabyTribal.researchPrerequisites;
+
+            LogUtil.DebugLog("babyClothes: " + babyClothes.ToStringSafeEnumerable());
+            LogUtil.DebugLog("childClothes: " + childClothes.ToStringSafeEnumerable());
+            LogUtil.DebugLog("specialClothes: " + specialClothes.ToStringSafeEnumerable());
+
+            LogUtil.DebugLog("standardBabyClothes: " + standardBabyClothes.ToStringSafeEnumerable());
+            LogUtil.DebugLog("tribalBabyClothes: " + tribalBabyClothes.ToStringSafeEnumerable());
+
+            LogUtil.DebugLog("medievalRecipeUsers: " + medievalRecipeUsers.ToStringSafeEnumerable());
+            LogUtil.DebugLog("neolithicRecipeUsers: " + neolithicRecipeUsers.ToStringSafeEnumerable());
+
+            LogUtil.DebugLog("medievalResearch: " + medievalResearch.ToStringSafeEnumerable());
+            LogUtil.DebugLog("neolithicResearch: " + neolithicResearch.ToStringSafeEnumerable());
+
+        }
+
+        public static void ApplyApparelSettings()
+        {
+            List<ThingDef> empty = new List<ThingDef>();
+
+            List<ThingDef> toHide = empty;
+            List<ThingDef> wearableByBaby = specialClothes;
+            List<ThingDef> neolithic = tribalBabyClothes;
 
             switch (apparelSetting)
             {
                 case ApparelSetting.NoBabyApparel:
-                    //Log.Message("Case: NoBabyApparel");
-                    foreach (ThingDef babyClothe in babyClothes)
-                    {
-                        //Log.Message("babyClothe: " + babyClothe);
-                        SetRecipesHidden(babyClothe);
-                        SetGameVisibility(babyClothe, false);
-                    }
-
-                    foreach (ThingDef clothe in childClothes.Concat(specialClothes))
-                    {
-                        //Log.Message("childClothe: " + childClothe);
-                        clothe.apparel.developmentalStageFilter &= ~DevelopmentalStage.Baby;
-                    }
+                    LogUtil.DebugLog("Case: NoBabyApparel");
+                    toHide = babyClothes;
+                    wearableByBaby = empty;
+                    neolithic = empty;
                     break;
 
                 case ApparelSetting.NoTribal:
-                    //Log.Message("Case: IndustrialOnly");
-                    foreach (ThingDef babyClothe in babyClothes)
-                    {
-                        //Log.Message("babyClothe: " + babyClothe);
-                        if (babyClothe == Toddlers_DefOf.Apparel_BabyTribal)
-                        {
-                            SetRecipesHidden(babyClothe);
-                            SetGameVisibility(babyClothe, false);
-                        }
-                        else
-                        {
-                            SetRecipesMedieval(babyClothe);
-                            SetGameVisibility(babyClothe, true);
-                        }
-                    }
-
-                    foreach (ThingDef childClothe in childClothes)
-                    {
-                        //Log.Message("childClothe: " + childClothe);
-                        childClothe.apparel.developmentalStageFilter &= ~DevelopmentalStage.Baby;
-                    }
-                    foreach (ThingDef specialClothe in specialClothes)
-                    {
-                        specialClothe.apparel.developmentalStageFilter |= DevelopmentalStage.Baby;
-                    }
-
+                    LogUtil.DebugLog("Case: NoTribal");
+                    toHide = tribalBabyClothes;
+                    neolithic = empty;
                     break;
 
                 case ApparelSetting.AllTribal:
-                    //Log.Message("Case: TribalOnesies");
-                    foreach (ThingDef babyClothe in babyClothes)
-                    {
-                        //Log.Message("babyClothe: " + babyClothe);
-                        SetRecipesNeolithic(babyClothe);
-                        SetGameVisibility(babyClothe, true);
-                    }
-
-                    foreach (ThingDef childClothe in childClothes)
-                    {
-                        //Log.Message("childClothe: " + childClothe);
-                        childClothe.apparel.developmentalStageFilter &= ~DevelopmentalStage.Baby;
-                    }
-                    foreach (ThingDef specialClothe in specialClothes)
-                    {
-                        specialClothe.apparel.developmentalStageFilter |= DevelopmentalStage.Baby;
-                    }
-
+                    LogUtil.DebugLog("Case: AllTribal");
+                    neolithic = babyClothes;
                     break;
 
                 case ApparelSetting.BabyTribalwear:
-                    //Log.Message("Case: BabyTribalwear");
-                    foreach (ThingDef babyClothe in babyClothes)
-                    {
-                        //Log.Message("babyClothe: " + babyClothe);
-                        if (babyClothe == Toddlers_DefOf.Apparel_BabyTribal)
-                        {
-                            SetRecipesNeolithic(babyClothe);
-                        }
-                        else
-                        {
-                            SetRecipesMedieval(babyClothe);
-                        }
-
-                        SetGameVisibility(babyClothe, true);
-                    }
-
-                    foreach (ThingDef childClothe in childClothes)
-                    {
-                        //Log.Message("childClothe: " + childClothe);
-                        childClothe.apparel.developmentalStageFilter &= ~DevelopmentalStage.Baby;
-                    }
-                    foreach (ThingDef specialClothe in specialClothes)
-                    {
-                        specialClothe.apparel.developmentalStageFilter |= DevelopmentalStage.Baby;
-                    }
+                    LogUtil.DebugLog("Case: BabyTribalwear");
                     break;
-
 
                 case ApparelSetting.AnyChildApparel:
-                    //Log.Message("Case: AnyChildApparel");
+                    LogUtil.DebugLog("Case: AnyChildApparel");
                     GenerateMissingGraphics();
-
-                    foreach (ThingDef babyClothe in babyClothes)
-                    {
-                        //Log.Message("babyClothe: " + babyClothe);
-                        SetRecipesHidden(babyClothe);
-                        SetGameVisibility(babyClothe, false);
-                    }
-
-                    foreach (ThingDef childClothe in childClothes)
-                    {
-                        //Log.Message("childClothe: " + childClothe);
-                        childClothe.apparel.developmentalStageFilter |= DevelopmentalStage.Baby;
-                    }
-
+                    toHide = babyClothes;
+                    wearableByBaby = childClothes.Concat(specialClothes).ToList();
                     break;
-
 
                 default:
                     break;
             }
+
+            LogUtil.DebugLog("toHide: " + toHide.ToStringSafeEnumerable());
+            LogUtil.DebugLog("wearableByBaby: " + wearableByBaby.ToStringSafeEnumerable());
+            LogUtil.DebugLog("neolithic: " + neolithic.ToStringSafeEnumerable());
+
+            //block anything to be hidden
+            if (!toHide.NullOrEmpty())
+            {
+                foreach(ThingDef def in toHide)
+                {
+                    def.destroyOnDrop = true;
+                    def.tradeability = 0;
+                    def.researchPrerequisites = new List<ResearchProjectDef>();
+                    UdpateRecipes(def, empty, new List<ResearchProjectDef>());
+                }
+            }
+
+            //re-enable anything that is no longer to be hidden
+            foreach (ThingDef babyClothe in babyClothes)
+            {
+                if (!toHide.Contains(babyClothe))
+                {
+                    babyClothe.destroyOnDrop = false;
+                    babyClothe.tradeability = babyClotheTradeabilities[babyClothe];
+                }
+            }
+
+            //set wearable by baby anything that should be wearable
+            if (!wearableByBaby.NullOrEmpty())
+            {
+                foreach(ThingDef clothe in wearableByBaby)
+                {
+                    clothe.apparel.developmentalStageFilter |= DevelopmentalStage.Baby;
+                }
+            }
+
+            //set not-wearable by baby anything that should not be wearable
+            foreach (ThingDef clothe in childClothes.Concat(specialClothes))
+            {
+                if (!wearableByBaby.Contains(clothe))
+                {
+                    clothe.apparel.developmentalStageFilter &= ~DevelopmentalStage.Baby;
+                }
+            }
+
+            //set neolithic anything that should be neolithic
+            if (!neolithic.NullOrEmpty())
+            {
+                foreach (ThingDef neolithicClothe in neolithic)
+                {
+                    if (!toHide.Contains(neolithicClothe))
+                    {
+                        neolithicClothe.techLevel = TechLevel.Neolithic;
+                        neolithicClothe.researchPrerequisites = neolithicResearch;
+                        UdpateRecipes(neolithicClothe, neolithicRecipeUsers, neolithicResearch);
+                    }
+                }
+            }
+
+            //set anything not specified neolithic to medieval
+            foreach (ThingDef babyClothe in babyClothes)
+            {
+                if (!neolithic.Contains(babyClothe) && !toHide.Contains(babyClothe))
+                {
+                    babyClothe.techLevel = TechLevel.Medieval;
+                    babyClothe.researchPrerequisites = medievalResearch;
+                    UdpateRecipes(babyClothe, medievalRecipeUsers, medievalResearch);
+                }
+            }
+
+            //clear research unlocked defs cache to force reload
+            foreach (ResearchProjectDef researchProjectDef in medievalResearch.Concat(neolithicResearch))
+            {
+                typeof(ResearchProjectDef).GetField("cachedUnlockedDefs", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(researchProjectDef, null);
+            }
+            typeof(MainTabWindow_Research).GetField("cachedUnlockedDefsGroupedByPrerequisites", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(
+                MainButtonDefOf.Research.TabWindow
+                , null);
+
+            //make sure references are resolved
+            //for eg updating graphics
+            foreach (ThingDef clothe in babyClothes.Concat(childClothes).Concat(specialClothes))
+            {
+                clothe.ResolveReferences();
+            }
+            
         }
 
         public static void GenerateMissingGraphics()
@@ -275,91 +333,30 @@ namespace Toddlers
             return true;
         }
 
-        public static void SetGameVisibility(ThingDef def, bool visible)
+        public static void UdpateRecipes(ThingDef apparel, List<ThingDef> recipeUsers, List<ResearchProjectDef> prerequisites)
         {
-            if (visible)
+            LogUtil.DebugLog("UdpateRecipes - apparel: " + apparel
+                + ", recipeUsers: " + recipeUsers.ToStringSafeEnumerable()
+                + ", prerequisites: " + prerequisites.ToStringSafeEnumerable());
+            List<RecipeDef> recipes;
+            if (babyClotheRecipes.TryGetValue(apparel, out recipes))
             {
-                //def.thingCategories = categoryDefs_Apparel;
-                def.tradeability = Tradeability.All;
-            }
-            else
-            {
-                //def.thingCategories.Clear();
-                def.tradeability = Tradeability.Sellable;
-            }
-        }
-
-        public static void SetRecipesHidden(ThingDef apparel)
-        {
-            List<ThingDef> recipeUsers = null;
-            ResearchProjectDef researchPrerequisite = null;
-            TechLevel techLevel = TechLevel.Undefined;
-
-            SetRecipes(apparel, recipeUsers, researchPrerequisite, techLevel);
-        }
-
-        public static void SetRecipesMedieval(ThingDef apparel)
-        {
-            List<ThingDef> recipeUsers = new List<ThingDef>
-                { DefDatabase<ThingDef>.GetNamed("ElectricTailoringBench"), DefDatabase<ThingDef>.GetNamed("HandTailoringBench") };
-            ResearchProjectDef researchPrerequisite = DefDatabase<ResearchProjectDef>.GetNamed("ComplexClothing");
-            TechLevel techLevel = TechLevel.Medieval;
-
-            SetRecipes(apparel, recipeUsers, researchPrerequisite, techLevel);
-        }
-
-        public static void SetRecipesNeolithic(ThingDef apparel)
-        {
-            List<ThingDef> recipeUsers = new List<ThingDef>
-                { DefDatabase<ThingDef>.GetNamed("ElectricTailoringBench"), DefDatabase<ThingDef>.GetNamed("HandTailoringBench"),
-                    DefDatabase<ThingDef>.GetNamed("CraftingSpot")};
-            ResearchProjectDef researchPrerequisite = null;
-            TechLevel techLevel = TechLevel.Neolithic;
-
-            SetRecipes(apparel, recipeUsers, researchPrerequisite, techLevel);
-        }
-
-        public static void SetRecipes(ThingDef apparel, List<ThingDef> recipeUsers, ResearchProjectDef researchPrerequisite, TechLevel techLevel)
-        {
-            //Log.Message("SetRecpies firing, apparel: " + apparel + ", recipeUsers: " + recipeUsers.ToStringSafeEnumerable()
-            //    + ", researchPrerequisite: " + researchPrerequisite + ", techLevel: " + techLevel);
-            //apparel.recipeMaker.researchPrerequisite = researchPrerequisite;
-            apparel.techLevel = techLevel;
-
-            foreach (RecipeDef recipe in DefDatabase<RecipeDef>.AllDefs.Where((RecipeDef x) => x.ProducedThingDef == apparel))
-            {
-                List<ThingDef> prevUsers = recipe.recipeUsers;
-                //Log.Message("recipe: " + recipe + ", prev users: " + prevUsers.ToStringSafeEnumerable());
-
-                recipe.recipeUsers = recipeUsers;
-                //Log.Message("new users: " + recipe.recipeUsers.ToStringSafeEnumerable());
-                recipe.researchPrerequisite = researchPrerequisite;
-                //Log.Message("new researchPrerequisite: " + researchPrerequisite);
-
-                List<ThingDef> allUsers;
-                if (recipeUsers != null && prevUsers != null)
+                LogUtil.DebugLog("Recipes for " + apparel + ": " + recipes.ToStringSafeEnumerable());
+                foreach (RecipeDef recipe in recipes)
                 {
-                    allUsers = recipeUsers.Union(prevUsers).ToList();
-                }
-                else if (recipeUsers != null)
-                {
-                    allUsers = recipeUsers;
-                }
-                else if (prevUsers != null)
-                {
-                    allUsers = prevUsers;
-                }
-                else
-                {
-                    return;
+                    recipe.recipeUsers = recipeUsers;
+                    recipe.researchPrerequisite = null;     //use list instead
+                    recipe.researchPrerequisites = prerequisites;
                 }
 
-                foreach (ThingDef recipeUser in allUsers)
+                foreach (ThingDef recipeUser in neolithicRecipeUsers.Concat(medievalRecipeUsers))
                 {
                     //empties the workbench's recipe cache so that it will be regenerated
                     typeof(ThingDef).GetField("allRecipesCached", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(recipeUser, null);
                 }
             }
+
         }
+
     }
 }

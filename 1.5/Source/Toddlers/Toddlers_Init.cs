@@ -54,6 +54,7 @@ namespace Toddlers
             harmony.PatchAll();
 
             ApplySettings();
+            ApparelSettings.InitializeApparelLists();
             ApparelSettings.ApplyApparelSettings();
 
             //Toddlers_Mod.televisionDefs = DefDatabase<JoyGiverDef>.GetNamed("WatchTelevision").thingDefs;
