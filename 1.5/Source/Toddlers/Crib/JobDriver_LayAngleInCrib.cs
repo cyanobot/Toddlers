@@ -23,7 +23,7 @@ namespace Toddlers
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            AddFailCondition(() => !ToddlerUtility.InCrib(pawn) || pawn.Downed);
+            AddFailCondition(() => !CribUtility.InCrib(pawn) || pawn.Downed);
             Toil toil = ToilMaker.MakeToil("LayAngleInCrib");
             toil.defaultCompleteMode = ToilCompleteMode.Delay;
             toil.defaultDuration = ToddlerPlayUtility.PlayDuration;

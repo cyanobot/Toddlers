@@ -9,7 +9,7 @@ namespace Toddlers
     {
         static void Postfix(ref TargetingParameters __result, Pawn p)
         {
-            if (!ToddlerUtility.CanDressSelf(p))
+            if (!ToddlerLearningUtility.CanDressSelf(p))
             {
                 __result.canTargetPawns = false;
                 __result.canTargetItems = false;

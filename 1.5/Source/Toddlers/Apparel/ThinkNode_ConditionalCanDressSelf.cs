@@ -13,6 +13,6 @@ namespace Toddlers
 {
     class ThinkNode_ConditionalCanDressSelf : ThinkNode_Conditional
     {
-        protected override bool Satisfied(Pawn pawn) => ToddlerUtility.CanDressSelf(pawn);
+        protected override bool Satisfied(Pawn pawn) => ToddlerLearningUtility.CanDressSelf(pawn);
     }
 }

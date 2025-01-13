@@ -49,7 +49,7 @@ namespace Toddlers
 			wait.AddPreInitAction(delegate
 			{
 				//Log.Message("wait.PreInitAction");
-				if (Baby.Awake() && ToddlerUtility.IsLiveToddler(Baby) && !ToddlerUtility.InCrib(Baby))
+				if (Baby.Awake() && ToddlerUtility.IsLiveToddler(Baby) && !CribUtility.InCrib(Baby))
 				{
 					//Log.Message("Attempting to force BeDressed job on " + Baby);
 					Job beDressedJob = JobMaker.MakeJob(Toddlers_DefOf.BeDressed, wait.actor);

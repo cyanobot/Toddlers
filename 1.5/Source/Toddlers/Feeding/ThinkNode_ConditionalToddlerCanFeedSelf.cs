@@ -15,7 +15,7 @@ namespace Toddlers
 	{
 		protected override bool Satisfied(Pawn pawn)
         {
-            if (ToddlerUtility.CanFeedSelf(pawn)) return true;
+            if (ToddlerLearningUtility.CanFeedSelf(pawn)) return true;
             return false;
         }
 

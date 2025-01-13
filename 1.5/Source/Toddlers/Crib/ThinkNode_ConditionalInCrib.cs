@@ -13,6 +13,6 @@ namespace Toddlers
 {
     class ThinkNode_ConditionalInCrib : ThinkNode_Conditional
     {
-        protected override bool Satisfied(Pawn pawn) => ToddlerUtility.InCrib(pawn);
+        protected override bool Satisfied(Pawn pawn) => CribUtility.InCrib(pawn);
     }
 }

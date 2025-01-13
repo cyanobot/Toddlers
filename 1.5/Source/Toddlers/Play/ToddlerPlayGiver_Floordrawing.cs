@@ -108,7 +108,7 @@ namespace Toddlers
 		{
 			IntVec3 intVec;
 			IntVec3 intVec2;
-			return base.CanDo(pawn) && ToddlerUtility.CanDressSelf(pawn) && ToddlerPlayGiver_Floordrawing.TryFindFloordrawingSpots(pawn, out intVec, out intVec2);
+			return base.CanDo(pawn) && ToddlerLearningUtility.CanDressSelf(pawn) && ToddlerPlayGiver_Floordrawing.TryFindFloordrawingSpots(pawn, out intVec, out intVec2);
 		}
 
 		public override bool CanDoWhileDowned(Pawn pawn)

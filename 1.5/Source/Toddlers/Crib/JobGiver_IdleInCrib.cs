@@ -24,15 +24,28 @@ namespace Toddlers
             //Log.Message("Fired JobGiver_IdleInCrib");
             if (pawn.CurJob != null && !(pawn.CurJob.def == JobDefOf.LayDown)) return pawn.CurJob;
 
-            Thing crib = ToddlerUtility.GetCurrentCrib(pawn);
+            Thing crib = CribUtility.GetCurrentCrib(pawn);
             if (crib == null) return null;
 
-            List<JobDef> Activities = new List<JobDef>
+            List<JobDef> Activities;
+            if (crib.def.defName == "Nej_TribalCrib") 
+            {
+                Activities = new List<JobDef>
+                {
+                    Toddlers_DefOf.RestIdleInCrib,
+                    Toddlers_DefOf.WiggleInCrib
+                };
+            }
+            else
+            {
+                Activities = new List<JobDef>
                 {
                     Toddlers_DefOf.LayAngleInCrib,
                     Toddlers_DefOf.RestIdleInCrib,
                     Toddlers_DefOf.WiggleInCrib
                 };
+            }
+            
             JobDef jobDef = Activities.RandomElement<JobDef>();
             //Log.Message("drew activity : " + jobDef.defName);
             return JobMaker.MakeJob(jobDef, crib);

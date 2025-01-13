@@ -34,7 +34,7 @@ namespace Toddlers
             actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap)]
         private static void ResetToddlerHediffs(Pawn p)
         {
-            ToddlerUtility.ResetHediffsForAge(p);
+            ToddlerLearningUtility.ResetHediffsForAge(p);
         }
 
     }

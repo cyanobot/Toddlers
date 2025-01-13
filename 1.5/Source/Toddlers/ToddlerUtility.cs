@@ -77,131 +77,6 @@ namespace Toddlers
             return (ticksSinceBaby / toddlerStageInTicks);
         }
 
-        public static void ResetHediffsForAge(Pawn p, bool clearExisting = true)
-        {
-            if (!IsToddler(p)) return;
-
-            if (p.ageTracker == null || p.health == null) return;
-
-            if (clearExisting)
-            {
-                List<Hediff_ToddlerLearning> learningHediffs = new List<Hediff_ToddlerLearning>();
-                p.health.hediffSet.GetHediffs<Hediff_ToddlerLearning>(ref learningHediffs);
-                foreach (Hediff hediff in learningHediffs)
-                {
-                    p.health.RemoveHediff(hediff);
-                }
-            }
-
-            float percentAge = PercentGrowth(p);
-
-            Hediff_LearningManipulation hediff_LearningManipulation = (Hediff_LearningManipulation)HediffMaker.MakeHediff(Toddlers_DefOf.LearningManipulation, p);
-            hediff_LearningManipulation.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Manipulation);
-            p.health.AddHediff(hediff_LearningManipulation);
-
-            //if (Toddlers_Mod.HARLoaded && !Patch_HAR.GetAlienRaceWrapper(p).humanlikeGait) return;
-
-            Hediff_LearningToWalk hediff_LearningToWalk = (Hediff_LearningToWalk)HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, p);
-            hediff_LearningToWalk.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Walk);
-            p.health.AddHediff(hediff_LearningToWalk);
-
-            return;
-        }
-
-        public static float GetLearningPerTickBase(Pawn p, Storyteller storyteller = null)
-        {
-            //2 years * 60 days per year * 60000 ticks per day
-            if (storyteller == null) storyteller = Find.Storyteller;
-            float ticksAsToddler = (ToddlerMaxAge(p) - ToddlerMinAge(p)) * 60 * 60000 / Find.Storyteller.difficulty.childAgingRate;
-            return 1 / ticksAsToddler;
-        }
-
-        /*
-        public static float GetLoneliness(Pawn pawn)
-        {
-            Hediff hediff = pawn.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.ToddlerLonely) as Hediff_ToddlerLonely;
-            if (hediff == null) return 0f;
-            else return hediff.Severity;
-        }
-        */
-
-        public static bool IsCrawler(Pawn pawn)
-        {
-            if (!IsToddler(pawn)) return false;
-            Hediff hediff = pawn.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.LearningToWalk) as Hediff_LearningToWalk;
-            if (hediff != null && hediff.CurStageIndex == 0) return true;
-            return false;
-        }
-
-        public static bool IsWobbly(Pawn pawn)
-        {
-            Hediff hediff = pawn.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.LearningToWalk) as Hediff_LearningToWalk;
-            if (hediff != null && hediff.CurStageIndex == 1) return true;
-            return false;
-        }
-
-        public static bool CanDressSelf(Pawn p)
-        {
-            Hediff hediff = p.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.LearningManipulation) as Hediff_LearningManipulation;
-            if (hediff == null || hediff.CurStageIndex >= 2) return true;
-            return false;
-        }
-
-        public static bool CanFeedSelf(Pawn p)
-        {
-            Hediff hediff = p.health?.hediffSet?.GetFirstHediffOfDef(Toddlers_DefOf.LearningManipulation) as Hediff_LearningManipulation;
-            if (hediff == null || hediff.CurStageIndex >= 1) return true;
-            return false;
-        }
-
-        public static bool EatsOnFloor(Pawn p)
-        {
-            Hediff hediff = p.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.LearningManipulation) as Hediff_LearningManipulation;
-            if (hediff != null && hediff.CurStageIndex == 1) return true;
-            return false;
-        }
-
-        public static bool InCrib(Pawn p)
-        {
-            //Building_Bed bed = p.CurrentBed();
-            //return bed != null && IsCrib(bed) ;
-            if (!(p.ParentHolder is Map) || p.pather.Moving) return false;
-
-            if (GetCurrentCrib(p) == null) return false;
-            else return true;
-        }
-
-        public static Building_Bed GetCurrentCrib(Pawn p)
-        {
-            if (!p.Spawned) return null;
-            Building_Bed bed = null;
-            List<Thing> thingList = p.Position.GetThingList(p.Map);
-            for (int i = 0; i < thingList.Count; i++)
-            {
-                bed = thingList[i] as Building_Bed;
-                if (bed != null && IsCrib(bed)) return bed;
-            }
-            return null;
-        }
-
-        public static bool IsCrib(Building_Bed bed)
-        {
-            return bed.def == DefDatabase<ThingDef>.GetNamed("Crib");
-        }
-
-        public static bool IsToddlerEatingUrgently(Pawn baby)
-        {
-            JobDef curJob = baby.CurJobDef;
-            if ((baby.needs != null && baby.needs.food != null
-                    && baby.needs.food.CurLevelPercentage < baby.needs.food.PercentageThreshUrgentlyHungry)
-                    && (curJob == JobDefOf.Ingest || (curJob == JobDefOf.TakeFromOtherInventory
-                    && baby.CurJob.targetA.HasThing && FoodUtility.WillEat(baby, baby.CurJob.targetA.Thing))))
-            {
-                return true;
-            }
-            return false;
-        }
-
         public static bool IsBabyBusy(Pawn baby)
         {
             //busy if drafted
@@ -211,7 +86,7 @@ namespace Toddlers
             if (baby.GetLord() != null) return true;
 
             //busy if eating urgently
-            if (IsToddlerEatingUrgently(baby)) return true;
+            if (FeedingUtility.IsToddlerEatingUrgently(baby)) return true;
 
             //busy if another pawn has already targeted baby
             if (baby.MapHeld.mapPawns.SpawnedPawnsInFaction(Faction.OfPlayer).Any(

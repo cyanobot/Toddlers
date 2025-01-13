@@ -17,7 +17,7 @@ namespace Toddlers
 		{
 			if (pawn.needs == null) return 0f;
 			if (HealthAIUtility.ShouldSeekMedicalRest(pawn)) return -1f;
-			if (ToddlerUtility.IsCrawler(pawn)) return -1f;
+			if (ToddlerLearningUtility.IsCrawler(pawn)) return -1f;
 			float priority = 1f;
 			if (pawn.needs.food != null)
 			{

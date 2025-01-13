@@ -67,7 +67,7 @@ namespace Toddlers
             stripAndDress.AddPreInitAction(delegate
             {
                 Pawn baby = (Pawn)stripAndDress.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
-                if (baby.Awake() && ToddlerUtility.IsLiveToddler(baby) && !ToddlerUtility.InCrib(baby))
+                if (baby.Awake() && ToddlerUtility.IsLiveToddler(baby) && !CribUtility.InCrib(baby))
                 {
                     Job beDressedJob = JobMaker.MakeJob(Toddlers_DefOf.BeDressed, stripAndDress.actor);
                     job.count = 1;

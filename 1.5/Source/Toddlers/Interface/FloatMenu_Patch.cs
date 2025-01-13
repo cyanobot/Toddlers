@@ -399,11 +399,11 @@ namespace Toddlers
                         if (ToddlerUtility.IsLiveToddler(baby))
                         {
                             //option to let crawlers out of their cribs
-                            if (ToddlerUtility.InCrib(baby) && ToddlerUtility.IsCrawler(baby))
+                            if (CribUtility.InCrib(baby) && ToddlerLearningUtility.IsCrawler(baby))
                             {
                                 FloatMenuOption letOutOfCrib = new FloatMenuOption("LetOutOfCrib".Translate(baby), delegate
                                 {
-                                    Building_Bed crib = ToddlerUtility.GetCurrentCrib(baby);
+                                    Building_Bed crib = CribUtility.GetCurrentCrib(baby);
                                     if (crib == null) return;
                                     Job job = JobMaker.MakeJob(DefDatabase<JobDef>.GetNamed("LetOutOfCrib"), baby, crib);
                                     job.count = 1;
@@ -433,7 +433,7 @@ namespace Toddlers
 
                 foreach (Thing t in c.GetThingList(pawn.Map))
                 {                                  
-                    if (t.def.IsApparel && !ToddlerUtility.CanDressSelf(pawn))
+                    if (t.def.IsApparel && !ToddlerLearningUtility.CanDressSelf(pawn))
                     {
                         //copied directly from source
                         //this will allow us to identify the menu options related to wearing this object
@@ -456,7 +456,7 @@ namespace Toddlers
                         }
                     }
 
-                    if (t.def.ingestible != null && !ToddlerUtility.CanFeedSelf(pawn))
+                    if (t.def.ingestible != null && !ToddlerLearningUtility.CanFeedSelf(pawn))
                     {
                         //copied directly from source
                         //this will allow us to identify the menu options related to consuming this object

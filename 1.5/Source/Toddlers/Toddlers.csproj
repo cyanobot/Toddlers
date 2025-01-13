@@ -57,6 +57,33 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caravan\CheckArrived_Patch.cs" />
+    <Compile Include="Carrying\CarryToil_Patch.cs" />
+    <Compile Include="Crib\CribUtility.cs" />
+    <Compile Include="Feeding\FeedingUtility.cs" />
+    <Compile Include="Learning\ToddlerLearningUtility.cs" />
+    <Compile Include="MiscHarmony\GetBackstoryCategoryFiltersFor_Patch.cs" />
+    <Compile Include="MiscHarmony\GeneratePawn_Patch.cs" />
+    <Compile Include="Kidnap\Harmony\JobGiver_Kidnap_Patch.cs" />
+    <Compile Include="Interface\MainTabWindow_Assign_Patch.cs" />
+    <Compile Include="Interface\MainTabWindow_Schedule_Patch.cs" />
+    <Compile Include="MentalStates\CaresAboutForbidden_Patch.cs" />
+    <Compile Include="Caravan\AllSendablePawns_Patch.cs" />
+    <Compile Include="MentalStates\BreakExtremeIsImminent_Patch.cs" />
+    <Compile Include="Feeding\Harmony\CarryIngestibleToChewSpot_Patch.cs" />
+    <Compile Include="Feeding\Harmony\BestFoodSource_Patch.cs" />
+    <Compile Include="Carrying\CarryDownedPawn_Patch.cs" />
+    <Compile Include="Carrying\ForCarry_Patch.cs" />
+    <Compile Include="MiscHarmony\GetRest_Patch.cs" />
+    <Compile Include="Work\DisabledWorkTypes_Patch.cs" />
+    <Compile Include="Work\WorkTags_Patch.cs" />
+    <Compile Include="MentalStates\TryStartMentalBreak_Patch.cs" />
+    <Compile Include="Learning\Harmony\VatLearning_Patch.cs" />
+    <Compile Include="MentalStates\Trigger_MentalState_Patch.cs" />
+    <Compile Include="MentalStates\Trigger_NoMentalState_Patch.cs" />
+    <Compile Include="Caravan\WantsToBeCarried_Patch.cs" />
+    <Compile Include="Kidnap\Harmony\TryFindGoodKidnapVictim_Patch.cs" />
+    <Compile Include="Feeding\Harmony\WantsSuckle_Patch.cs" />
     <None Include="RefugeePod\WanderDestDebug.cs" />
     <None Include="Scrapyard.cs" />
     <Compile Include="Animation\AnimationUtility.cs" />
@@ -79,11 +106,16 @@
     <None Include="HAR\Harmony.cs" />
     <None Include="HAR\Patch_HAR.cs" />
     <None Include="HAR\AlienRace.cs" />
-    <Compile Include="Animation\HarmonyPatching_Animation.cs" />
-    <None Include="Harmony\FloatMenu_Patch_old.cs" />
+    <Compile Include="Animation\Harmony\AdjustParms_Patch.cs" />
     <Compile Include="Apparel\Harmony\SwaddleBaby_Patch.cs" />
-    <Compile Include="Harmony\FloatMenu_Patch.cs" />
+    <Compile Include="MiscHarmony\Door_Patch.cs" />
+    <Compile Include="Interface\FloatMenu_Patch.cs" />
+    <Compile Include="MiscHarmony\IsIdle_Patch.cs" />
+    <Compile Include="MentalStates\IsColonistPlayerControlled_Patch.cs" />
     <Compile Include="LogUtil.cs" />
+    <Compile Include="Feeding\Harmony\MoodFromIngesting_Patch.cs" />
+    <Compile Include="Interface\NeedsCardUtility_Patch.cs" />
+    <Compile Include="Caravan\PrepareCaravan_Patch.cs" />
     <Compile Include="RefugeePod\LordToil_ToddlerLoiter.cs" />
     <Compile Include="RefugeePod\LordJob_ToddlerLoiter.cs" />
     <Compile Include="Play\JobDriver_BePlayedWith.cs" />
@@ -100,7 +132,7 @@
     <Compile Include="Apparel\JobDriver_BeDressed.cs" />
     <Compile Include="Apparel\JobDriver_ToddlerRemoveApparel.cs" />
     <Compile Include="Play\HarmonyPatching_Play.cs" />
-    <Compile Include="JobDriver_KidnapToddler.cs" />
+    <Compile Include="Kidnap\JobDriver_KidnapToddler.cs" />
     <Compile Include="Play\JobDriver_ToddlerPlayDecor.cs" />
     <Compile Include="Apparel\JobDriver_DressBaby.cs" />
     <Compile Include="Crib\JobGiver_LeaveCrib.cs" />
@@ -110,9 +142,12 @@
     <Compile Include="Safety\Harmony\FindUnsafeBaby_Patch.cs" />
     <Compile Include="Safety\Harmony\SafePlaceForBaby_Patch.cs" />
     <Compile Include="Safety\JobDriver_BringBabyToSafety.cs" />
+    <Compile Include="MiscHarmony\TargetingParameters_Patch.cs" />
+    <Compile Include="Interface\ShowDraftGizmo_Patch.cs" />
     <Compile Include="TestPatch.cs" />
     <Compile Include="Animation\Toddlers_AnimationDefOf.cs" />
-    <Compile Include="ThinkNode_ConditionalToddlerCanFeedSelf.cs" />
+    <Compile Include="Feeding\ThinkNode_ConditionalToddlerCanFeedSelf.cs" />
+    <Compile Include="Combat\ThreatDisabled_Patch.cs" />
     <Compile Include="Toddlers_DebugTools.cs" />
     <Compile Include="Toddlers_Init.cs" />
     <Compile Include="Toddlers_Mod.cs" />
@@ -126,7 +161,7 @@
     <Compile Include="Play\JobDriver_ToddlerBugwatching.cs" />
     <Compile Include="Play\JobDriver_ToddlerFiregazing.cs" />
     <Compile Include="Play\JobDriver_ToddlerFloordrawing.cs" />
-    <Compile Include="HarmonyPatching.cs" />
+    <Compile Include="Combat\CombatJobGiver_MultiPatch.cs" />
     <Compile Include="Play\JobDriver_ToddlerPlayToys.cs" />
     <Compile Include="Play\JobDriver_ToddlerSkydreaming.cs" />
     <Compile Include="Play\JobDriver_ToddlerWatchTelevision.cs" />

@@ -45,22 +45,7 @@ namespace Toddlers
 				pawn.story.bodyType = bodyTypeFor;
 				pawn.Drawer.renderer.SetAllGraphicsDirty();
 			}
-			if (!pawn.health.hediffSet.HasHediff(Toddlers_DefOf.LearningToWalk))
-            {
-				if (Toddlers_Mod.HARLoaded)
-                {
-					//if (Patch_HAR.GetAlienRaceWrapper(pawn).humanlikeGait)
-					//	pawn.health.AddHediff(HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, pawn));
-				}
-                else
-				{
-					pawn.health.AddHediff(HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, pawn));
-				}
-			}
-			if (!pawn.health.hediffSet.HasHediff(Toddlers_DefOf.LearningManipulation))
-			{
-				pawn.health.AddHediff(HediffMaker.MakeHediff(Toddlers_DefOf.LearningManipulation, pawn));
-			}
+			ToddlerLearningUtility.ResetHediffsForAge(pawn);
 			if (PawnUtility.ShouldSendNotificationAbout(pawn))
             {
 				ChoiceLetter let = LetterMaker.MakeLetter("LetterTitleBecameToddler".Translate(pawn.Named("PAWN")), "LetterTextBecameToddler".Translate(pawn.Named("PAWN")), LetterDefOf.PositiveEvent, pawn, null, null, null);
