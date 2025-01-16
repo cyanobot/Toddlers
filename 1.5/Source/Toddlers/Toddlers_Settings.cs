@@ -19,12 +19,23 @@ namespace Toddlers
         AnyChildApparel
     }
 
+    public enum MoveMessageSetting
+    {
+        None,
+        Danger,
+        DangerAndUnknown,
+        Unknown,
+        All
+    }
+
     public class Toddlers_Settings : ModSettings
     {
         public static bool debugBabySafety = false;
 
         public static bool careAboutBedtime = true;
         public static bool careAboutFloorSleep = true;
+        public static MoveMessageSetting moveMessageSetting = MoveMessageSetting.DangerAndUnknown;
+
         public static bool feedCapableToddlers = true;
 
         public static bool canDraftToddlers = false;
@@ -59,6 +70,7 @@ namespace Toddlers
             Scribe_Values.Look(ref debugBabySafety, "debugBabySafety", debugBabySafety, true);
             Scribe_Values.Look(ref careAboutBedtime, "careAboutBedtime", careAboutBedtime, true);
             Scribe_Values.Look(ref careAboutFloorSleep, "careAboutFloorSleep", careAboutFloorSleep, true);
+            Scribe_Values.Look(ref moveMessageSetting, "moveMessageSetting", moveMessageSetting, true);
             Scribe_Values.Look(ref feedCapableToddlers, "feedCapableToddlers", feedCapableToddlers, true);
             Scribe_Values.Look(ref canDraftToddlers, "canDraftToddlers", canDraftToddlers, true);
             Scribe_Values.Look(ref playFallFactor_Baby, "playFallFactor_Baby", playFallFactor_Baby, true);
@@ -121,6 +133,23 @@ namespace Toddlers
                     })
                     {
                         tooltip = ApparelSettingTooltip(a)
+                    }
+                    );
+                }
+                Find.WindowStack.Add(new FloatMenu(floatMenuOptions));
+            }
+
+            if (l.ButtonTextLabeled("MoveMessageSettingLabelMain".Translate() + " : ", MoveMessageSettingLabel(moveMessageSetting)))
+            {
+                List<FloatMenuOption> floatMenuOptions = new List<FloatMenuOption>();
+                foreach (MoveMessageSetting m in Enum.GetValues(typeof(MoveMessageSetting)))
+                {
+                    floatMenuOptions.Add(new FloatMenuOption(MoveMessageSettingLabel(m), delegate ()
+                    {
+                        moveMessageSetting = m;
+                    })
+                    {
+                        tooltip = MoveMessageSettingTooltip(m)
                     }
                     );
                 }
@@ -202,6 +231,16 @@ namespace Toddlers
         {
             return ("ApparelSettingTooltip" + setting.ToString()).Translate();
         }
+
+        public static string MoveMessageSettingLabel(MoveMessageSetting setting)
+        {
+            return ("MoveMessageSettingLabel" + setting.ToString()).Translate();
+        }
+        public static string MoveMessageSettingTooltip(MoveMessageSetting setting)
+        {
+            return ("MoveMessageSettingTooltip" + setting.ToString()).Translate();
+        }
+
         public static void ApplySettings()
         {
             LifeStageDef babyDef = DefDatabase<LifeStageDef>.GetNamed("HumanlikeBaby");

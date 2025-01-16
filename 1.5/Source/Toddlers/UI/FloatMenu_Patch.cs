@@ -119,7 +119,7 @@ namespace Toddlers
                 //have to be able to manipulate to do anything to a baby
                 if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
                 {
-                    //check all babies (infant and toddler)
+                    //check all babies (infant and toddler) at targeted square
                     foreach (LocalTargetInfo localTargetInfo1 in GenUI.TargetsAt(clickPos, ForBaby(pawn), thingsOnly: true))
                     {
                         Pawn baby = (Pawn)localTargetInfo1.Thing;
@@ -131,6 +131,22 @@ namespace Toddlers
 
                         if (baby.IsForbidden(pawn) ||
                             !pawn.CanReserveAndReach(baby, PathEndMode.ClosestTouch, Danger.Deadly, ignoreOtherReservations: true)) continue;
+
+                        //pick up baby option
+                        //should always be available not just when drafted
+                        if (!pawn.Drafted)
+                        {
+                            FloatMenuOption carryOption = FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("Carry".Translate(baby), delegate
+                            {
+                                baby.SetForbidden(value: false, warnOnFail: false);
+                                Job carryJob = JobMaker.MakeJob(JobDefOf.CarryDownedPawnDrafted, baby);
+                                carryJob.playerForced = true;
+                                carryJob.count = 1;
+                                pawn.Reserve(baby, carryJob, ignoreOtherReservations: false);
+                                pawn.jobs.TryTakeOrderedJob(carryJob, JobTag.Misc);
+                            }), pawn, baby);
+                            opts.Add(carryOption);
+                        }
 
                         //return to crib/safe place options
 
@@ -420,7 +436,30 @@ namespace Toddlers
                         }
                     }
                 
-                    
+                    //option to put baby down if carrying
+                    if (pawn.IsCarryingPawn())
+                    {
+                        Pawn baby = (Pawn)pawn.carryTracker.CarriedThing;
+                        if (baby.DevelopmentalStage == DevelopmentalStage.Baby)
+                        {
+                            IntVec3 clickCell = IntVec3.FromVector3(clickPos);
+                            if (clickCell.IsValid && clickCell.Standable(pawn.Map))
+                            {
+                                FloatMenuOption dropOption = FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("Drop".Translate(pawn, baby), delegate
+                                {
+                                    Job dropJob = JobMaker.MakeJob(JobDefOf.HaulToCell, baby);
+                                    dropJob.targetA = baby;
+                                    dropJob.targetB = clickCell;
+                                    dropJob.playerForced = true;
+                                    dropJob.count = 1;
+                                    pawn.jobs.TryTakeOrderedJob(dropJob, JobTag.Misc);
+                                }), pawn, clickCell);
+                                opts.Add(dropOption);
+                            }
+                            
+                        }
+                       
+                    }
                 }
             }
             

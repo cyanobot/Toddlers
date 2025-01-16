@@ -24,7 +24,7 @@ namespace Toddlers
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            AddFailCondition(() => 
+            AddFailCondition(() =>
                 pawn.Downed
                 || !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation)
                 || (pawn.Drafted && !job.playerForced)
@@ -45,7 +45,8 @@ namespace Toddlers
                     + ", bestPlace: " + bestPlace + ", moveReason: " + moveReason);
                 if (moveReason == BabyMoveReason.None || !bestPlace.IsValid || AlreadyAtTarget(bestPlace,Baby))
                 {
-                    if (job.playerForced) Messages.Message("MessageBabySafetyAlreadyBestLocation".Translate(Baby.Named("BABY")), new LookTargets(Baby), MessageTypeDefOf.NeutralEvent);
+                    if (job.playerForced) 
+                        { Messages.Message("MessageBabySafetyAlreadyBestLocation".Translate(Baby.Named("BABY")), new LookTargets(Baby), MessageTypeDefOf.NeutralEvent); }
                     pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
                 }
             };
@@ -53,17 +54,9 @@ namespace Toddlers
             yield return findMoveReason;
 
             //send message if appropriate
-            if (!job.playerForced
-                 && (PawnUtility.ShouldSendNotificationAbout(pawn) || PawnUtility.ShouldSendNotificationAbout(Baby)))
+            if (!job.playerForced && (PawnUtility.ShouldSendNotificationAbout(pawn) || PawnUtility.ShouldSendNotificationAbout(Baby)))
             {
-                yield return Toils_General.Do(delegate
-                {
-                    string messageKey = MessageKeyForMoveReason(moveReason);
-                    if (!messageKey.NullOrEmpty())
-                    {
-                        Messages.Message(messageKey.Translate(pawn.Named("ADULT"), Baby.Named("BABY")), new LookTargets(pawn, Baby), MessageTypeDefOf.NeutralEvent);
-                    }
-                });
+                yield return MessageToil();                
             }
 
             //create find destination toil so that we can jumpif to it
@@ -90,6 +83,40 @@ namespace Toddlers
                 .FailOn(() => !pawn.IsCarryingPawn(Baby) || pawn.Downed || (pawn.Drafted && !job.playerForced));
             yield return Toils_Reserve.ReleaseDestinationOrThing(TargetIndex.B);
             yield return Toils_Bed.TuckIntoBed(TargetIndex.B, TargetIndex.A);
+        }
+
+        private Toil MessageToil()
+        {            
+            return Toils_General.Do(delegate
+            {
+                bool sendMessage;
+
+                switch (Toddlers_Settings.moveMessageSetting)
+                {
+                    case MoveMessageSetting.None:
+                        sendMessage = false;
+                        break;
+                    case MoveMessageSetting.Danger:
+                        sendMessage = (moveReason == BabyMoveReason.Medical || moveReason == BabyMoveReason.UnsafeTemperature);
+                        break;
+                    case MoveMessageSetting.DangerAndUnknown:
+                        sendMessage = (moveReason == BabyMoveReason.Medical || moveReason == BabyMoveReason.UnsafeTemperature
+                                        || moveReason == BabyMoveReason.Undetermined || moveReason == BabyMoveReason.None);
+                        break;
+                    case MoveMessageSetting.Unknown:
+                        sendMessage = (moveReason == BabyMoveReason.Undetermined || moveReason == BabyMoveReason.None);
+                        break;
+                    default:
+                        sendMessage = !(moveReason == BabyMoveReason.Held);
+                        break;
+                }
+
+                string messageKey = MessageKeyForMoveReason(moveReason);
+                if (sendMessage && !messageKey.NullOrEmpty())
+                {
+                    Messages.Message(messageKey.Translate(pawn.Named("ADULT"), Baby.Named("BABY")), new LookTargets(pawn, Baby), MessageTypeDefOf.NeutralEvent);
+                }
+            });
         }
 
         private Toil FindDestination()

@@ -30,6 +30,19 @@
 <ApparelSettingTooltipBabyTribalwear>Baby tribalwear for tribals, onesies for medieval and up.</ApparelSettingTooltipBabyTribalwear>
 <ApparelSettingTooltipAnyChildApparel>Babies can wear any apparel children can.</ApparelSettingTooltipAnyChildApparel>
 
+<MoveMessageSettingLabelMain>Baby move feedback</MoveMessageSettingLabelMain>
+<MoveMessageSettingLabelNone>None</MoveMessageSettingLabelNone>
+<MoveMessageSettingLabelDanger>Danger only</MoveMessageSettingLabelDanger>
+<MoveMessageSettingLabelDangerAndUnknown>Danger/Unknown</MoveMessageSettingLabelDangerAndUnknown>
+<MoveMessageSettingLabelUnknown>Unknown only</MoveMessageSettingLabelUnknown>
+<MoveMessageSettingLabelAll>All</MoveMessageSettingLabelAll>
+
+<MoveMessageSettingTooltipNone>Never receive messages about adults deciding to move babies</MoveMessageSettingTooltipNone>
+<MoveMessageSettingTooltipDanger>Receive messages when adults move babies for medical or temperature reasons.</MoveMessageSettingTooltipDanger>
+<MoveMessageSettingTooltipDangerAndUnknown>Receive messages when adults move babies for medical or temperature reasons, and when the AI is unsure why it's moving the baby. (It helps the developer out if you report these instances.)</MoveMessageSettingTooltipDangerAndUnknown>
+<MoveMessageSettingTooltipUnknown>Receive messages when adults move babies and the AI isn't sure why. (It helps the developer out if you report these instances.)</MoveMessageSettingTooltipUnknown>
+<MoveMessageSettingTooltipAll>Receive messages whenever an adult decides to move a baby or return them to their bed.</MoveMessageSettingTooltipAll>
+
 <SettingLabelPlayFallFactor>Play need fall factor</SettingLabelPlayFallFactor>
 <SettingTooltipPlayFallFactor>How fast the Play need falls</SettingTooltipPlayFallFactor>
 <SettingLabelLonelinessFactor>Loneliness gain rate factor</SettingLabelLonelinessFactor>
