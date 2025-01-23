@@ -67,7 +67,12 @@ namespace Toddlers
             childClothes.RemoveAll(x => x == null);
             
             specialClothes = new List<ThingDef>
-                { ThingDefOf.Apparel_GasMask, ThingDefOf.Apparel_ShieldBelt, DefDatabase<ThingDef>.AllDefsListForReading.Find(x => x.defName == "Apparel_ClothMask") };
+                { 
+                    ThingDefOf.Apparel_GasMask, 
+                    ThingDefOf.Apparel_ShieldBelt,
+                    DefDatabase<ThingDef>.AllDefsListForReading.Find(x => x.defName == "Apparel_PsychicFoilHelmet"),
+                    DefDatabase<ThingDef>.AllDefsListForReading.Find(x => x.defName == "Apparel_ClothMask") 
+                };
             specialClothes.RemoveAll(x => x == null);
 
             tribalBabyClothes = babyClothes.Where(t => t.techLevel == TechLevel.Neolithic).ToList();

@@ -12,6 +12,19 @@ namespace Toddlers
 {
     class ToddlerPlayGiver_Firegazing : ToddlerPlayGiver
     {
+        public static List<ThingDef> validFireDefs = null;
+
+        public static void InitValidFireDefs()
+        {
+            validFireDefs = new List<ThingDef>();
+            validFireDefs.Add(ThingDefOf.Campfire);
+            if (ModsConfig.RoyaltyActive) validFireDefs.Add(ThingDefOf.Brazier);
+            if (ModsConfig.RoyaltyActive && ModsConfig.IdeologyActive)
+                validFireDefs.Add(DefDatabase<ThingDef>.GetNamed("DarklightBrazier"));
+
+            LogUtil.DebugLog("validFireDefs: " + validFireDefs);
+        }
+
         public override bool CanDo(Pawn pawn)
         {
             if (!base.CanDo(pawn)) return false;
@@ -41,10 +54,13 @@ namespace Toddlers
 
         private bool IsValidFire(Thing fire, Pawn pawn)
         {
-            if (fire.def != ThingDefOf.Campfire || fire.IsForbidden(pawn) || !pawn.CanReach(fire, PathEndMode.Touch, Danger.Some) || pawn.Position.DistanceTo(fire.Position) >= MaxFireDistance)
+            if (fire.IsForbidden(pawn) || !pawn.CanReach(fire, PathEndMode.Touch, Danger.Some) || pawn.Position.DistanceTo(fire.Position) >= MaxFireDistance)
             {
                 return false;
             }
+            if (validFireDefs == null) InitValidFireDefs();
+            if (!validFireDefs.Contains(fire.def)) return false;
+
             CompRefuelable compRefuelable = fire.TryGetComp<CompRefuelable>();
             if (compRefuelable != null && !compRefuelable.HasFuel) return false;
 
@@ -65,7 +81,8 @@ namespace Toddlers
             Room room = pawn.GetRoom(RegionType.Set_All);
             if (room != null)
             {
-                foreach (Thing thing in room.ContainedThings(ThingDefOf.Campfire))
+                if (validFireDefs == null) InitValidFireDefs();
+                foreach (Thing thing in room.ContainedThingsList(validFireDefs))
                 {
                     if (this.IsValidFire(thing, pawn))
                     {
@@ -73,7 +90,7 @@ namespace Toddlers
                     }
                 }
             }
-            return GenClosest.ClosestThingReachable(pawn.Position, pawn.Map, ThingRequest.ForDef(ThingDefOf.Campfire), PathEndMode.OnCell, TraverseParms.For(pawn, Danger.None, TraverseMode.ByPawn, false, false, false), 15.9f, (Thing t) => this.IsValidFire(t, pawn), null, 0, -1, false, RegionType.Set_Passable, false);
+            return GenClosest.ClosestThingReachable(pawn.Position, pawn.Map, ThingRequest.ForGroup(ThingRequestGroup.BuildingArtificial), PathEndMode.OnCell, TraverseParms.For(pawn, Danger.None, TraverseMode.ByPawn, false, false, false), 15.9f, (Thing t) => this.IsValidFire(t, pawn), null, 0, -1, false, RegionType.Set_Passable, false);
         }
 
         private IntVec3 FindFiregazingSpot(Pawn pawn, Thing fire)

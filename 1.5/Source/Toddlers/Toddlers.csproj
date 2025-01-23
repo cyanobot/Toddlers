@@ -62,6 +62,7 @@
     <Compile Include="Crib\CribUtility.cs" />
     <Compile Include="Feeding\FeedingUtility.cs" />
     <Compile Include="Learning\ToddlerLearningUtility.cs" />
+    <Compile Include="MiscHarmony\Alert_NeedMeditationSpot_Targets_Patch.cs" />
     <Compile Include="MiscHarmony\GetBackstoryCategoryFiltersFor_Patch.cs" />
     <Compile Include="MiscHarmony\GeneratePawn_Patch.cs" />
     <Compile Include="Kidnap\Harmony\JobGiver_Kidnap_Patch.cs" />
