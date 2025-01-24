@@ -102,7 +102,6 @@
     <Compile Include="Animation\AnimationWorker_WiggleInCrib.cs" />
     <Compile Include="Animation\AnimationWorker_ToddlerWobble.cs" />
     <Compile Include="Animation\AnimationWorker_ToddlerCrawl.cs" />
-    <None Include="Apparel\ApparelSettings_old.cs" />
     <Compile Include="Apparel\ApparelSettings.cs" />
     <Compile Include="Apparel\Harmony\ForStrip_Patch.cs" />
     <Compile Include="Apparel\Harmony\CanBeStrippedByColony_Patch.cs" />

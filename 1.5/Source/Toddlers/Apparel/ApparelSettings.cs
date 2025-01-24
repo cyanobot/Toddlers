@@ -216,10 +216,14 @@ namespace Toddlers
             {
                 typeof(ResearchProjectDef).GetField("cachedUnlockedDefs", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(researchProjectDef, null);
             }
-            typeof(MainTabWindow_Research).GetField("cachedUnlockedDefsGroupedByPrerequisites", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(
-                MainButtonDefOf.Research.TabWindow
-                , null);
-
+            if (MainButtonDefOf.Research.TabWindow.GetType() == typeof(MainTabWindow_Research))
+            {
+                typeof(MainTabWindow_Research).GetField("cachedUnlockedDefsGroupedByPrerequisites", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .SetValue(
+                        MainButtonDefOf.Research.TabWindow
+                        , null);
+            }
+            
             //make sure references are resolved
             //for eg updating graphics
             foreach (ThingDef clothe in babyClothes.Concat(childClothes).Concat(specialClothes))
