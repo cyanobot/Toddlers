@@ -16,7 +16,7 @@ namespace Toddlers
             if (!result) return false;
             if (!IsToddler(baby)) return result;
             if (IsToddlerEatingUrgently(baby)) return false;
-            if (!Toddlers_Settings.feedCapableToddlers && CanFeedSelf(baby) && FoodUtility.TryFindBestFoodSourceFor(baby, baby, false, out var _, out var _)) return false;
+            if (!Toddlers_Settings.feedCapableToddlers && CanFeedSelf(baby) && baby.Spawned && FoodUtility.TryFindBestFoodSourceFor(baby, baby, false, out var _, out var _)) return false;
             return result;
         }
 
