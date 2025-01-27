@@ -33,6 +33,7 @@ namespace Toddlers
 
             if (!HARClasses["BodyAddon"].IsAssignableFrom(addon.GetType())) return;
 
+            /*
             ToddlerRenderer.ToddlerRenderMode renderMode = ToddlerRenderer.GetToddlerRenderMode(pawn);
 
             if (renderMode == ToddlerRenderer.ToddlerRenderMode.Crawling)
@@ -86,6 +87,7 @@ namespace Toddlers
                     offsetVector.z += tweakVector.y;
                 }
             }
+            */
 
             //Log.Message("End rot: " + rot + ", offsetVector: " + offsetVector + ", angle: " + angle);
         }

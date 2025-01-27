@@ -59,6 +59,9 @@
   <ItemGroup>
     <Compile Include="Caravan\CheckArrived_Patch.cs" />
     <Compile Include="Carrying\CarryToil_Patch.cs" />
+    <Compile Include="Compat\HAR\AlienRace.cs" />
+    <Compile Include="Compat\HAR\HARCompat.cs" />
+    <Compile Include="Compat\HAR\HARTestPatches.cs" />
     <Compile Include="Crib\CribUtility.cs" />
     <Compile Include="Feeding\FeedingUtility.cs" />
     <Compile Include="Learning\ToddlerLearningUtility.cs" />
@@ -113,8 +116,8 @@
     <None Include="Compat\HAR\AlienRace.BodyTypes.cs" />
     <None Include="Compat\HAR\CrawlingTweak.cs" />
     <None Include="Compat\HAR\Harmony.cs" />
-    <None Include="Compat\HAR\Patch_HAR.cs" />
-    <None Include="Compat\HAR\AlienRace.cs" />
+    <None Include="Compat\HAR\Patch_HAR_old.cs" />
+    <None Include="Compat\HAR\AlienRace_old.cs" />
     <Compile Include="Animation\Harmony\AdjustParms_Patch.cs" />
     <Compile Include="Apparel\Harmony\SwaddleBaby_Patch.cs" />
     <Compile Include="MiscHarmony\Door_Patch.cs" />
