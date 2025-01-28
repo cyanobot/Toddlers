@@ -8,8 +8,10 @@ using Verse;
 using static Toddlers.Toddlers_Mod;
 using static Toddlers.LogUtil;
 using static Toddlers.HARCompat;
+using static Toddlers.HARUtil;
 using RimWorld;
 using System.Collections;
+using System.Reflection;
 
 namespace Toddlers
 {
@@ -24,10 +26,15 @@ namespace Toddlers
         public int babyIndex;
         public float toddlerMinAge = -1f;
         public float toddlerEndAge = -1f;
+        public bool humanlikeGait = true;
+
+        public Dictionary<object, object> extendedGraphicsRequiringToddlerCondition = new Dictionary<object, object>();
+        private object curParentGraphic = null;
+        private Stack<object> parentStack = new Stack<object>();
 
         public AlienRace(ThingDef def)
         {
-            HARLog("[Toddlers] Processing alien race: " + def.defName);
+            DebugLog("[Toddlers] Processing alien race: " + def.defName);
             this.def = def;
 
             if (def.race == null)
@@ -43,7 +50,7 @@ namespace Toddlers
                 LifeStageAge lsa = def.race.lifeStageAges[i];
                 s += lsa.minAge + ":" + lsa.def.defName;
             }
-            HARLog(s);
+            DebugLog(s);
 
             InitLifeStageFields();
 
@@ -52,9 +59,18 @@ namespace Toddlers
                 toddlerMinAge = CalculateToddlerMinAge();
                 CreateToddlerLifeStageAge();
                 def.race.lifeStageAges.Insert(babyIndex + 1, lsa_Toddler);
-
-                UpdateExtendedGraphics();
+                hasToddler = true;
             }
+
+            if (hasToddler)
+            {
+                AnalyzeGraphicPaths();
+                AnalyzeBodyAddons();
+                AddNewExtendedGraphics();
+            }
+
+            humanlikeGait = HasHumanlikeGait(def);
+            DebugLog("humanlikeGait: " + humanlikeGait);
 
             s = "Final life stages: ";
             for (int i = 0; i < def.race.lifeStageAges.Count; i++)
@@ -63,7 +79,7 @@ namespace Toddlers
                 LifeStageAge lsa = def.race.lifeStageAges[i];
                 s += lsa.minAge + ":" + lsa.def.defName;
             }
-            HARLog(s);
+            DebugLog(s);
         }
 
         public void IterateExtendedGrapics(Traverse trav_curField)
@@ -76,6 +92,7 @@ namespace Toddlers
 
             DebugLog("Iterating - curField: " + curField
                 //+ ", curFieldType: " + curFieldType
+                + ", curParentGraphic: " + curParentGraphic
                 //+ ", t_AbstractExtendedGraphic.IsAssignableFrom : " 
                 //+ t_AbstractExtendedGraphic.IsAssignableFrom(curFieldType)
                 //+ ", t_ExtendedConditionGraphic.IsAssignableFrom : "
@@ -88,12 +105,12 @@ namespace Toddlers
             if (t_ExtendedConditionGraphic.IsAssignableFrom(curFieldType))
             {
                 IList conditions = trav_curField.Field("conditions").GetValue() as IList;
-                DebugLog("Iterating - found ExtendedConditionGraphic " + curField
-                    + ", with conditions.Count: " + conditions?.Count);
+                //DebugLog("Iterating - found ExtendedConditionGraphic " + curField
+                //    + ", with conditions.Count: " + conditions?.Count);
 
                 if (conditions != null && conditions.Count > 0)
                 {
-                    List<object> toAdd = new List<object>();
+                    Dictionary<object, object> toAdd = new Dictionary<object, object>();
                     foreach (object condition in conditions)
                     {
                         Traverse trav_condition = Traverse.Create(condition);
@@ -104,16 +121,13 @@ namespace Toddlers
                             DebugLog("Iterating - found ConditionAge with age: " + age.defName);
                             if (age == lsa_Baby.def)
                             {
-                                DebugLog("Iterating - creating new ConditionAge for toddler");
-                                object newCondition = Activator.CreateInstance(t_ConditionAge);
-                                Traverse.Create(newCondition).Field("age").SetValue(lsa_Toddler.def);
-                                toAdd.Add(newCondition);
+                                DebugLog("Iterating - found baby graphic - noting for replication");                                
+
+                                extendedGraphicsRequiringToddlerCondition.Add(curParentGraphic, curField);
+
+                                break;
                             }
                         }
-                    }
-                    foreach (object newCondition in toAdd)
-                    {
-                        conditions.Add(newCondition);
                     }
                 }
             }
@@ -124,27 +138,109 @@ namespace Toddlers
                 );
             */
             IList extendedGraphics = trav_curField.Field("extendedGraphics").GetValue() as IList;
-            DebugLog("Iterating - child extendedGraphics: " + extendedGraphics
-                + ".Count: " + extendedGraphics?.Count);
+            //DebugLog("Iterating - child extendedGraphics: " + extendedGraphics
+            //    + ".Count: " + extendedGraphics?.Count);
             if (extendedGraphics != null && extendedGraphics.Count > 0)
             {
+                parentStack.Push(curParentGraphic);
+                curParentGraphic = curField;
+
                 foreach (object child in extendedGraphics)
                 {
                     //DebugLog("Iterating - child: " + child);
                     IterateExtendedGrapics(Traverse.Create(child));
                 }
+
+                curParentGraphic = parentStack.Pop();
             }
         }
 
-        public void UpdateExtendedGraphics()
+        public void AddNewExtendedGraphics()
         {
+
+            if (extendedGraphicsRequiringToddlerCondition.Count > 0)
+            {
+                object toddlerCondition = Activator.CreateInstance(t_ConditionAge);
+                Traverse.Create(toddlerCondition).Field("age").SetValue(lsa_Toddler.def);
+
+                foreach (KeyValuePair<object, object> kvp in extendedGraphicsRequiringToddlerCondition)
+                {
+                    object parentGraphic = kvp.Key;
+                    object babyGraphic = kvp.Value;
+
+                    object toddlerGraphic = Activator.CreateInstance(t_ExtendedConditionGraphic);
+                    DebugLog("Iterating over new extended graphics - parentGraphic: " + parentGraphic
+                        + ", babyGraphic: " + babyGraphic
+                        + ", toddlerGraphic: " + toddlerGraphic);
+
+
+                    FieldInfo[] fields = babyGraphic.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    //DebugLog("GetFields for babyGraphic: " + fields.Select(f => f.Name).ToStringSafeEnumerable());
+                    foreach (FieldInfo field in fields)
+                    {
+                        //DebugLog("Field: " + field.Name + ", value: " + field.GetValue(babyGraphic));
+                        field.SetValue(toddlerGraphic,
+                            field.GetValue(babyGraphic));
+                    }
+
+
+                    Traverse toddlerTrav = Traverse.Create(toddlerGraphic);
+                    IList babyConditions = toddlerTrav.Field("conditions").GetValue() as IList;
+                    if (babyConditions == null)
+                    {
+                        Log.Error("[Toddlers] Error in copying baby graphics for alien race " + this.def
+                            + " : field babyGraphic.conditions is null"
+                            + ", parentGraphic: " + parentGraphic
+                            + ", babyGraphic: " + babyGraphic);
+                        continue;
+                    }
+                    IList toddlerConditions = Activator.CreateInstance(babyConditions.GetType()) as IList;
+                    toddlerConditions.Add(toddlerCondition);
+                    toddlerTrav.Field("conditions").SetValue(toddlerConditions);
+                    
+                    //DebugLog("babyConditions: " + babyConditions.ToStringSafeEnumerable()
+                    //    + ", toddlerConditions: " + toddlerConditions.ToStringSafeEnumerable()
+                    //    );
+
+                    IList babyExtendedGraphics = Traverse.Create(babyGraphic).Field("extendedGraphics").GetValue() as IList;
+                    IList toddlerExtendedGraphics = Traverse.Create(toddlerGraphic).Field("extendedGraphics").GetValue() as IList;
+                    DebugLog("babyGraphic.path: " + Traverse.Create(babyGraphic).Field("path").GetValue()
+                        + ", toddlerGraphic.path: " + Traverse.Create(toddlerGraphic).Field("path").GetValue()
+                        //+ ", babyGraphic.extendedGraphics: " + babyExtendedGraphics
+                        //+ ", Count: " + babyExtendedGraphics.Count
+                        //+ ", toddlerGraphic.extendedGraphics: " + toddlerExtendedGraphics
+                        //+ ", Count: " + toddlerExtendedGraphics.Count
+                        );
+
+
+                    Traverse parentTrav = Traverse.Create(parentGraphic);
+                    IList extendedGraphics = parentTrav.Field("extendedGraphics").GetValue() as IList;
+                    if (extendedGraphics == null)
+                    {
+                        Log.Error("[Toddlers] Error in copying baby graphics for alien race " + this.def
+                            + " : field parentGraphic.extendedGraphics is null"
+                            + ", parentGraphic: " + parentGraphic
+                            + ", babyGraphic: " + babyGraphic);
+                        continue;
+                    }
+                    extendedGraphics.Add(toddlerGraphic);
+                }
+            }
+        }
+
+        public void AnalyzeGraphicPaths()
+        {
+            curParentGraphic = null;
+            parentStack.Clear();
+
             Traverse traverse = Traverse.Create(def);   //ThingDef_AlienRace
 
             object graphicPaths = traverse.Field("alienRace").Field("graphicPaths").GetValue();
-            DebugLog("graphicPaths: " + graphicPaths + 
-                ", type: " + graphicPaths.GetType());
+            //DebugLog("graphicPaths: " + graphicPaths + 
+            //    ", type: " + graphicPaths.GetType());
 
             Traverse.IterateFields(graphicPaths, IterateExtendedGrapics);
+
         }
 
         public void CreateToddlerLifeStageAge()
@@ -155,11 +251,12 @@ namespace Toddlers
             if (lsa_Baby.def == LifeStageDefOf.HumanlikeBaby)
             {
                 lsa_Toddler.def = Toddlers_DefOf.HumanlikeToddler;
+                HARLog("[Toddlers] Processing alien race " + def.defName + ": added life stage HumanlikeToddler");
             }
             else
             {
                 lsa_Toddler.def = CreateToddlerLifeStageDef();                
-                Log.Message("[Toddlers] " + def.defName + ": created new toddler life stage def");
+                HARLog("[Toddlers] Processing alien race " + def.defName + ": created new toddler LifeStageDef");
             }
 
             lsa_Toddler.minAge = toddlerMinAge;
@@ -200,17 +297,17 @@ namespace Toddlers
         {
             if (hasToddler)
             {
-                HARLog("[Toddlers] " + def.defName + " already has toddler lifestage, skipping");
+                HARLog("[Toddlers] Processing alien race " + def.defName + ": found pre-generated life stage HumanlikeToddler");
                 return false;
             }
             if (lsa_Baby == null || lsa_Child == null)
             {
-                HARLog("[Toddlers] " + def.defName + ": cannot identify baby and child life stages, skipping");
+                HARLog("[Toddlers] Processing alien race " + def.defName + ": cannot identify baby and child life stages, skipping");
                 return false;
             }
             if (toddlerEndAge < 2f)
             {
-                HARLog("[Toddlers] " + def.defName + ": no room for at least a year of toddlerhood between Baby and Child, skipping");
+                HARLog("[Toddlers] Processing alien race " + def.defName + ": no room for at least a year of toddlerhood between Baby and Child, skipping");
                 return false;
             }
             return true;
@@ -268,6 +365,25 @@ namespace Toddlers
                 }
             }
 
+        }
+    
+        public void AnalyzeBodyAddons()
+        {
+            curParentGraphic = null;
+            parentStack.Clear();
+
+            Traverse traverseDef = Traverse.Create(def);   //ThingDef_AlienRace
+
+            IList bodyAddons = traverseDef.Field("alienRace").Field("generalSettings").Field("alienPartGenerator")
+                .Field("bodyAddons").GetValue() as IList;
+            if (bodyAddons == null || bodyAddons.Count <= 0) return;
+
+            foreach (object bodyAddon in bodyAddons)
+            {
+                Traverse traverseBodyAddon = Traverse.Create(bodyAddon);
+                DebugLog("analysing bodyAddon: " + traverseBodyAddon.Property("Name").GetValue());
+                IterateExtendedGrapics(traverseBodyAddon);
+            }
         }
     }
 }

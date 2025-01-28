@@ -24,6 +24,7 @@ namespace Toddlers
         public static Type t_AlienPartGenerator;
         public static Type t_ExtendedConditionGraphic;
         public static Type t_ConditionAge;
+        //public static Type t_ConditionBodyType;
 
         public static void Init()
         {
@@ -35,13 +36,14 @@ namespace Toddlers
                 t_AlienPartGenerator = AccessTools.TypeByName("AlienRace.AlienPartGenerator");
                 t_ExtendedConditionGraphic = (Type)Traverse.Create(t_AlienPartGenerator).Type("ExtendedConditionGraphic").GetValue();
                 t_ConditionAge = AccessTools.TypeByName("AlienRace.ExtendedGraphics.ConditionAge");
+                //t_ConditionBodyType = AccessTools.TypeByName("AlienRace.ExtendedGraphics.ConditionBodyType");
 
-                LogUtil.DebugLog("t_ThingDef_AlienRace: " + t_ThingDef_AlienRace);
-                LogUtil.DebugLog("t_LifeStageAgeAlien: " + t_LifeStageAgeAlien);
-                LogUtil.DebugLog("t_AbstractExtendedGraphic: " + t_AbstractExtendedGraphic);
-                LogUtil.DebugLog("t_AlienPartGenerator: " + t_AlienPartGenerator);
-                LogUtil.DebugLog("t_ExtendedConditionGraphic: " + t_ExtendedConditionGraphic);
-                LogUtil.DebugLog("t_ConditionAge: " + t_ConditionAge);
+                //LogUtil.DebugLog("t_ThingDef_AlienRace: " + t_ThingDef_AlienRace);
+                //LogUtil.DebugLog("t_LifeStageAgeAlien: " + t_LifeStageAgeAlien);
+                //LogUtil.DebugLog("t_AbstractExtendedGraphic: " + t_AbstractExtendedGraphic);
+                //LogUtil.DebugLog("t_AlienPartGenerator: " + t_AlienPartGenerator);
+                //LogUtil.DebugLog("t_ExtendedConditionGraphic: " + t_ExtendedConditionGraphic);
+                //LogUtil.DebugLog("t_ConditionAge: " + t_ConditionAge);
 
                 alienRaces = LoadRaces().ToDictionary(x => x.def.defName);
             }
@@ -51,6 +53,7 @@ namespace Toddlers
                 HARLoaded = false;
             }
         }
+
         static List<AlienRace> LoadRaces()
         {
             List<ThingDef> thingDefs = DefDatabase<ThingDef>.AllDefsListForReading.FindAll(

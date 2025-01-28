@@ -62,7 +62,9 @@
     <Compile Include="Compat\HAR\AlienRace.cs" />
     <Compile Include="Compat\HAR\HARCompat.cs" />
     <Compile Include="Compat\HAR\HARTestPatches.cs" />
+    <Compile Include="Compat\HAR\HARUtil.cs" />
     <Compile Include="Crib\CribUtility.cs" />
+    <Compile Include="DefListDef.cs" />
     <Compile Include="Feeding\FeedingUtility.cs" />
     <Compile Include="Learning\ToddlerLearningUtility.cs" />
     <Compile Include="MiscHarmony\Alert_NeedMeditationSpot_Targets_Patch.cs" />
@@ -114,7 +116,6 @@
     <None Include="Compat\HAR\AlienRace.LifeStages.cs" />
     <None Include="Compat\HAR\AlienRace.Graphics.cs" />
     <None Include="Compat\HAR\AlienRace.BodyTypes.cs" />
-    <None Include="Compat\HAR\CrawlingTweak.cs" />
     <None Include="Compat\HAR\Harmony.cs" />
     <None Include="Compat\HAR\Patch_HAR_old.cs" />
     <None Include="Compat\HAR\AlienRace_old.cs" />
