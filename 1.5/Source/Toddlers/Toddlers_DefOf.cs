@@ -13,7 +13,9 @@ namespace Toddlers
 {
     [DefOf]
     static class Toddlers_DefOf
-    { 
+    {
+        public static DefListDef HumanlikeGaitOverride;
+
         public static DutyDef ToddlerLoiter;
 
         public static HediffDef LearningToWalk;

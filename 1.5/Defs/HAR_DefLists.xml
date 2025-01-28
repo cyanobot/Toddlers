@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<Toddlers.DefListDef>
+	<defName>HumanlikeGaitOverride</defName>
+	<whitelist>
+		<li MayRequire="zal.moonjelly">Moonjelly_Race</li>
+	</whitelist>
+	<blacklist>
+		<li MayRequire="ssm9906.TheTTanconRace">Alien_TTancon</li>
+	</blacklist>
+</Toddlers.DefListDef>
+
+</Defs>

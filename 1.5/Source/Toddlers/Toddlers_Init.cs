@@ -48,7 +48,7 @@ namespace Toddlers
             */
 
             if (Toddlers_Mod.DBHLoaded) Patch_DBH.GeneratePatches(harmony);
-            //if (Toddlers_Mod.HARLoaded) Patch_HAR.Init();
+            if (Toddlers_Mod.HARLoaded) HARCompat.Init();
 
 
             harmony.PatchAll();

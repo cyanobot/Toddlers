@@ -36,7 +36,8 @@ namespace Toddlers
             base.Tick();
             if (pawn.IsHashIntervalTick(updateInterval))
             {
-                float factor = updateInterval;
+                float agingRateFactor = this.pawn.genes?.BiologicalAgeTickFactor ?? 1f;
+                float factor = updateInterval * agingRateFactor;
                 InnerTick(factor);
             }
         }

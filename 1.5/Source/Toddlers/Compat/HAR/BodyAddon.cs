@@ -79,14 +79,14 @@ namespace Toddlers
             //Log.Message("Patch_HAR.method_GetOffsetByTypes: " + Patch_HAR.method_GetOffsetByTypes);
             Vector3 defaultOffset = defaultOffsets_north == null ? Vector3.zero :
                 (Vector3?)method_GetOffset_ByTypes.Invoke(defaultOffsets_north,
-                    new object[] { false, pawn.story?.bodyType ?? BodyTypeDefOf.Male, pawn.story?.headType ?? HeadTypeDefOf.Stump })
+                    new object[] { false, pawn.story?.bodyType ?? BodyTypeDefOf.Male, pawn.story?.headType ?? null })
                 ?? Vector3.zero;
             //Log.Message("defaultOffset: " + defaultOffset);
 
             object specificOffsets = pawn.gender == Gender.Female ? femaleOffsets_north : offsets_north;
             Vector3 specificOffset = specificOffsets == null ? Vector3.zero :
                 (Vector3?)method_GetOffset_ByTypes.Invoke(specificOffsets,
-                    new object[] { false, pawn.story?.bodyType ?? BodyTypeDefOf.Male, pawn.story?.headType ?? HeadTypeDefOf.Stump })
+                    new object[] { false, pawn.story?.bodyType ?? BodyTypeDefOf.Male, pawn.story?.headType ?? null })
                 ?? Vector3.zero;
 
             Vector3 offset = defaultOffset + specificOffset;

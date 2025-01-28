@@ -9,51 +9,47 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Verse.AI.Group;
+using static Toddlers.Toddlers_Mod;
 
 namespace Toddlers
 {
     public static class ToddlerUtility
     {
         public const float BASE_MIN_AGE = 1f;
-        public const float BASE_MAX_AGE = 3f;
+        public const float BASE_END_AGE = 3f;
 
         public static float ToddlerMinAge(Pawn p)
         {
+            if (HARLoaded)
+            {
+                AlienRace alienRace = HARUtil.GetAlienRaceWrapper(p);
+                if (alienRace != null) return alienRace.toddlerMinAge;
+            }
             return BASE_MIN_AGE;
-            /*
-            if (!Toddlers_Mod.HARLoaded)
-            {
-                return BASE_MIN_AGE;
-            }
-            else
-            {
-                AlienRace alienRace = Patch_HAR.GetAlienRaceWrapper(p);
-                return alienRace.toddlerMinAge;
-            }
-            */
+
         }
 
-        public static float ToddlerMaxAge(Pawn p)
+        public static float ToddlerEndAge(Pawn p)
         {
-            return BASE_MAX_AGE;
-            /*
-            if (!Toddlers_Mod.HARLoaded)
+            if (HARLoaded)
             {
-                return BASE_MAX_AGE;
+                AlienRace alienRace = HARUtil.GetAlienRaceWrapper(p);
+                if (alienRace != null) return alienRace.toddlerEndAge;
             }
-            else
-            {
-                AlienRace alienRace = Patch_HAR.GetAlienRaceWrapper(p);
-                return alienRace.lifeStageChild.minAge;
-            }
-            */
+            return BASE_END_AGE;
+        }
+
+        public static float ToddlerStageInTicks(Pawn p)
+        {
+            //time in years * 60 days per year * 60000 ticks per day
+            return (ToddlerEndAge(p) - ToddlerMinAge(p)) * 60f * 60000f;
         }
 
         public static bool IsToddler(Pawn p)
         {
             if (p == null) return false;
             if (p.ageTracker.CurLifeStage == Toddlers_DefOf.HumanlikeToddler) return true;
-            if (Toddlers_Mod.HARLoaded)
+            if (HARLoaded)
             {
                 if (p.ageTracker.CurLifeStage.workerClass == typeof(LifeStageWorker_HumanlikeToddler)) return true;
             }
@@ -68,7 +64,7 @@ namespace Toddlers
         public static float PercentGrowth(Pawn p)
         {
             //2 years * 60 days per year * 60000 ticks per day
-            float toddlerStageInTicks = (ToddlerMaxAge(p) - ToddlerMinAge(p)) * 60f * 60000f;
+            float toddlerStageInTicks = ToddlerStageInTicks(p);
             //age up at 1 yearold
             float ticksSinceBaby = (float)p.ageTracker.AgeBiologicalTicks - (ToddlerMinAge(p) * 60f * 60000f);
 

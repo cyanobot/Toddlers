@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 using static Toddlers.ToddlerUtility;
+using static Toddlers.Toddlers_Mod;
 
 namespace Toddlers
 {
@@ -37,6 +38,8 @@ namespace Toddlers
 
             //if (Toddlers_Mod.HARLoaded && !Patch_HAR.GetAlienRaceWrapper(p).humanlikeGait) return;
 
+            if (HARLoaded && !HARUtil.GetAlienRaceWrapper(p).humanlikeGait) return;
+
             Hediff_LearningToWalk hediff_LearningToWalk = (Hediff_LearningToWalk)HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, p);
             hediff_LearningToWalk.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Walk);
             p.health.AddHediff(hediff_LearningToWalk);
@@ -47,8 +50,8 @@ namespace Toddlers
         public static float GetLearningPerTickBase(Pawn p, Storyteller storyteller = null)
         {
             //2 years * 60 days per year * 60000 ticks per day
-            if (storyteller == null) storyteller = Find.Storyteller;
-            float ticksAsToddler = (ToddlerMaxAge(p) - ToddlerMinAge(p)) * 60 * 60000 / Find.Storyteller.difficulty.childAgingRate;
+            //if (storyteller == null) storyteller = Find.Storyteller;
+            float ticksAsToddler = ToddlerStageInTicks(p); // / Find.Storyteller.difficulty.childAgingRate;
             return 1 / ticksAsToddler;
         }
 
