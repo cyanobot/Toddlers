@@ -16,11 +16,14 @@ namespace Toddlers
 
         public static void InitValidFireDefs()
         {
+            /*
             validFireDefs = new List<ThingDef>();
             validFireDefs.Add(ThingDefOf.Campfire);
             if (ModsConfig.RoyaltyActive) validFireDefs.Add(ThingDefOf.Brazier);
             if (ModsConfig.RoyaltyActive && ModsConfig.IdeologyActive)
                 validFireDefs.Add(DefDatabase<ThingDef>.GetNamed("DarklightBrazier"));
+            */
+            validFireDefs = Toddlers_DefOf.FiregazingTargets.whitelist;
 
             LogUtil.DebugLog("validFireDefs: " + validFireDefs);
         }
@@ -78,6 +81,7 @@ namespace Toddlers
         private Thing FindNearbyUseableFire(Pawn pawn)
         {
             //Log.Message("Fired FindNearbyUseableFire");
+            if (validFireDefs != null && validFireDefs.Count == 0) return null;
             Room room = pawn.GetRoom(RegionType.Set_All);
             if (room != null)
             {

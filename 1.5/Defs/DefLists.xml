@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<Toddlers.DefListDef>
+	<defName>FiregazingTargets</defName>
+	<whitelist>
+		<li>Campfire</li>
+		<li MayRequire="Ludeon.RimWorld.Royalty">Brazier</li>
+		<li MayRequire="Ludeon.RimWorld.Royalty,Ludeon.RimWorld.Ideology">DarklightBrazier</li>
+		<li MayRequire="BattIeBear.Undergrounders.Darkfire">undrgdrs_Darkfire</li>
+		<li MayRequire="BattIeBear.Undergrounders.Darkfire">undrgdrs_FungusDarkfire</li>
+		<li MayRequire="BattIeBear.Undergrounders.Darkfire,Ludeon.RimWorld.Royalty">undrgdrs_FungusDarklightBrazier</li>
+		<li MayRequire="BattIeBear.Undergrounders.Darkfire,VanillaExpanded.VFECore">Stone_FungusDarklightCampfire</li>
+		<li MayRequire="BattIeBear.Undergrounders.Darkfire,VanillaExpanded.VFECore">Stone_FungusDarklightCampfire</li>
+		<li MayRequire="VanillaExpanded.VFECore">Stone_Campfire</li>
+	</whitelist>
+</Toddlers.DefListDef>
+
+<Toddlers.DefListDef>
+	<defName>WearableByBaby</defName>
+	<whitelist>
+		<li>Apparel_GasMask</li>
+		<li>Apparel_ShieldBelt</li>
+		<li>Apparel_PsychicFoilHelmet</li>
+		<li>Apparel_ClothMask</li>
+	</whitelist>
+</Toddlers.DefListDef>
+
+</Defs>

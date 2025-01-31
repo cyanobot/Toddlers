@@ -15,6 +15,8 @@ namespace Toddlers
     static class Toddlers_DefOf
     {
         public static DefListDef HumanlikeGaitOverride;
+        public static DefListDef FiregazingTargets;
+        public static DefListDef WearableByBaby;
 
         public static DutyDef ToddlerLoiter;
 
