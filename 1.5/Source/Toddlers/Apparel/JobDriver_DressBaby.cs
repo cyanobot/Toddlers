@@ -47,40 +47,47 @@ namespace Toddlers
             AddFailCondition(() => Baby.DestroyedOrNull() || !Baby.Spawned || Baby.DevelopmentalStage != DevelopmentalStage.Baby || !ChildcareUtility.CanSuckle(Baby, out var _));
             AddFailCondition(() => Apparel.DestroyedOrNull() || Apparel.IsBurning());
 
+            //go to clothes, pick up
             yield return Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.ClosestTouch).FailOnForbidden(TargetIndex.B);
             yield return Toils_Haul.StartCarryThing(TargetIndex.B);
-            //yield return Toils_Haul.CarryHauledThingToCell(TargetIndex.A);
+            //go to baby
             yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch);
+
+            //make baby wait
+            //Toil makeBabyWait = ToilMaker.MakeToil("MakeBabyWait");
+            //makeBabyWait.defaultCompleteMode = ToilCompleteMode.Instant;
+            //makeBabyWait.
+
+            //put clothes down beside baby
             yield return Toils_Haul.PlaceCarriedThingInCellFacing(TargetIndex.A);
 
             // Wait duration, strip conflicting clothes periodically.
-            Toil stripAndDress = new Toil()
+            Toil stripAndDress = ToilMaker.MakeToil("StripAndDress");
+            stripAndDress.defaultCompleteMode = ToilCompleteMode.Delay;
+            stripAndDress.defaultDuration = duration;
+            stripAndDress.tickAction = delegate ()
             {
-                defaultCompleteMode = ToilCompleteMode.Delay,
-                defaultDuration = duration,
-                tickAction = delegate ()
-                {
-                    unequipBuffer++;
-                    TryUnequipSomething();
-                }
+                unequipBuffer++;
+                TryUnequipSomething();
             };
             stripAndDress.AddPreInitAction(delegate
             {
                 Pawn baby = (Pawn)stripAndDress.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
-                if (baby.Awake() && ToddlerUtility.IsLiveToddler(baby) && !CribUtility.InCrib(baby))
+                if (!baby.Downed && baby.Awake() && ToddlerUtility.IsLiveToddler(baby) && !CribUtility.InCrib(baby))
                 {
+                    LogUtil.DebugLog("attempting to assign BeDressed job to baby: " + baby);
                     Job beDressedJob = JobMaker.MakeJob(Toddlers_DefOf.BeDressed, stripAndDress.actor);
-                    job.count = 1;
+                    beDressedJob.count = 1;
                     baby.jobs.StartJob(beDressedJob, JobCondition.InterruptForced);
                 }
                 
             });
             stripAndDress.AddFinishAction(delegate
             {
-                Pawn pawn = (Pawn)stripAndDress.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
-                if (pawn.CurJobDef == Toddlers_DefOf.BeDressed)
+                Pawn baby = (Pawn)stripAndDress.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
+                if (baby?.CurJobDef == Toddlers_DefOf.BeDressed)
                 {
-                    pawn.jobs.EndCurrentJob(JobCondition.Succeeded);
+                    baby.jobs.EndCurrentJob(JobCondition.Succeeded);
                 }
             });
 

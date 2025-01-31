@@ -47,22 +47,24 @@ namespace Toddlers
 			yield return Toils_Goto.GotoThing(BabyIndex, PathEndMode.ClosestTouch).FailOnForbidden(BabyIndex);
 			Toil wait = Toils_General.Wait(duration).WithProgressBarToilDelay(BabyIndex, true);
 			wait.AddPreInitAction(delegate
-			{
-				//Log.Message("wait.PreInitAction");
-				if (Baby.Awake() && ToddlerUtility.IsLiveToddler(Baby) && !CribUtility.InCrib(Baby))
+            {
+                Pawn baby = (Pawn)wait.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
+                Log.Message("wait.PreInitAction");
+				if (!baby.Downed && baby.Awake() && ToddlerUtility.IsLiveToddler(baby) && !CribUtility.InCrib(baby))
 				{
-					//Log.Message("Attempting to force BeDressed job on " + Baby);
+					LogUtil.DebugLog("Attempting to force BeDressed job on baby: " + baby);
 					Job beDressedJob = JobMaker.MakeJob(Toddlers_DefOf.BeDressed, wait.actor);
 					job.count = 1;
-					Baby.jobs.StartJob(beDressedJob, JobCondition.InterruptForced);
+					baby.jobs.StartJob(beDressedJob, JobCondition.InterruptForced);
 				}
 			});
 			wait.AddFinishAction(delegate
-			{
-				//Log.Message("wait.FinishAction");
-				if (Baby.CurJobDef == Toddlers_DefOf.BeDressed)
+            {
+                Pawn baby = (Pawn)wait.actor.jobs.curJob.GetTarget(TargetIndex.A).Thing;
+                //Log.Message("wait.FinishAction");
+                if (baby?.CurJobDef == Toddlers_DefOf.BeDressed)
 				{
-					Baby.jobs.EndCurrentJob(JobCondition.Succeeded);
+					baby.jobs.EndCurrentJob(JobCondition.Succeeded);
 				}
 			});
 
@@ -70,7 +72,7 @@ namespace Toddlers
 			{
 				defaultCompleteMode = ToilCompleteMode.Instant,
 				initAction = delegate {
-					//Log.Message("strip.initAction");
+					Log.Message("strip.initAction");
 					if (Baby.apparel.WornApparel.Contains(Apparel))
 					{
 						if (Baby.apparel.TryDrop(Apparel, out var resultingAp))

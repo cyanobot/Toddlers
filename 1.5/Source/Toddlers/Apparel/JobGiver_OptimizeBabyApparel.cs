@@ -104,7 +104,7 @@ namespace Toddlers
 				wornApparelScores.Add(JobGiver_OptimizeApparel.ApparelScoreRaw(baby, wornApparel[i]));
 				if (!curApparelPolicy.filter.Allows(wornApparel[i]) && baby.outfits.forcedHandler.AllowedToAutomaticallyDrop(wornApparel[i]) && !baby.apparel.IsLocked(wornApparel[i]))
 				{
-					Job job2 = JobMaker.MakeJob(Toddlers_DefOf.UndressBaby, baby, wornApparel[i]);
+					Job job2 = JobMaker.MakeJob(JobDefOf.Strip, baby, wornApparel[i]);
 					job2.haulDroppedApparel = true;
 					return job2;
 				}
