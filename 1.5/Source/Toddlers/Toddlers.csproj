@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Apparel\Harmony\HatPairValidator_Patch.cs" />
     <Compile Include="Apparel\Harmony\JobDriver_Strip_MakeNewToils_Patch.cs" />
     <None Include="Apparel\Harmony\TestPatch.cs" />
     <Compile Include="Caravan\CheckArrived_Patch.cs" />

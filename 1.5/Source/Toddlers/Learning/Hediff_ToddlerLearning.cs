@@ -36,7 +36,7 @@ namespace Toddlers
             base.Tick();
             if (pawn.IsHashIntervalTick(updateInterval))
             {
-                float agingRateFactor = this.pawn.genes?.BiologicalAgeTickFactor ?? 1f;
+                float agingRateFactor = this.pawn.ageTracker.BiologicalTicksPerTick;
                 float factor = updateInterval * agingRateFactor;
                 InnerTick(factor);
             }
@@ -50,7 +50,7 @@ namespace Toddlers
 
             //Log.Message("InnerTick for " + pawn + ", GetLearningPerTickBase: " + ToddlerUtility.GetLearningPerTickBase(pawn));
 
-            Severity += ToddlerLearningUtility.GetLearningPerTickBase(pawn) * factor * (1/ (float)typeof(Toddlers_Settings).GetField(SettingName, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public).GetValue(null));
+            Severity += ToddlerLearningUtility.GetLearningPerBioTick(pawn) * factor * (1/ (float)typeof(Toddlers_Settings).GetField(SettingName, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public).GetValue(null));
 
             if (CurStageIndex != prevStage)
             {

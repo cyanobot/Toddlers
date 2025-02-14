@@ -47,7 +47,7 @@ namespace Toddlers
             return;
         }
 
-        public static float GetLearningPerTickBase(Pawn p, Storyteller storyteller = null)
+        public static float GetLearningPerBioTick(Pawn p, Storyteller storyteller = null)
         {
             //2 years * 60 days per year * 60000 ticks per day
             //if (storyteller == null) storyteller = Find.Storyteller;
