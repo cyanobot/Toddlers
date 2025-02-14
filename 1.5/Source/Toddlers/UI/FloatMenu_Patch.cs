@@ -11,9 +11,8 @@ using System.Threading.Tasks;
 
 namespace Toddlers
 {
-
     [HarmonyPatch(typeof(FloatMenuMakerMap), "ChoicesAtFor")]
-    class FloatMenu_Patch
+    public static class FloatMenu_Patch
     {
         public const bool LOG_FLOAT_MENU = false;
 
@@ -112,7 +111,15 @@ namespace Toddlers
         {
             //Log.Message("opts.Count = " + opts.Count);
             IntVec3 c = IntVec3.FromVector3(clickPos);
-           
+
+            /*
+            LogUtil.DebugLog("clickCell.GetThingList: " + c.GetThingList(pawn.Map).ToStringSafeEnumerable()
+                + ", TargetsAt(ForPawns): " + GenUI.TargetsAt(clickPos, TargetingParameters.ForPawns()).ToStringSafeEnumerable()
+                + ", TargetsAtMouse(ForPawns): " + GenUI.TargetsAtMouse(TargetingParameters.ForPawns()).ToStringSafeEnumerable()
+                );
+            LogUtil.DebugLog("ChoicesAtFor: " + opts.Select(o => o.Label).ToStringSafeEnumerable());
+            */
+
             //for non-toddlers
             if (pawn.DevelopmentalStage != DevelopmentalStage.Baby)
             {
@@ -524,4 +531,33 @@ namespace Toddlers
             return opts;
         }
     }
+
+    /*
+    [HarmonyPatch(typeof(FloatMenuMakerMap), "AddHumanlikeOrders")]
+    public static class TestPatch_HumanlikeOrders
+    {
+        public static void Postfix(List<FloatMenuOption> opts)
+        {
+            LogUtil.DebugLog("AddHumanlikeOrders: " + opts.Select(o => o.Label).ToStringSafeEnumerable());
+        }
+    }
+
+    [HarmonyPatch(typeof(FloatMenuMakerMap), "AddJobGiverWorkOrders")]
+    public static class TestPatch_AddJobGiverWorkOrders
+    {
+        public static void Postfix(List<FloatMenuOption> opts)
+        {
+            LogUtil.DebugLog("AddJobGiverWorkOrders: " + opts.Select(o => o.Label).ToStringSafeEnumerable());
+        }
+    }
+
+    [HarmonyPatch(typeof(FloatMenuMakerMap), "AddUndraftedOrders")]
+    public static class TestPatch_AddUndraftedOrders
+    {
+        public static void Postfix(List<FloatMenuOption> opts)
+        {
+            LogUtil.DebugLog("AddUndraftedOrders: " + opts.Select(o => o.Label).ToStringSafeEnumerable());
+        }
+    }
+    */
 }

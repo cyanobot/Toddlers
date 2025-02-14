@@ -76,6 +76,7 @@
     <Compile Include="Kidnap\Harmony\JobGiver_Kidnap_Patch.cs" />
     <Compile Include="Play\Harmony\BabyPlayGiver_Patch.cs" />
     <Compile Include="Play\Harmony\BabyPlayGiver_PlayWalking_Patch.cs" />
+    <Compile Include="Play\Harmony\EndCurrentJob_PlayerForcedPlay_Patch.cs" />
     <Compile Include="Play\Harmony\JobDriver_BabyPlay_MakeNewToils_Patch.cs" />
     <Compile Include="Play\Harmony\NeedTipString_Patch.cs" />
     <Compile Include="Play\Harmony\Play_NeedInterval_Patch.cs" />
