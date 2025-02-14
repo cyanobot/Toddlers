@@ -14,9 +14,9 @@ namespace Toddlers
     public static class ToddlerPlayUtility
     {
         public const float PlayNeedSatisfiedPerTick = 1.2E-04f;
-        public const float LonelinessCuredPerTick = 1.2E-03f;
+        public const float LonelinessCuredPerTick = 6E-04f;
         public const int PlayDuration = 2000;
-        public const float BaseLonelinessRate = 0.0005f;
+        public const float BaseLonelinessRate = 0.0015f;
 
         public static List<ThingDef> cachedTelevisionDefs = new List<ThingDef>();
         public static int cachedTelevisionMaxParticipants = -1;
