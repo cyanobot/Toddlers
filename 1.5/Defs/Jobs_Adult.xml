@@ -1,37 +1,43 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 	
-	<JobDef>
-		<defName>PutInCrib</defName>
-		<driverClass>JobDriver_TakeToBed</driverClass>
-		<reportString>putting TargetA to bed.</reportString>
-		<casualInterruptible>false</casualInterruptible>
-	</JobDef>
-	
-	<JobDef>
-		<defName>LetOutOfCrib</defName>
-		<driverClass>Toddlers.JobDriver_LetOutOfCrib</driverClass>
-		<reportString>letting TargetA out of crib.</reportString>
-	</JobDef>
-	
-	<JobDef>
-		<defName>DressBaby</defName>
-		<driverClass>Toddlers.JobDriver_DressBaby</driverClass>
-		<reportString>dressing TargetA.</reportString>
-		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
-	</JobDef>
-	
-	<JobDef>
-		<defName>UndressBaby</defName>
-		<driverClass>Toddlers.JobDriver_UndressBaby</driverClass>
-		<reportString>undressing TargetA.</reportString>
-	</JobDef>
-	
-	<JobDef>
-		<defName>KidnapToddler</defName>
-		<driverClass>Toddlers.JobDriver_KidnapToddler</driverClass>
-		<reportString>kidnapping TargetA.</reportString>
-	</JobDef>
+<JobDef>
+	<defName>PutInCrib</defName>
+	<driverClass>JobDriver_TakeToBed</driverClass>
+	<reportString>putting TargetA to bed.</reportString>
+	<casualInterruptible>false</casualInterruptible>
+</JobDef>
+
+<JobDef>
+	<defName>LetOutOfCrib</defName>
+	<driverClass>Toddlers.JobDriver_LetOutOfCrib</driverClass>
+	<reportString>letting TargetA out of crib.</reportString>
+</JobDef>
+
+<JobDef>
+	<defName>DressBaby</defName>
+	<driverClass>Toddlers.JobDriver_DressBaby</driverClass>
+	<reportString>dressing TargetA.</reportString>
+	<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+</JobDef>
+
+<JobDef>
+	<defName>UndressBaby</defName>
+	<driverClass>Toddlers.JobDriver_UndressBaby</driverClass>
+	<reportString>undressing TargetA.</reportString>
+</JobDef>
+
+<JobDef>
+	<defName>KidnapToddler</defName>
+	<driverClass>Toddlers.JobDriver_KidnapToddler</driverClass>
+	<reportString>kidnapping TargetA.</reportString>
+</JobDef>
+
+<JobDef MayRequireAnyOf="Dubwise.DubsBadHygiene,Dubwise.DubsBadHygiene.Lite">
+	<defName>CYB_WashBaby</defName>
+	<driverClass>Toddlers.JobDriver_WashBaby</driverClass>
+	<reportString>washing TargetA.</reportString>
+</JobDef>
 
 
 </Defs>

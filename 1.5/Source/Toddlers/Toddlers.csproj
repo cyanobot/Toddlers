@@ -62,6 +62,8 @@
     <None Include="Apparel\Harmony\TestPatch.cs" />
     <Compile Include="Caravan\CheckArrived_Patch.cs" />
     <Compile Include="Carrying\CarryToil_Patch.cs" />
+    <Compile Include="Compat\DBH\JobDriver_WashBaby.cs" />
+    <Compile Include="Compat\DBH\WorkGiver_WashBaby.cs" />
     <Compile Include="Compat\HAR\AlienRace.cs" />
     <Compile Include="Compat\HAR\HARCompat.cs" />
     <Compile Include="Compat\HAR\HARTestPatches.cs" />
@@ -141,7 +143,7 @@
     <Compile Include="RefugeePod\QuestNode_Root_RefugeePodCrash_Baby.cs" />
     <Compile Include="RefugeePod\QuestPart_ToddlerLoiter.cs" />
     <Compile Include="Crib\JobDriver_LeaveCrib.cs" />
-    <Compile Include="Compat\Patch_DBH.cs" />
+    <Compile Include="Compat\DBH\Patch_DBH.cs" />
     <Compile Include="Apparel\Harmony\OptimizeApparel_Patch.cs" />
     <None Include="ReplaceTesting.cs" />
     <Compile Include="Safety\BabyMoveUtility.cs" />

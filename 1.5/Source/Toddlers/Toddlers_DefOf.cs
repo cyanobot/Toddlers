@@ -32,6 +32,7 @@ namespace Toddlers
         public static JobDef PutInCrib;
         public static JobDef DressBaby;
         public static JobDef BeDressed;
+        public static JobDef ToddlerBeWashed;
         public static JobDef ToddlerRemoveApparel;
         public static JobDef KidnapToddler;
         public static JobDef BePlayedWith;

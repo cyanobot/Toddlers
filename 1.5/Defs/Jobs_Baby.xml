@@ -28,13 +28,19 @@
 	<JobDef>
 		<defName>BeDressed</defName>
 		<driverClass>Toddlers.JobDriver_BeDressed</driverClass>
-		<reportString>be dressed by TargetA.</reportString>
+		<reportString>being dressed by TargetA.</reportString>
 	</JobDef>
 	
 	<JobDef>
 		<defName>ToddlerRemoveApparel</defName>
 		<driverClass>Toddlers.JobDriver_ToddlerRemoveApparel</driverClass>
 		<reportString>removing TargetA.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>ToddlerBeWashed</defName>
+		<driverClass>JobDriver_Wait</driverClass>
+		<reportString>being washed.</reportString>
 	</JobDef>
 	
 </Defs>

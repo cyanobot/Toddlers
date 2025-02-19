@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+<Operation Class="PatchOperationFindMod">
+	<mods>
+		<li>Dubs Bad Hygiene</li>
+		<li>Dubs Bad Hygiene Lite</li>
+	</mods>
+	<match Class="PatchOperationAdd">
+		<xpath>Defs/ThoughtDef[defName="HygieneLevel"]</xpath>
+		<value>
+			<developmentalStageFilter>Adult,Child,Baby</developmentalStageFilter>
+		</value>
+	</match>
+</Operation>
+
+</Patch>

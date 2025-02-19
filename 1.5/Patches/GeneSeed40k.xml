@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+<Operation Class="PatchOperationFindMod">
+	<mods>
+		<li>[WarHammer 40k] GeneSeed</li>
+	</mods>
+	<match Class="PatchOperationInsert">
+		<xpath>Defs/ThingDef[defName="AstarteAdaptusCore"]/race/lifeStageAges
+			/li[def="HumanlikeBaby"]</xpath>
+		<order>Append</order>
+		<value>
+			<li>
+				<def>HumanlikeToddler</def>
+				<minAge>1</minAge>
+			</li>
+		</value>
+	</match>
+</Operation>
+
+</Patch>
