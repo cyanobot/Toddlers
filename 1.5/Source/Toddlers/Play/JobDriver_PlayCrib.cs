@@ -34,7 +34,7 @@ namespace Toddlers
                 pawn.rotationTracker.FaceTarget(Baby);
                 if (Find.TickManager.TicksGame % 1250 == 0)
                 {
-                    pawn.interactions.TryInteractWith(base.Baby, InteractionDefOf.BabyPlay);
+                    pawn.interactions.TryInteractWith(Baby, InteractionDefOf.BabyPlay);
                 }
                 if (roomPlayGainFactor < 0f)
                 {

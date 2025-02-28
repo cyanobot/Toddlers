@@ -8,6 +8,7 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 using static Toddlers.Patch_DBH;
+using static Toddlers.WashBabyUtility;
 
 namespace Toddlers
 {
@@ -19,16 +20,15 @@ namespace Toddlers
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
-            Pawn pawn = base.pawn;
-            LocalTargetInfo localTargetInfo = Baby;
-            Job job = base.job;
-            if (!ReservationUtility.Reserve(pawn, localTargetInfo, job, 1, -1, (ReservationLayerDef)null, errorOnFailed))
+            if (!ReservationUtility.Reserve(pawn, Baby, job, 1, -1, (ReservationLayerDef)null, errorOnFailed))
             {
                 return false;
             }
             if (job.targetB.HasThing)
             {
-                if ((pawn.inventory == null || !pawn.inventory.Contains(base.TargetThingB)) && !ReservationUtility.Reserve(pawn, (LocalTargetInfo)Water, job, 1, -1, (ReservationLayerDef)null, errorOnFailed))
+                if ((pawn.inventory == null 
+                            || !pawn.inventory.Contains(Water)) 
+                        && !ReservationUtility.Reserve(pawn, Water, job, 1, -1, (ReservationLayerDef)null, errorOnFailed))
                 {
                     return false;
                 }
@@ -42,8 +42,16 @@ namespace Toddlers
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
+            AddFailCondition(() =>
+                pawn.Downed
+                || !pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation)
+                || (pawn.Drafted && !job.playerForced)
+                );
             this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
-            this.FailOn(() => !WorkGiver_WashBaby.ShouldWashNow(Baby));
+            AddFailCondition(() =>
+                !WashBabyUtility.ColonistShouldWash(Baby)
+                || (Baby.Drafted && !job.playerForced)
+                );
             if (pawn.inventory != null && pawn.inventory.Contains(base.TargetThingB))
             {
                 yield return Toils_Misc.TakeItemFromInventoryToCarrier(pawn, TargetIndex.B);
@@ -63,7 +71,7 @@ namespace Toddlers
                     new object[] { TargetIndex.B, true, true }) as Toil;
             }
             yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.Touch);
-            Toil toil = new Toil();
+            Toil toil = ToilMaker.MakeToil("WashBaby");
             toil.defaultDuration = 800;
             toil.PlaySustainerOrSound(() => SoundDefOf.Interact_CleanFilth);
             toil.defaultCompleteMode = ToilCompleteMode.Delay;
@@ -74,7 +82,7 @@ namespace Toddlers
             toil.initAction = delegate
             {
                 //Baby.jobs.EndCurrentJob(JobCondition.InterruptForced, false);
-                Job waitJob = JobMaker.MakeJob(Toddlers_DefOf.ToddlerBeWashed, toil.actor, 1000);
+                Job waitJob = JobMaker.MakeJob(ToddlerBeWashed, toil.actor, 5000);
                 Baby.jobs.StartJob(waitJob, JobCondition.InterruptForced);
             };
             toil.tickAction = delegate
@@ -97,7 +105,7 @@ namespace Toddlers
                 {
                     Water.SplitOff(1);
                 }
-                if (Baby.CurJobDef == Toddlers_DefOf.ToddlerBeWashed)
+                if (Baby.CurJobDef == ToddlerBeWashed)
                 {
                     Baby.jobs.EndCurrentJob(JobCondition.Succeeded);
                 }

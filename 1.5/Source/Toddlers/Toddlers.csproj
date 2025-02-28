@@ -63,11 +63,15 @@
     <Compile Include="Caravan\CheckArrived_Patch.cs" />
     <Compile Include="Carrying\CarryToil_Patch.cs" />
     <Compile Include="Compat\DBH\JobDriver_WashBaby.cs" />
+    <Compile Include="Compat\DBH\JobGiver_WashBaby.cs" />
+    <Compile Include="Compat\DBH\StatPart_BabyHygiene.cs" />
+    <Compile Include="Compat\DBH\WashBabyUtility.cs" />
     <Compile Include="Compat\DBH\WorkGiver_WashBaby.cs" />
     <Compile Include="Compat\HAR\AlienRace.cs" />
     <Compile Include="Compat\HAR\HARCompat.cs" />
     <Compile Include="Compat\HAR\HARTestPatches.cs" />
     <Compile Include="Compat\HAR\HARUtil.cs" />
+    <Compile Include="Compat\DBH\JobDriver_BatheToddler.cs" />
     <Compile Include="Crib\CribUtility.cs" />
     <Compile Include="DefListDef.cs" />
     <Compile Include="Feeding\FeedingUtility.cs" />

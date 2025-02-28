@@ -8,6 +8,7 @@ using Verse.AI;
 using Verse;
 using static Toddlers.Patch_DBH;
 using static Toddlers.LogUtil;
+using static Toddlers.WashBabyUtility;
 
 namespace Toddlers
 {
@@ -40,45 +41,34 @@ namespace Toddlers
         public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
 
-            if (!(t is Pawn baby) || pawn == baby) return false;
+            if (!(t is Pawn baby)) return false;
 
-            if (!pawn.CanReserve(baby, 1, -1, null, forced)) return false;
-
-            Need need_Hygiene = baby.needs.AllNeeds.Find(n => n.def.defName == "Hygiene");
-            if (need_Hygiene == null || need_Hygiene.CurLevel > 0.3f) return false;
-
-            if (!ShouldWashNow(baby)) return false;
-
-            if (TryRunJob(pawn, baby) == null) return false;
-
-            return true;
-        }
-
-        public static bool ShouldWashNow(Pawn baby)
-        {
-            if (!ChildcareUtility.CanSuckleNow(baby, out var _)) return false;
-            if (baby.Faction != Faction.OfPlayer && baby.HostFaction != Faction.OfPlayer) return false;
+            if (!CanWashNow(pawn, baby, forced)) return false;
+            if (GetWashJob(pawn, baby) == null) return false;
 
             return true;
         }
 
         public override Job JobOnThing(Pawn pawn, Thing t, bool forced = false)
         {
+            /*
             DebugLog("WorkGiver_WashBaby JobOnThing - "
                 + "pawn: " + pawn
                 + ", t: " + t
                 );
+            */
 
             if (!(t is Pawn baby) || baby == pawn)
             {
                 return null;
             }
-            return TryRunJob(pawn, baby);
+            return GetWashJob(pawn, baby);
         }
 
-        public Job TryRunJob(Pawn pawn, Pawn baby)
+        /*
+        public static Job TryRunJob(Pawn pawn, Pawn baby)
         {
-                        LocalTargetInfo targetB = null;
+            LocalTargetInfo targetB = null;
             targetB = pawn.inventory.innerContainer.FirstOrDefault((Thing x) => x.def.defName == "DBH_WaterBottle");
 
             JobDef washDef = DefDatabase<JobDef>.GetNamed("CYB_WashBaby");
@@ -97,13 +87,6 @@ namespace Toddlers
             }
             if (targetB.HasThing)
             {
-                /*
-                if (targetB.Thing.def.HasModExtension<WaterExt>())
-                {
-                    Log.Warning("Returned drink for washPatient, this shouldn't happen");
-                    return null;
-                }
-                */
                 return JobMaker.MakeJob(washDef, baby, targetB.Thing);
             }
             if (targetB.Cell.IsValid)
@@ -112,5 +95,6 @@ namespace Toddlers
             }
             return null;
         }
+        */
     }
 }

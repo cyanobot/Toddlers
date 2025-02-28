@@ -32,7 +32,7 @@ namespace Toddlers
             this.FailOnDestroyedNullOrForbidden(TargetIndex.A);
             AddFailCondition(() => 
                 !ChildcareUtility.CanSuckle(Baby, out var _)
-                || Baby.Drafted
+                || (Baby.Drafted && !job.playerForced)
                 );
 
             //determine why we're moving the baby           

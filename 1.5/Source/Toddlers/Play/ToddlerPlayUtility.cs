@@ -108,5 +108,24 @@ namespace Toddlers
             }
             return false;
         }
+
+        public static bool IsToddlerPlaying(Pawn toddler)
+        {
+            if (toddler == null) return false;
+            if (!toddler.Spawned) return false;
+            JobDriver curDriver = toddler.jobs?.curDriver;
+            if (curDriver == null) return false;
+            if (curDriver is JobDriver_ToddlerBugwatching 
+                || curDriver is JobDriver_ToddlerFiregazing
+                || curDriver is JobDriver_ToddlerFloordrawing
+                || curDriver is JobDriver_ToddlerPlayDecor
+                || curDriver is JobDriver_ToddlerPlayToys
+                || curDriver is JobDriver_ToddlerSkydreaming
+                || curDriver is JobDriver_ToddlerWatchTelevision)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -37,10 +37,10 @@
 		<reportString>removing TargetA.</reportString>
 	</JobDef>
 	
-	<JobDef>
+	<DubsBadHygiene.WashingJobDef MayRequireAnyOf="Dubwise.DubsBadHygiene,Dubwise.DubsBadHygiene.Lite">
 		<defName>ToddlerBeWashed</defName>
 		<driverClass>JobDriver_Wait</driverClass>
 		<reportString>being washed.</reportString>
-	</JobDef>
+	</DubsBadHygiene.WashingJobDef>
 	
 </Defs>

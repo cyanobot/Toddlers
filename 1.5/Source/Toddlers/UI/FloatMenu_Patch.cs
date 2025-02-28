@@ -417,6 +417,30 @@ namespace Toddlers
                             opts.Add(FloatMenuUtility.DecoratePrioritizedTask(dressBaby, pawn, baby));
                         }
 
+                        //DBH
+                        if (Patch_DBH.babyHygiene && !pawn.WorkTagIsDisabled(WorkTags.Caring))
+                        {
+                            Need need_Hygiene = baby.needs?.AllNeeds.Find(n => n.def.defName == "Hygiene");
+                            if (need_Hygiene != null && need_Hygiene.CurLevel <= 0.3f)
+                            {
+                                Job washJob = WashBabyUtility.GetWashJob(pawn, baby);
+                                
+                                if (washJob != null)
+                                {
+                                    washJob.playerForced = true;
+                                    washJob.count = 1;
+                                    FloatMenuOption washOption = FloatMenuUtility.DecoratePrioritizedTask(
+                                        new FloatMenuOption("Wash".Translate() + " " + baby.LabelShort, delegate
+                                        {
+                                            baby.SetForbidden(value: false, warnOnFail: false);
+                                            pawn.Reserve(baby, washJob, ignoreOtherReservations: false);
+                                            pawn.jobs.TryTakeOrderedJob(washJob, JobTag.Misc);
+                                        }), pawn, baby);
+                                    opts.Add(washOption);
+                                }
+                            }
+                        }
+
 
                         //logic for toddlers
                         if (ToddlerUtility.IsLiveToddler(baby))

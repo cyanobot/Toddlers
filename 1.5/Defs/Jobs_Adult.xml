@@ -39,5 +39,11 @@
 	<reportString>washing TargetA.</reportString>
 </JobDef>
 
+<JobDef MayRequireAnyOf="Dubwise.DubsBadHygiene,Dubwise.DubsBadHygiene.Lite">
+	<defName>CYB_BatheToddler</defName>
+	<driverClass>Toddlers.JobDriver_BatheToddler</driverClass>
+	<reportString>bathing TargetA.</reportString>
+</JobDef>
+
 
 </Defs>
