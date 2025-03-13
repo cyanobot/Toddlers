@@ -11,6 +11,7 @@ using static Toddlers.ToddlerUtility;
 using static RimWorld.ChildcareUtility;
 using RimWorld.Planet;
 using System.Reflection;
+using HarmonyLib;
 
 namespace Toddlers
 {
@@ -34,9 +35,11 @@ namespace Toddlers
        
         public static bool LOG_BABY_MOVE => Toddlers_Settings.debugBabySafety;
 
+
+
         public static void BabyMoveLog(string message)
         {
-            if (LOG_BABY_MOVE) Log.Message(message);
+            if (LOG_BABY_MOVE) Log.Message("[Toddlers] " + message);
         }
                 
         public static string MessageKeyForMoveReason(BabyMoveReason reason)
@@ -114,6 +117,12 @@ namespace Toddlers
 
         public static bool AlreadyAtTarget(LocalTargetInfo target, Pawn pawn)
         {
+            BabyMoveLog("AlreadyAtTarget - target: " + target + ", pawn: " + pawn
+                + ", target.Thing: " + target.Thing
+                + ", pawn.CurrentBed(): " + pawn.CurrentBed()
+                + ", pawn.Spawned: " + pawn.Spawned
+                + ", pawn.Position: " + pawn.Position);
+
             if (target.HasThing && target.Thing is Building_Bed)
             {
                 return pawn.CurrentBed() == target.Thing;
@@ -209,7 +218,7 @@ namespace Toddlers
             }
 
             //first check beds, because that's probably cheaper than searching all regions
-            Building_Bed bed = RestUtility.FindBedFor(baby, hauler, true, ignoreOtherReservations);
+            Building_Bed bed = FindBedFor_Clone(baby, hauler, true, ignoreOtherReservations);
             BabyMoveLog("bed: " + bed);
 
             bool safeTemperatureAtBed = false;
@@ -558,6 +567,148 @@ namespace Toddlers
 
         public static FieldInfo f_bedDefsBestToWorst_Medical = HarmonyLib.AccessTools.Field(typeof(RestUtility), "bedDefsBestToWorst_Medical");
         public static List<ThingDef> bedDefsBestToWorst_Medical = (List<ThingDef>)f_bedDefsBestToWorst_Medical.GetValue(null);
+
+        public static FieldInfo f_bedDefsBestToWorst_RestEffectiveness = HarmonyLib.AccessTools.Field(typeof(RestUtility), "bedDefsBestToWorst_RestEffectiveness");
+        public static List<ThingDef> bedDefsBestToWorst_RestEffectiveness = (List<ThingDef>)f_bedDefsBestToWorst_RestEffectiveness.GetValue(null);
+
+        public static FieldInfo f_bedDefsBestToWorst_SlabBed_Medical = HarmonyLib.AccessTools.Field(typeof(RestUtility), "bedDefsBestToWorst_SlabBed_Medical");
+        public static List<ThingDef> bedDefsBestToWorst_SlabBed_Medical = (List<ThingDef>)f_bedDefsBestToWorst_SlabBed_Medical.GetValue(null);
+
+        public static FieldInfo f_bedDefsBestToWorst_SlabBed_RestEffectiveness = HarmonyLib.AccessTools.Field(typeof(RestUtility), "bedDefsBestToWorst_SlabBed_RestEffectiveness");
+        public static List<ThingDef> bedDefsBestToWorst_SlabBed_RestEffectiveness = (List<ThingDef>)f_bedDefsBestToWorst_SlabBed_RestEffectiveness.GetValue(null);
+
+        public static MethodInfo m_IsEmptySleeve = Toddlers_Mod.alteredCarbonLoaded ? AccessTools.Method(
+            AccessTools.TypeByName("AlteredCarbon.AC_Utils"), "IsEmptySleeve",
+            new Type[] {typeof(Pawn)}) : null;
+
+        //clone of FindBedFor with a few (annotated) tweaks
+        //to improve temperature checking behaviour for carried sleepers
+        //and potentially avoid nullreference/nullargument errors 
+        //resulting from sleeper.Map being null
+        public static Building_Bed FindBedFor_Clone(Pawn sleeper, Pawn traveler, bool checkSocialProperness, bool ignoreOtherReservations = false, GuestStatus? guestStatus = null)
+        {
+            if (sleeper.RaceProps.IsMechanoid)
+            {
+                return null;
+            }
+
+            //omitted biotech check bc mod is dependent on biotech
+
+            if (sleeper.Deathresting)
+            {
+                Building_Bed assignedDeathrestCasket = sleeper.ownership.AssignedDeathrestCasket;
+                if (assignedDeathrestCasket != null && RestUtility.IsValidBedFor(assignedDeathrestCasket, sleeper, traveler, checkSocialProperness: true))
+                {
+                    CompDeathrestBindable compDeathrestBindable = assignedDeathrestCasket.TryGetComp<CompDeathrestBindable>();
+                    if (compDeathrestBindable != null && (compDeathrestBindable.BoundPawn == sleeper || compDeathrestBindable.BoundPawn == null))
+                    {
+                        return assignedDeathrestCasket;
+                    }
+                }
+            }
+            bool flag = false;
+            if (sleeper.Ideo != null)
+            {
+                foreach (Precept item in sleeper.Ideo.PreceptsListForReading)
+                {
+                    if (item.def.prefersSlabBed)
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            
+            List<ThingDef> list = (flag ? bedDefsBestToWorst_SlabBed_Medical : bedDefsBestToWorst_Medical);
+            List<ThingDef> list2 = (flag ? bedDefsBestToWorst_SlabBed_RestEffectiveness : bedDefsBestToWorst_RestEffectiveness);
+            
+            //replicating Altered Carbon's FindBedFor patch
+            if (Toddlers_Mod.alteredCarbonLoaded && (bool)m_IsEmptySleeve.Invoke(null, new object[] { sleeper }))
+            {
+                ThingDef casketDef = DefDatabase<ThingDef>.GetNamed("AC_SleeveCasket");
+                if (casketDef != null)
+                {
+                    //clone lists before messing with them
+                    list = list.ToList();
+                    list2 = list2.ToList();
+
+                    list.Insert(0, casketDef);
+                    list2.Insert(0, casketDef);
+                }                
+            }
+            if (HealthAIUtility.ShouldSeekMedicalRest(sleeper))
+            {
+                if (sleeper.InBed() 
+                    && sleeper.CurrentBed().Medical 
+                    && RestUtility.IsValidBedFor(sleeper.CurrentBed(), sleeper, traveler, checkSocialProperness, allowMedBedEvenIfSetToNoCare: false, ignoreOtherReservations, guestStatus)
+                    )
+                {
+                    return sleeper.CurrentBed();
+                }
+                for (int i = 0; i < list.Count; i++)
+                {
+                    ThingDef thingDef = list[i];
+                    if (!RestUtility.CanUseBedEver(sleeper, thingDef))
+                    {
+                        continue;
+                    }
+                    for (int j = 0; j < 2; j++)
+                    {
+                        Danger maxDanger2 = ((j == 0) ? Danger.None : Danger.Deadly);
+                        Building_Bed building_Bed = (Building_Bed)GenClosest.ClosestThingReachable(
+                            sleeper.Position, sleeper.MapHeld, ThingRequest.ForDef(thingDef), 
+                            PathEndMode.OnCell, TraverseParms.For(traveler), 9999f, 
+                            (Thing b) => ((Building_Bed)b).Medical &&
+                                //changed sleeper.Map to sleeper.MapHeld
+                                (int)b.Position.GetDangerFor(sleeper, sleeper.MapHeld) <= (int)maxDanger2 
+                                && RestUtility.IsValidBedFor(b, sleeper, traveler, checkSocialProperness, allowMedBedEvenIfSetToNoCare: false, ignoreOtherReservations, guestStatus)
+                            );
+                        if (building_Bed != null)
+                        {
+                            return building_Bed;
+                        }
+                    }
+                }
+            }
+            if (sleeper.RaceProps.Dryad)
+            {
+                return null;
+            }
+            if (sleeper.ownership != null && sleeper.ownership.OwnedBed != null 
+                && RestUtility.IsValidBedFor(sleeper.ownership.OwnedBed, sleeper, traveler, checkSocialProperness, allowMedBedEvenIfSetToNoCare: false, ignoreOtherReservations, guestStatus)
+                )
+            {
+                return sleeper.ownership.OwnedBed;
+            }
+            
+            //omitted section on love partner bed sharing because irrelevant to babies
+        
+            for (int dg = 0; dg < 3; dg++)
+            {
+                Danger maxDanger = ((dg <= 1) ? Danger.None : Danger.Deadly);
+                for (int k = 0; k < list2.Count; k++)
+                {
+                    ThingDef thingDef2 = list2[k];
+                    if (!RestUtility.CanUseBedEver(sleeper, thingDef2))
+                    {
+                        continue;
+                    }
+                    Building_Bed building_Bed2 = (Building_Bed)GenClosest.ClosestThingReachable(
+                        sleeper.PositionHeld, sleeper.MapHeld, ThingRequest.ForDef(thingDef2), PathEndMode.OnCell, TraverseParms.For(traveler), 
+                        9999f, (Thing b) => !((Building_Bed)b).Medical 
+                            && (int)b.Position.GetDangerFor(sleeper, sleeper.MapHeld) <= (int)maxDanger 
+                            && RestUtility.IsValidBedFor(b, sleeper, traveler, checkSocialProperness, allowMedBedEvenIfSetToNoCare: false, ignoreOtherReservations, guestStatus) 
+                            && (dg > 0 || !b.Position.GetItems(b.Map).Any((Thing thing) => thing.def.IsCorpse))
+                        );
+                    if (building_Bed2 != null)
+                    {
+                        return building_Bed2;
+                    }
+                }
+            }
+            return null;
+        }
+
 
         //looks for a non-medical-marked bed
         //for a baby that can't be taken to the best medical-marked bed due to bad temperature

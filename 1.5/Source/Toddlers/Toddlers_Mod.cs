@@ -16,6 +16,8 @@ namespace Toddlers
         public static bool DBHLoaded;
         public static bool HARLoaded;
         public static bool celsiusLoaded;
+        public static bool alteredCarbonLoaded;
+        public static bool hospitalLoaded;
 
         public Toddlers_Mod(ModContentPack mcp) : base(mcp)
         {

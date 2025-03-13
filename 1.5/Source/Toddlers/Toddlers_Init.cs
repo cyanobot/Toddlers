@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using static Toddlers.Toddlers_Settings;
 using System.IO;
+using System;
 
 namespace Toddlers
 {
@@ -20,7 +21,8 @@ namespace Toddlers
             Toddlers_Mod.injuredCarryLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Injured Carry");
             Toddlers_Mod.HARLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Humanoid Alien Races");
             Toddlers_Mod.celsiusLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Celsius");
-
+            Toddlers_Mod.alteredCarbonLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Altered Carbon 2: ReSleeved");
+            Toddlers_Mod.hospitalLoaded = LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Hospital");
 
             var harmony = new Harmony("cyanobot.toddlers");
 
@@ -49,7 +51,24 @@ namespace Toddlers
 
             if (Toddlers_Mod.DBHLoaded) Patch_DBH.GeneratePatches(harmony);
             if (Toddlers_Mod.HARLoaded) HARCompat.Init();
-
+            if (Toddlers_Mod.hospitalLoaded) 
+            {
+                Type t_Patients_BedFinder_Patch = AccessTools.TypeByName("Hospital.Patches.Patients_BedFinder_Patch");
+                Type t_FindBedPatch = t_Patients_BedFinder_Patch == null ? null 
+                    : AccessTools.Inner(t_Patients_BedFinder_Patch, "FindBedPatch");
+                MethodInfo m_Postfix = t_FindBedPatch == null ? null : AccessTools.Method(t_FindBedPatch, "Postfix");
+                LogUtil.DebugLog("[Toddlers] Hospital patch: "
+                    + "t_Patients_BedFinder_Patch: " + t_Patients_BedFinder_Patch
+                    + ", t_FindBedPatch: " + t_FindBedPatch
+                    + ", m_Postfix: " + m_Postfix);
+                if (m_Postfix != null)
+                {
+                    harmony.Patch(
+                        AccessTools.Method(typeof(BabyMoveUtility), nameof(BabyMoveUtility.FindBedFor_Clone)),
+                        postfix: new HarmonyMethod(m_Postfix)
+                        );
+                }
+            }
 
             harmony.PatchAll();
 
