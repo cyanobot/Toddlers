@@ -36,7 +36,10 @@ namespace Toddlers
             if (bed == null) return false;
             ThingDef bedDef = bed.def;
             if (bedDef.defName.Contains("Crib") || bedDef.defName.Contains("crib")
-                || bedDef.label.Contains("Crib") || bedDef.label.Contains("crib"))
+                || bedDef.label.Contains("Crib") || bedDef.label.Contains("crib")
+                || bedDef.defName.Contains("Cradle") || bedDef.defName.Contains("cradle")
+                || bedDef.label.Contains("Cradle") || bedDef.label.Contains("cradle")
+                )
             {
                 return true;
             }

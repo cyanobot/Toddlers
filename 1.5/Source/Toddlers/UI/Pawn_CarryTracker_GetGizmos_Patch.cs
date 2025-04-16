@@ -14,7 +14,12 @@ namespace Toddlers
         {
             foreach (Gizmo gizmo in __result) yield return gizmo;
 
-            if (!__instance.pawn.Drafted && __instance.CarriedThing is Pawn carriedPawn)
+            Pawn pawn = __instance.pawn;
+            if (pawn == null) yield break;
+
+            if (!pawn.Drafted
+                && pawn.IsPlayerControlled
+                && __instance.CarriedThing is Pawn carriedPawn)
             {
                 Command_Action command_Action = new Command_Action();
                 command_Action.defaultLabel = "CommandDropPawn".Translate(carriedPawn);
