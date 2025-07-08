@@ -84,12 +84,16 @@
     <Compile Include="Apparel\Harmony\HatPairValidator_Patch.cs" />
     <Compile Include="Apparel\Harmony\JobDriver_Strip_MakeNewToils_Patch.cs" />
     <None Include="Apparel\Harmony\TestPatch.cs" />
-    <Compile Include="Caravan\CheckArrived_Patch.cs" />
+    <Compile Include="Caravan\1.5\CheckArrived_Patch.cs" />
+    <Compile Include="Caravan\LordJob_FormAndSendCaravan_Notify_PawnAdded_Patch.cs" />
+    <Compile Include="Caravan\ToddlersCannotHelp_Patch.cs" />
+    <Compile Include="Caravan\TreatToddlerAsDowned_Patch.cs" />
     <Compile Include="Carrying\1.5\CarryToil_Patch.cs" />
     <None Include="Carrying\FloatMenuOptionProvider_CarryToddler.cs" />
     <Compile Include="Carrying\FloatMenuOptions_AlwaysCarryToddler_Patch.cs" />
     <Compile Include="Crib\FloatMenuProvider_LetOutOfCrib.cs" />
     <Compile Include="Feeding\Harmony\FloatMenuOptionProvider_Ingest_Patch.cs" />
+    <Compile Include="MentalStates\IgnoreToddlerMentalStates_Patch.cs" />
     <Compile Include="MiscHarmony\FloatMenuOptions_ToddlerCannot_Patch.cs" />
     <None Include="Carrying\JobDriver_CarryToddler.cs" />
     <Compile Include="Compat\DBH\JobDriver_WashBaby.cs" />
@@ -122,7 +126,7 @@
     <Compile Include="UI\MainTabWindow_Assign_Patch.cs" />
     <Compile Include="UI\MainTabWindow_Schedule_Patch.cs" />
     <Compile Include="MentalStates\CaresAboutForbidden_Patch.cs" />
-    <Compile Include="Caravan\AllSendablePawns_Patch.cs" />
+    <Compile Include="Caravan\1.5\AllSendablePawns_Patch.cs" />
     <Compile Include="MentalStates\BreakExtremeIsImminent_Patch.cs" />
     <Compile Include="Feeding\Harmony\CarryIngestibleToChewSpot_Patch.cs" />
     <Compile Include="Feeding\Harmony\BestFoodSource_Patch.cs" />
@@ -168,7 +172,7 @@
     <Compile Include="LogUtil.cs" />
     <Compile Include="Feeding\Harmony\MoodFromIngesting_Patch.cs" />
     <Compile Include="UI\NeedsCardUtility_Patch.cs" />
-    <Compile Include="Caravan\PrepareCaravan_Patch.cs" />
+    <Compile Include="Caravan\1.5\PrepareCaravan_Patch.cs" />
     <Compile Include="RefugeePod\LordToil_ToddlerLoiter.cs" />
     <Compile Include="RefugeePod\LordJob_ToddlerLoiter.cs" />
     <Compile Include="Play\JobDriver_BePlayedWith.cs" />

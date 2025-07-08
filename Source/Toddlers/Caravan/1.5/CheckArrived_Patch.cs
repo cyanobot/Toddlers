@@ -9,6 +9,7 @@ using Verse.AI;
 
 namespace Toddlers
 {
+#if RW_1_5
     //accept carried toddlers as ready to  leave on caravans
     [HarmonyPatch(typeof(GatherAnimalsAndSlavesForCaravanUtility),nameof(GatherAnimalsAndSlavesForCaravanUtility.CheckArrived))]
     class CheckArrived_Patch
@@ -63,5 +64,5 @@ namespace Toddlers
         }
     }   
 
-    
+#endif
 }

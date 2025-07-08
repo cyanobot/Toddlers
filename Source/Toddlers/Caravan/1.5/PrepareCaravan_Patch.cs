@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Verse;
 using Verse.AI.Group;
-
+#if RW_1_5
 namespace Toddlers
 {
     //treat toddlers (in some ways) as downed pawns when trying to form caravans
@@ -92,3 +92,4 @@ namespace Toddlers
 
     
 }
+#endif

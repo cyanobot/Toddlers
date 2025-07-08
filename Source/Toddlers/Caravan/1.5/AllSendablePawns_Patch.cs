@@ -3,6 +3,7 @@ using RimWorld.Planet;
 using System.Collections.Generic;
 using Verse;
 
+#if RW_1_5
 namespace Toddlers
 {
     //Can take toddlers on caravans even if they are in a mental state
@@ -26,3 +27,4 @@ namespace Toddlers
 
     
 }
+#endif
