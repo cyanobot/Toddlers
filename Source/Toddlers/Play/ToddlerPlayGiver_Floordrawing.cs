@@ -118,6 +118,8 @@ namespace Toddlers
 
 		public override Job TryGiveJob(Pawn pawn)
 		{
+			if (!ToddlerLearningUtility.CanFeedSelf(pawn)) return null;
+
 			IntVec3 c;
 			IntVec3 c2;
 			if (!ToddlerPlayGiver_Floordrawing.TryFindFloordrawingSpots(pawn, out c, out c2))

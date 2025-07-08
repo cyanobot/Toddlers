@@ -17,7 +17,6 @@ namespace Toddlers
 
         //[TweakValue("AA", 20, 150)]
         public const int MAX_WOBBLE_PERIOD = 60;
-
         public const int MIN_WOBBLE_PERIOD = 30;
         public const float CRAWL_ANGLE = 40F;
 

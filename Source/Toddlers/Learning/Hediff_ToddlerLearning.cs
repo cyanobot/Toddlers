@@ -30,11 +30,19 @@ namespace Toddlers
                 return Severity.ToStringPercent();
             }
         }
-
+#if RW_1_5
         public override void Tick()
         {
+            int delta = 1;
             base.Tick();
+
             if (pawn.IsHashIntervalTick(updateInterval))
+#else
+        public override void TickInterval(int delta)
+        {
+            base.TickInterval(delta);
+            if (pawn.IsHashIntervalTick(updateInterval, delta))
+#endif
             {
                 float agingRateFactor = this.pawn.ageTracker.BiologicalTicksPerTick;
                 float factor = updateInterval * agingRateFactor;

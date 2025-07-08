@@ -38,7 +38,7 @@ namespace Toddlers
             toil.AddPreTickAction(delegate ()
             {
                 ticksAtAngle++;
-                if (ticksAtAngle > 620)
+                if (ticksAtAngle > 600)
                 {
                     angle = Rand.Value * 360f;
                     ticksAtAngle = 0;

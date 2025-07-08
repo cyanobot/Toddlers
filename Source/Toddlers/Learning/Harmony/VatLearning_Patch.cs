@@ -23,7 +23,7 @@ namespace Toddlers
             Hediff_ToddlerLearning learningHediff_manipulation = (Hediff_ToddlerLearning)___pawn.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.LearningManipulation);
 
             //0.6 = factor so that the growth vat is less efficient than learning by doing
-            float factor = (float)Building_GrowthVat.AgeTicksPerTickInGrowthVat * 0.6f;
+            float factor = (float)Building_GrowthVat.AgeTicksPerTickInGrowthVat * 0.6f * delta;
 
             if (learningHediff_walk != null)
             {

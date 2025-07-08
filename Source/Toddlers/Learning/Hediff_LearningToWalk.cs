@@ -56,6 +56,9 @@ namespace Toddlers
             }
         }
 
+
+        //TODO: This approach doesn't work! Stages are defined per def, not per hediff
+        /*
         public override void OnUpdate(int stageIndex)
         {
             if (stageIndex == 1)
@@ -64,6 +67,7 @@ namespace Toddlers
                 CurStage.capMods.Add(this.WobblyCapacityModifier);
             }
         }
+        */
 
         public override void OnStageUp(int newStageIndex)
         {

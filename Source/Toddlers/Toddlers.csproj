@@ -58,6 +58,7 @@
     </Reference>
     <Reference Condition="'$(Configuration)' != '1.5'" Include="Assembly-CSharp">
       <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -69,9 +70,11 @@
     <Reference Include="System.Xml" />
     <Reference Condition="'$(Configuration)' != '1.5'" Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Condition="'$(Configuration)' != '1.5'" Include="UnityEngine.TextRenderingModule">
       <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -87,7 +90,7 @@
     <Compile Include="Carrying\FloatMenuOptions_AlwaysCarryToddler_Patch.cs" />
     <Compile Include="Crib\FloatMenuProvider_LetOutOfCrib.cs" />
     <Compile Include="Feeding\Harmony\FloatMenuOptionProvider_Ingest_Patch.cs" />
-    <Compile Include="MiscHarmony\FloatMenuOptions_ToddlerCannot_Patch.cs" />
+    <Compile Include="UI\FloatMenuOptions_ToddlerCannot_Patch.cs" />
     <None Include="Carrying\JobDriver_CarryToddler.cs" />
     <Compile Include="Compat\DBH\JobDriver_WashBaby.cs" />
     <Compile Include="Compat\DBH\JobGiver_WashBaby.cs" />
@@ -105,7 +108,7 @@
     <Compile Include="Learning\ToddlerLearningUtility.cs" />
     <Compile Include="MiscHarmony\Alert_NeedMeditationSpot_Targets_Patch.cs" />
     <Compile Include="MiscHarmony\GetBackstoryCategoryFiltersFor_Patch.cs" />
-    <Compile Include="MiscHarmony\GeneratePawn_Patch.cs" />
+    <Compile Include="Learning\Harmony\GeneratePawn_Patch.cs" />
     <Compile Include="Kidnap\Harmony\JobGiver_Kidnap_Patch.cs" />
     <Compile Include="Play\Harmony\BabyPlayGiver_Patch.cs" />
     <Compile Include="Play\Harmony\BabyPlayGiver_PlayWalking_Patch.cs" />
@@ -125,8 +128,8 @@
     <Compile Include="Feeding\Harmony\BestFoodSource_Patch.cs" />
     <Compile Include="Carrying\1.5\CarryDownedPawn_Patch.cs" />
     <Compile Include="Carrying\1.5\ForCarry_Patch.cs" />
-    <Compile Include="MiscHarmony\GetRest_Patch.cs" />
-    <Compile Include="UI\Pawn_CarryTracker_GetGizmos_Patch.cs" />
+    <Compile Include="Crib\GetRest_Patch.cs" />
+    <Compile Include="Carrying\Pawn_CarryTracker_GetGizmos_Patch.cs" />
     <Compile Include="Work\DisabledWorkTypes_Patch.cs" />
     <Compile Include="Work\WorkTags_Patch.cs" />
     <Compile Include="MentalStates\TryStartMentalBreak_Patch.cs" />
@@ -158,7 +161,7 @@
     <None Include="Compat\HAR\AlienRace_old.cs" />
     <Compile Include="Animation\Harmony\AdjustParms_Patch.cs" />
     <Compile Include="Apparel\Harmony\SwaddleBaby_Patch.cs" />
-    <Compile Include="MiscHarmony\Door_Patch.cs" />
+    <Compile Include="Learning\Harmony\Door_Patch.cs" />
     <Compile Include="UI\FloatMenu_Patch.cs" />
     <Compile Include="MiscHarmony\IsIdle_Patch.cs" />
     <Compile Include="MentalStates\IsColonistPlayerControlled_Patch.cs" />
