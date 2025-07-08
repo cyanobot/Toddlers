@@ -18,9 +18,9 @@
 <SettingLabelBabyTalk>Baby talk for toddlers</SettingLabelBabyTalk>
 <SettingTooltipBabyTalk>Whether toddler thoughts should be translated to "goo goo ba gee".</SettingTooltipBabyTalk>
 
-<ApparelSettingLabelNoBabyApparel>No Baby Apparel</ApparelSettingLabelNoBabyApparel>
-<ApparelSettingLabelNoTribal>Onesies Only</ApparelSettingLabelNoTribal>
-<ApparelSettingLabelAllTribal>All Baby Apparel Neolithic</ApparelSettingLabelAllTribal>
+<ApparelSettingLabelNoBabyApparel>No Babywear</ApparelSettingLabelNoBabyApparel>
+<ApparelSettingLabelNoTribal>No Neolithic Babywear</ApparelSettingLabelNoTribal>
+<ApparelSettingLabelAllTribal>All Babywear Neolithic</ApparelSettingLabelAllTribal>
 <ApparelSettingLabelBabyTribalwear>Default</ApparelSettingLabelBabyTribalwear>
 <ApparelSettingLabelAnyChildApparel>Babies Wear Child Apparel</ApparelSettingLabelAnyChildApparel>
 

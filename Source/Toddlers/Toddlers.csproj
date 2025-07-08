@@ -90,7 +90,7 @@
     <Compile Include="Carrying\FloatMenuOptions_AlwaysCarryToddler_Patch.cs" />
     <Compile Include="Crib\FloatMenuProvider_LetOutOfCrib.cs" />
     <Compile Include="Feeding\Harmony\FloatMenuOptionProvider_Ingest_Patch.cs" />
-    <Compile Include="UI\FloatMenuOptions_ToddlerCannot_Patch.cs" />
+    <Compile Include="MiscHarmony\FloatMenuOptions_ToddlerCannot_Patch.cs" />
     <None Include="Carrying\JobDriver_CarryToddler.cs" />
     <Compile Include="Compat\DBH\JobDriver_WashBaby.cs" />
     <Compile Include="Compat\DBH\JobGiver_WashBaby.cs" />
@@ -151,7 +151,7 @@
     <Compile Include="Apparel\1.5\ForStrip_Patch.cs" />
     <Compile Include="Apparel\Harmony\CanBeStrippedByColony_Patch.cs" />
     <Compile Include="Apparel\Harmony\ITab_Pawn_Gear_Patch.cs" />
-    <Compile Include="Apparel\JobDriver_UndressBaby.cs" />
+    <Compile Include="Apparel\1.5\JobDriver_UndressBaby.cs" />
     <None Include="Compat\HAR\BodyAddon.cs" />
     <None Include="Compat\HAR\AlienRace.LifeStages.cs" />
     <None Include="Compat\HAR\AlienRace.Graphics.cs" />
@@ -162,7 +162,7 @@
     <Compile Include="Animation\Harmony\AdjustParms_Patch.cs" />
     <Compile Include="Apparel\Harmony\SwaddleBaby_Patch.cs" />
     <Compile Include="Learning\Harmony\Door_Patch.cs" />
-    <Compile Include="UI\FloatMenu_Patch.cs" />
+    <Compile Include="MiscHarmony\1.5\FloatMenu_Patch.cs" />
     <Compile Include="MiscHarmony\IsIdle_Patch.cs" />
     <Compile Include="MentalStates\IsColonistPlayerControlled_Patch.cs" />
     <Compile Include="LogUtil.cs" />
@@ -187,7 +187,7 @@
     <Compile Include="Play\Harmony\PlayStatic_Patch.cs" />
     <Compile Include="Kidnap\JobDriver_KidnapToddler.cs" />
     <Compile Include="Play\JobDriver_ToddlerPlayDecor.cs" />
-    <Compile Include="Apparel\JobDriver_DressBaby.cs" />
+    <Compile Include="Apparel\1.5\JobDriver_DressBaby.cs" />
     <Compile Include="Crib\JobGiver_LeaveCrib.cs" />
     <Compile Include="Apparel\JobGiver_OptimizeBabyApparel.cs" />
     <Compile Include="Play\JobGiver_PlayWithSadBaby.cs" />

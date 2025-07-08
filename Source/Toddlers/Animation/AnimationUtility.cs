@@ -7,6 +7,7 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 using LudeonTK;
+using static Toddlers.LogUtil;
 
 namespace Toddlers
 {
@@ -58,6 +59,8 @@ namespace Toddlers
                 || curAnimation == Toddlers_AnimationDefOf.LayAngleInCrib
                 || curAnimation == Toddlers_AnimationDefOf.WiggleInCrib)
                 return;
+
+            //DebugLog($"SetLocomotionAnimation - pawn: {pawn}, animation: {animation}");
 
             pawn.Drawer.renderer.SetAnimation(animation);
         }

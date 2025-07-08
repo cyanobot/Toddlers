@@ -76,7 +76,7 @@
 	<defName>ToddlerWobble</defName>
 	<label>toddler wobble</label>
 	<durationTicks>60</durationTicks>
-	<startOnRandomTick>false</startOnRandomTick>
+	<startOnRandomTick>true</startOnRandomTick>
 	<playWhenDowned>false</playWhenDowned>
 	<keyframeParts>
 		<li>

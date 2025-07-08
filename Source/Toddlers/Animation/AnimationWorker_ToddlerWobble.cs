@@ -91,28 +91,39 @@ namespace Toddlers
 
         public override float AngleAtTick(int tick, AnimationDef def, PawnRenderNode node, AnimationPart part, PawnDrawParms parms)
         {
-
             //part.pivot = Pivot;
 
-            //Log.Message("AngleAtTick - tick: " + tick + ", WobblePeriod: " + WalkHediff.WobblePeriod 
-            //    + ", WobbleMagnitude: " + WalkHediff.WobbleMagnitude);
+            //LogUtil.DebugLog("AnimationWorker_ToddlerWobble.AngleAtTick - tick: " + tick + ", WobblePeriod: " + WalkHediff(parms.pawn)?.WobblePeriod 
+            //    + ", WobbleMagnitude: " + WalkHediff(parms.pawn)?.WobbleMagnitude);
             if (WalkHediff(parms.pawn) == null) return 0f;
 
             float x = (float)(Find.TickManager.TicksGame % walkHediff.WobblePeriod) / (float)walkHediff.WobblePeriod;
             //Log.Message("tick: " + tick + ", %period: " + (tick % WalkHediff.WobblePeriod) + ", x: " + x);
             float mag = walkHediff.WobbleMagnitude;
             //Log.Message("x: " + x + ", mag: " + mag + ", toddleCurve.Evaluate: " + toddleCurve.Evaluate(x));
-            return mag * Waveform(f => toddleCurve.Evaluate(f), x);
+            float result = mag * Waveform(f => toddleCurve.Evaluate(f), x);
+
+            //LogUtil.DebugLog($"AnimationWorker_ToddlerWobble.AngleAtTick - tick: {tick}, pawn: {parms.pawn}" +
+            //    $", result: {result}");
+            return result;
         }
 
         public override bool Enabled(AnimationDef def, PawnRenderNode node, AnimationPart part, PawnDrawParms parms)
         {
+            /*
+            LogUtil.DebugLog($"AnimationWorker_ToddlerWobble.Enabled - def: {def}, pawn: {parms.pawn}" +
+                $", node: {node}, part: {part}, base.Enabled: {base.Enabled(def, node, part, parms)}" +
+                $", Spawned: {parms.pawn.Spawned}, Moving: {parms.pawn.pather.Moving}" +
+                $", node.Props.drawData: {node.Props.drawData}, parms.flags: {parms.flags}"
+                );
+            */
+
             if (!base.Enabled(def, node, part, parms)) return false;
 
             if (!parms.pawn.Spawned) return false;
             if (!parms.pawn.pather.Moving) return false;
 
-            return false;
+            return true;
         }
     }
 #endif

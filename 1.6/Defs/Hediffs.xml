@@ -77,7 +77,7 @@
 			<mentalStateGivers>
 				<li>
 					<mentalState>RemoveClothes</mentalState>
-					<mtbDays>6</mtbDays>
+					<mtbDays>0.006</mtbDays>
 				</li>
 			</mentalStateGivers>
 		</li>

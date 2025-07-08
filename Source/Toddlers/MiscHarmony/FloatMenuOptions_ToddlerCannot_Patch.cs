@@ -18,23 +18,24 @@ namespace Toddlers
     {
         public static IEnumerable<MethodBase> TargetMethods()
         {
-            Type[] argTypes = new Type[] { typeof(Pawn), typeof(FloatMenuContext) };
+            Type[] argTypes_Thing = new Type[] { typeof(Thing), typeof(FloatMenuContext) };
+            Type[] argTypes_Pawn = new Type[] { typeof(Pawn), typeof(FloatMenuContext) };
 
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_Arrest), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_BringBabyToSafety), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CapturePawn), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryDeathrestingToCasket), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryMechToCharger), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryPawn), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryPawnToExit), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryToBiosculpterPod), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryToCryptosleepCasket), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryToShuttle), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_DressOtherPawn), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_PutOutFireOnPawn), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_RescuePawn), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_ReturnSlaveToBed), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_Strip), "GetSingleOptionFor", argTypes);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_Arrest), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_BringBabyToSafety), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CapturePawn), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryDeathrestingToCasket), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryMechToCharger), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryPawn), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryPawnToExit), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryToBiosculpterPod), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryToCryptosleepCasket), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryToShuttle), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_DressOtherPawn), "GetSingleOptionFor", argTypes_Thing);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_PutOutFireOnPawn), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_RescuePawn), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_ReturnSlaveToBed), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_Strip), "GetSingleOptionFor", argTypes_Pawn);
         }
 
         public static FloatMenuOption Postfix(FloatMenuOption __result, FloatMenuContext context)

@@ -170,7 +170,11 @@ namespace Toddlers
 				return null;
 			}
 			//Log.Message("Got all the way to the end");
+#if RW_1_5
 			return JobMaker.MakeJob(Toddlers_DefOf.DressBaby, baby, thing);
+#else
+			return JobMaker.MakeJob(JobDefOf.ForceTargetWear, baby, thing);
+#endif
 		}
 	}
 }

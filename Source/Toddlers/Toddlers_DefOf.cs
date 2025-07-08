@@ -30,13 +30,15 @@ namespace Toddlers
         public static JobDef LayAngleInCrib;
         public static JobDef WiggleInCrib;
         public static JobDef PutInCrib;
-        public static JobDef DressBaby;
         public static JobDef BeDressed;
         public static JobDef ToddlerRemoveApparel;
         public static JobDef KidnapToddler;
         public static JobDef BePlayedWith;
+
+#if RW_1_5
         public static JobDef UndressBaby;
-        //public static JobDef CarryToddler;
+        public static JobDef DressBaby;
+#endif
 
         public static LifeStageDef HumanlikeToddler;
 

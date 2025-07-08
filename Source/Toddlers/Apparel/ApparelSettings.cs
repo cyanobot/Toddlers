@@ -98,7 +98,7 @@ namespace Toddlers
             List<ThingDef> empty = new List<ThingDef>();
 
             List<ThingDef> toHide = empty;
-            List<ThingDef> wearableByBaby = specialClothes;
+            List<ThingDef> extraWearableByBaby = specialClothes;
             List<ThingDef> neolithic = tribalBabyClothes;
 
             switch (apparelSetting)
@@ -106,7 +106,7 @@ namespace Toddlers
                 case ApparelSetting.NoBabyApparel:
                     LogUtil.DebugLog("Case: NoBabyApparel");
                     toHide = babyClothes;
-                    wearableByBaby = empty;
+                    extraWearableByBaby = empty;
                     neolithic = empty;
                     break;
 
@@ -129,7 +129,7 @@ namespace Toddlers
                     LogUtil.DebugLog("Case: AnyChildApparel");
                     GenerateMissingGraphics();
                     toHide = babyClothes;
-                    wearableByBaby = childClothes.Concat(specialClothes).ToList();
+                    extraWearableByBaby = childClothes.Concat(specialClothes).ToList();
                     break;
 
                 default:
@@ -137,7 +137,7 @@ namespace Toddlers
             }
 
             LogUtil.DebugLog("toHide: " + toHide.ToStringSafeEnumerable());
-            LogUtil.DebugLog("wearableByBaby: " + wearableByBaby.ToStringSafeEnumerable());
+            LogUtil.DebugLog("wearableByBaby: " + extraWearableByBaby.ToStringSafeEnumerable());
             LogUtil.DebugLog("neolithic: " + neolithic.ToStringSafeEnumerable());
 
             //block anything to be hidden
@@ -145,9 +145,10 @@ namespace Toddlers
             {
                 foreach(ThingDef def in toHide)
                 {
-                    def.destroyOnDrop = true;
+                    //def.destroyOnDrop = true;
                     def.tradeability = 0;
                     def.researchPrerequisites = new List<ResearchProjectDef>();
+                    def.apparel.developmentalStageFilter &= ~DevelopmentalStage.Baby;
                     UdpateRecipes(def, empty, new List<ResearchProjectDef>());
                 }
             }
@@ -157,15 +158,16 @@ namespace Toddlers
             {
                 if (!toHide.Contains(babyClothe))
                 {
-                    babyClothe.destroyOnDrop = false;
+                    //babyClothe.destroyOnDrop = false;
                     babyClothe.tradeability = babyClotheTradeabilities[babyClothe];
+                    babyClothe.apparel.developmentalStageFilter |= DevelopmentalStage.Baby;
                 }
             }
 
             //set wearable by baby anything that should be wearable
-            if (!wearableByBaby.NullOrEmpty())
+            if (!extraWearableByBaby.NullOrEmpty())
             {
-                foreach(ThingDef clothe in wearableByBaby)
+                foreach(ThingDef clothe in extraWearableByBaby)
                 {
                     clothe.apparel.developmentalStageFilter |= DevelopmentalStage.Baby;
                 }
@@ -174,7 +176,7 @@ namespace Toddlers
             //set not-wearable by baby anything that should not be wearable
             foreach (ThingDef clothe in childClothes.Concat(specialClothes))
             {
-                if (!wearableByBaby.Contains(clothe))
+                if (!extraWearableByBaby.Contains(clothe))
                 {
                     clothe.apparel.developmentalStageFilter &= ~DevelopmentalStage.Baby;
                 }
@@ -235,7 +237,7 @@ namespace Toddlers
             foreach (ThingDef childClothe in childClothes)
             {
                 ModContentPack mcp = childClothe.modContentPack;
-                //Log.Message("childClothe: " + childClothe + ", mcp: " + mcp);
+                Log.Message("childClothe: " + childClothe + ", mcp: " + mcp);
 
                 if (!ApparelDependentOnBodyType(childClothe)) continue;
 
@@ -260,36 +262,39 @@ namespace Toddlers
                     }
                 }
             }
+
+            Toddlers_Mod.mcp.GetContentHolder<Texture2D>().ReloadAll(true);
+
         }
 
         public static void GenerateMissingGraphics_Inner(string path, ModContentPack mcp)
         {
             if (path.NullOrEmpty()) return;
-            //Log.Message("base path: " + path);
+            Log.Message("base path: " + path);
 
             string childPath = path + "_Child";
             string babyPath = path + "_Baby";
 
             Texture2D babyTex = ContentFinder<Texture2D>.Get(babyPath, false);
-            //Log.Message("babyTex: " + babyTex);
+            Log.Message("babyTex: " + babyTex);
             if (babyTex != null) return;
 
             Texture2D babyTex_north = ContentFinder<Texture2D>.Get(babyPath + "_north", false);
-            //Log.Message("babyTex_north: " + babyTex_north);
+            Log.Message("babyTex_north: " + babyTex_north);
             if (babyTex_north != null) return;
 
             DirectoryInfo directoryInfo = new DirectoryInfo(mcp.RootDir);
-            //Log.Message("directoryInfo: " + directoryInfo);
+            Log.Message("directoryInfo: " + directoryInfo);
             if (!directoryInfo.Exists)
             {
                 return;
             }
 
             string searchPattern = "*" + Path.GetFileName(childPath) + "*";
-            //Log.Message(searchPattern);
+            Log.Message(searchPattern);
 
             FileInfo[] files = directoryInfo.GetFiles(searchPattern, SearchOption.AllDirectories);
-            //Log.Message("files: " + files.ToStringSafeEnumerable());
+            Log.Message("files: " + files.ToStringSafeEnumerable());
 
             foreach (FileInfo file in files)
             {
@@ -301,21 +306,21 @@ namespace Toddlers
                 int place = name.LastIndexOf("Child");
                 string newName = name.Remove(place, "Child".Length).Insert(place, "Baby");
 
-                //Log.Message("name: " + name + ", pathStub: " + pathStub + ", newPath: " + newPath + ", newName: " + newName);
+                Log.Message("name: " + name + ", pathStub: " + pathStub + ", newPath: " + newPath + ", newName: " + newName);
 
                 DirectoryInfo newDir = new DirectoryInfo(newPath);
                 if (!newDir.Exists)
                 {
-                    //Log.Message("!newDir.Exists");
+                    Log.Message("!newDir.Exists");
                     newDir.Create();
                 }
                 if (newDir.GetFiles(newName).Any())
                 {
-                    //Log.Message("baby file already exists");
+                    Log.Message("baby file already exists");
                 }
                 else
                 {
-                    //Log.Message("baby file doesn't yet exist");
+                    Log.Message("baby file doesn't yet exist");
                     file.CopyTo(newPath + newName);
                 }
             }

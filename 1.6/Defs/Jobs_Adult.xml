@@ -14,6 +14,7 @@
 	<reportString>letting TargetA out of crib.</reportString>
 </JobDef>
 
+<!--
 <JobDef>
 	<defName>DressBaby</defName>
 	<driverClass>Toddlers.JobDriver_DressBaby</driverClass>
@@ -26,6 +27,7 @@
 	<driverClass>Toddlers.JobDriver_UndressBaby</driverClass>
 	<reportString>undressing TargetA.</reportString>
 </JobDef>
+-->
 
 <JobDef>
 	<defName>KidnapToddler</defName>

@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿#if RW_1_5
+using RimWorld;
 using Verse;
 using Verse.AI;
 using UnityEngine;
@@ -127,3 +128,4 @@ namespace Toddlers
         }
     }
 }
+#endif
