@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+<Operation Class="PatchOperationFindMod">
+	<mods>
+		<li>Dubs Bad Hygiene</li>
+		<li>Dubs Bad Hygiene Lite</li>
+	</mods>
+	<match Class="PatchOperationSequence">
+	<operations>
+	
+		<li Class="PatchOperationAdd">
+			<xpath>Defs/ThoughtDef[defName="HygieneLevel"]</xpath>
+			<value>
+				<developmentalStageFilter>Adult,Child,Baby</developmentalStageFilter>
+			</value>
+		</li>
+	
+		<li Class="PatchOperationInsert">
+			<xpath>Defs/ThinkTreeDef//li[@Class="ThinkNode_Tagger"]/subNodes
+				/li[@Class="JobGiver_Autofeed"]</xpath>
+			<order>Append</order>
+			<value>
+				<li Class="Toddlers.JobGiver_WashBaby"/>
+			</value>
+		</li>
+		
+		<li Class="PatchOperationConditional">
+			<xpath>Defs/StatDef[defName="HygieneRateMultiplier"]/parts</xpath>
+			<nomatch Class="PatchOperationAdd">
+				<xpath>Defs/StatDef[defName="HygieneRateMultiplier"]</xpath>
+				<value>
+					<parts/>
+				</value>
+			</nomatch>
+		</li>
+		<li Class="PatchOperationAdd">
+			<xpath>Defs/StatDef[defName="HygieneRateMultiplier"]/parts</xpath>
+			<value>
+				<li Class="Toddlers.StatPart_BabyHygiene"></li>
+			</value>
+		</li>
+		
+	</operations>
+	</match>
+</Operation>
+
+</Patch>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <BabyPlayDef>
+    <defName>PlayCrib</defName>
+    <workerClass>Toddlers.BabyPlayGiver_PlayCrib</workerClass>
+    <jobDef>PlayCrib</jobDef>
+  </BabyPlayDef>
+
+</Defs>

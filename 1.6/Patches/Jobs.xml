@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+	
+	<Operation Class="PatchOperationReplace">
+		<xpath>Defs/JobDef[defName="BringBabyToSafety"]/driverClass</xpath>
+		<value>
+			<driverClass>Toddlers.JobDriver_BringBabyToSafety</driverClass>
+		</value>
+	</Operation>
+	
+	<Operation Class="PatchOperationReplace">
+		<xpath>Defs/JobDef[defName="BringBabyToSafetyUnforced"]/driverClass</xpath>
+		<value>
+			<driverClass>Toddlers.JobDriver_BringBabyToSafety</driverClass>
+		</value>
+	</Operation>
+	
+</Patch>

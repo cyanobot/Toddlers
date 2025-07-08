@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B1DF138F-3AA0-4E02-B985-5101A5F06100}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Toddlers</RootNamespace>
+    <AssemblyName>Toddlers</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\1.6\Assemblies\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;RW_1_6</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\1.6\Assemblies\</OutputPath>
+    <DefineConstants>TRACE;RW_1_6</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '1.5|AnyCPU'">
+    <OutputPath>..\..\1.5\Assemblies\</OutputPath>
+    <DefineConstants>TRACE;RW_1_5</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\..\..\..\..\..\..\Harmony.2.2.2.0\net472\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Condition="'$(Configuration)' == '1.5'" Include="1.5_Assembly-CSharp">
+      <HintPath>..\..\..\1.5Assemblies\1.5_Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Condition="'$(Configuration)' == '1.5'" Include="1.5_UnityEngine.CoreModule">
+      <HintPath>..\..\..\1.5Assemblies\1.5_UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Condition="'$(Configuration)' == '1.5'" Include="1.5_UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\1.5Assemblies\1.5_UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Condition="'$(Configuration)' != '1.5'" Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Condition="'$(Configuration)' != '1.5'" Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Condition="'$(Configuration)' != '1.5'" Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Animation\AnimationPart_Toddler.cs" />
+    <Compile Include="Animation\AnimationWorker_Toddler.cs" />
+    <Compile Include="Apparel\Harmony\FloatMenuOptionProvider_Wear_Patch.cs" />
+    <Compile Include="Apparel\Harmony\HatPairValidator_Patch.cs" />
+    <Compile Include="Apparel\Harmony\JobDriver_Strip_MakeNewToils_Patch.cs" />
+    <None Include="Apparel\Harmony\TestPatch.cs" />
+    <Compile Include="Caravan\CheckArrived_Patch.cs" />
+    <Compile Include="Carrying\1.5\CarryToil_Patch.cs" />
+    <None Include="Carrying\FloatMenuOptionProvider_CarryToddler.cs" />
+    <Compile Include="Carrying\FloatMenuOptions_AlwaysCarryToddler_Patch.cs" />
+    <Compile Include="Crib\FloatMenuProvider_LetOutOfCrib.cs" />
+    <Compile Include="Feeding\Harmony\FloatMenuOptionProvider_Ingest_Patch.cs" />
+    <Compile Include="MiscHarmony\FloatMenuOptions_ToddlerCannot_Patch.cs" />
+    <None Include="Carrying\JobDriver_CarryToddler.cs" />
+    <Compile Include="Compat\DBH\JobDriver_WashBaby.cs" />
+    <Compile Include="Compat\DBH\JobGiver_WashBaby.cs" />
+    <Compile Include="Compat\DBH\StatPart_BabyHygiene.cs" />
+    <Compile Include="Compat\DBH\WashBabyUtility.cs" />
+    <Compile Include="Compat\DBH\WorkGiver_WashBaby.cs" />
+    <Compile Include="Compat\HAR\AlienRace.cs" />
+    <Compile Include="Compat\HAR\HARCompat.cs" />
+    <Compile Include="Compat\HAR\HARTestPatches.cs" />
+    <Compile Include="Compat\HAR\HARUtil.cs" />
+    <Compile Include="Compat\DBH\JobDriver_BatheToddler.cs" />
+    <Compile Include="Crib\CribUtility.cs" />
+    <Compile Include="DefListDef.cs" />
+    <Compile Include="Feeding\FeedingUtility.cs" />
+    <Compile Include="Learning\ToddlerLearningUtility.cs" />
+    <Compile Include="MiscHarmony\Alert_NeedMeditationSpot_Targets_Patch.cs" />
+    <Compile Include="MiscHarmony\GetBackstoryCategoryFiltersFor_Patch.cs" />
+    <Compile Include="MiscHarmony\GeneratePawn_Patch.cs" />
+    <Compile Include="Kidnap\Harmony\JobGiver_Kidnap_Patch.cs" />
+    <Compile Include="Play\Harmony\BabyPlayGiver_Patch.cs" />
+    <Compile Include="Play\Harmony\BabyPlayGiver_PlayWalking_Patch.cs" />
+    <Compile Include="Play\Harmony\EndCurrentJob_PlayerForcedPlay_Patch.cs" />
+    <Compile Include="Play\Harmony\JobDriver_BabyPlay_MakeNewToils_Patch.cs" />
+    <Compile Include="Play\Harmony\NeedTipString_Patch.cs" />
+    <Compile Include="Play\Harmony\Play_NeedInterval_Patch.cs" />
+    <Compile Include="Play\Harmony\Play_IsLow_Patch.cs" />
+    <Compile Include="Play\Harmony\MakeBabyPlayAsLongAsToilIsActive_Patch.cs" />
+    <Compile Include="Play\Harmony\MakeBabyPlayJob_Patch.cs" />
+    <Compile Include="UI\MainTabWindow_Assign_Patch.cs" />
+    <Compile Include="UI\MainTabWindow_Schedule_Patch.cs" />
+    <Compile Include="MentalStates\CaresAboutForbidden_Patch.cs" />
+    <Compile Include="Caravan\AllSendablePawns_Patch.cs" />
+    <Compile Include="MentalStates\BreakExtremeIsImminent_Patch.cs" />
+    <Compile Include="Feeding\Harmony\CarryIngestibleToChewSpot_Patch.cs" />
+    <Compile Include="Feeding\Harmony\BestFoodSource_Patch.cs" />
+    <Compile Include="Carrying\1.5\CarryDownedPawn_Patch.cs" />
+    <Compile Include="Carrying\1.5\ForCarry_Patch.cs" />
+    <Compile Include="MiscHarmony\GetRest_Patch.cs" />
+    <Compile Include="UI\Pawn_CarryTracker_GetGizmos_Patch.cs" />
+    <Compile Include="Work\DisabledWorkTypes_Patch.cs" />
+    <Compile Include="Work\WorkTags_Patch.cs" />
+    <Compile Include="MentalStates\TryStartMentalBreak_Patch.cs" />
+    <Compile Include="Learning\Harmony\VatLearning_Patch.cs" />
+    <Compile Include="MentalStates\Trigger_MentalState_Patch.cs" />
+    <Compile Include="MentalStates\Trigger_NoMentalState_Patch.cs" />
+    <Compile Include="Caravan\WantsToBeCarried_Patch.cs" />
+    <Compile Include="Kidnap\Harmony\TryFindGoodKidnapVictim_Patch.cs" />
+    <Compile Include="Feeding\Harmony\WantsSuckle_Patch.cs" />
+    <None Include="RefugeePod\WanderDestDebug.cs" />
+    <None Include="Scrapyard.cs" />
+    <Compile Include="Animation\AnimationUtility.cs" />
+    <Compile Include="Animation\AnimationWorker_Bugwatch.cs" />
+    <Compile Include="Animation\AnimationWorker_LayAngleInCrib.cs" />
+    <Compile Include="Animation\AnimationWorker_WiggleInCrib.cs" />
+    <Compile Include="Animation\AnimationWorker_ToddlerWobble.cs" />
+    <Compile Include="Animation\AnimationWorker_ToddlerCrawl.cs" />
+    <Compile Include="Apparel\ApparelSettings.cs" />
+    <Compile Include="Apparel\1.5\ForStrip_Patch.cs" />
+    <Compile Include="Apparel\Harmony\CanBeStrippedByColony_Patch.cs" />
+    <Compile Include="Apparel\Harmony\ITab_Pawn_Gear_Patch.cs" />
+    <Compile Include="Apparel\JobDriver_UndressBaby.cs" />
+    <None Include="Compat\HAR\BodyAddon.cs" />
+    <None Include="Compat\HAR\AlienRace.LifeStages.cs" />
+    <None Include="Compat\HAR\AlienRace.Graphics.cs" />
+    <None Include="Compat\HAR\AlienRace.BodyTypes.cs" />
+    <None Include="Compat\HAR\Harmony.cs" />
+    <None Include="Compat\HAR\Patch_HAR_old.cs" />
+    <None Include="Compat\HAR\AlienRace_old.cs" />
+    <Compile Include="Animation\Harmony\AdjustParms_Patch.cs" />
+    <Compile Include="Apparel\Harmony\SwaddleBaby_Patch.cs" />
+    <Compile Include="MiscHarmony\Door_Patch.cs" />
+    <Compile Include="UI\FloatMenu_Patch.cs" />
+    <Compile Include="MiscHarmony\IsIdle_Patch.cs" />
+    <Compile Include="MentalStates\IsColonistPlayerControlled_Patch.cs" />
+    <Compile Include="LogUtil.cs" />
+    <Compile Include="Feeding\Harmony\MoodFromIngesting_Patch.cs" />
+    <Compile Include="UI\NeedsCardUtility_Patch.cs" />
+    <Compile Include="Caravan\PrepareCaravan_Patch.cs" />
+    <Compile Include="RefugeePod\LordToil_ToddlerLoiter.cs" />
+    <Compile Include="RefugeePod\LordJob_ToddlerLoiter.cs" />
+    <Compile Include="Play\JobDriver_BePlayedWith.cs" />
+    <Compile Include="Play\JobDriver_PlayCrib.cs" />
+    <Compile Include="Play\BabyPlayGiver_PlayCrib.cs" />
+    <Compile Include="RefugeePod\QuestNode_Root_RefugeePodCrash_Baby.cs" />
+    <Compile Include="RefugeePod\QuestPart_ToddlerLoiter.cs" />
+    <Compile Include="Crib\JobDriver_LeaveCrib.cs" />
+    <Compile Include="Compat\DBH\Patch_DBH.cs" />
+    <Compile Include="Apparel\Harmony\OptimizeApparel_Patch.cs" />
+    <None Include="ReplaceTesting.cs" />
+    <Compile Include="Safety\BabyMoveUtility.cs" />
+    <Compile Include="Crib\JobDriver_LetOutOfCrib.cs" />
+    <Compile Include="Apparel\JobDriver_BeDressed.cs" />
+    <Compile Include="Apparel\JobDriver_ToddlerRemoveApparel.cs" />
+    <Compile Include="Play\Harmony\PlayStatic_Patch.cs" />
+    <Compile Include="Kidnap\JobDriver_KidnapToddler.cs" />
+    <Compile Include="Play\JobDriver_ToddlerPlayDecor.cs" />
+    <Compile Include="Apparel\JobDriver_DressBaby.cs" />
+    <Compile Include="Crib\JobGiver_LeaveCrib.cs" />
+    <Compile Include="Apparel\JobGiver_OptimizeBabyApparel.cs" />
+    <Compile Include="Play\JobGiver_PlayWithSadBaby.cs" />
+    <Compile Include="Play\ToddlerPlayGiver_PlayDecor.cs" />
+    <Compile Include="Safety\Harmony\FindUnsafeBaby_Patch.cs" />
+    <Compile Include="Safety\Harmony\SafePlaceForBaby_Patch.cs" />
+    <Compile Include="Safety\JobDriver_BringBabyToSafety.cs" />
+    <Compile Include="MiscHarmony\1.5\TargetingParameters_Patch.cs" />
+    <Compile Include="UI\ShowDraftGizmo_Patch.cs" />
+    <Compile Include="TestPatch.cs" />
+    <Compile Include="Animation\Toddlers_AnimationDefOf.cs" />
+    <Compile Include="Feeding\ThinkNode_ConditionalToddlerCanFeedSelf.cs" />
+    <Compile Include="Combat\ThreatDisabled_Patch.cs" />
+    <Compile Include="Toddlers_DebugTools.cs" />
+    <Compile Include="Toddlers_Init.cs" />
+    <Compile Include="Toddlers_Mod.cs" />
+    <Compile Include="ToddlerUtility.cs" />
+    <Compile Include="Learning\Hediff_LearningManipulation.cs" />
+    <Compile Include="Learning\Hediff_LearningToWalk.cs" />
+    <Compile Include="Learning\Hediff_ToddlerLearning.cs" />
+    <Compile Include="Play\Hediff_ToddlerLonely.cs" />
+    <Compile Include="Crib\JobDriver_WiggleInCrib.cs" />
+    <Compile Include="Crib\JobDriver_RestIdleInCrib.cs" />
+    <Compile Include="Play\JobDriver_ToddlerBugwatching.cs" />
+    <Compile Include="Play\JobDriver_ToddlerFiregazing.cs" />
+    <Compile Include="Play\JobDriver_ToddlerFloordrawing.cs" />
+    <Compile Include="Combat\CombatJobGiver_MultiPatch.cs" />
+    <Compile Include="Play\JobDriver_ToddlerPlayToys.cs" />
+    <Compile Include="Play\JobDriver_ToddlerSkydreaming.cs" />
+    <Compile Include="Play\JobDriver_ToddlerWatchTelevision.cs" />
+    <Compile Include="Crib\JobDriver_LayAngleInCrib.cs" />
+    <Compile Include="Crib\JobGiver_IdleInCrib.cs" />
+    <Compile Include="Apparel\JobGiver_RemoveClothes.cs" />
+    <Compile Include="Play\JobGiver_ToddlerPlay.cs" />
+    <Compile Include="Play\JobGiver_ToddlerPlayInCrib.cs" />
+    <Compile Include="LifeStageWorker_HumanlikeToddler.cs" />
+    <Compile Include="Apparel\MentalState_RemoveClothes.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Apparel\MentalStateWorker_RemoveClothes.cs" />
+    <Compile Include="Apparel\ThinkNode_ConditionalCanDressSelf.cs" />
+    <Compile Include="Crib\ThinkNode_ConditionalInCrib.cs" />
+    <Compile Include="Play\ToddlerPlayDef.cs" />
+    <Compile Include="Play\ToddlerPlayGiver.cs" />
+    <Compile Include="Play\ToddlerPlayGiver_Bugwatching.cs" />
+    <Compile Include="Play\ToddlerPlayGiver_Firegazing.cs" />
+    <Compile Include="Play\ToddlerPlayGiver_Floordrawing.cs" />
+    <Compile Include="Play\ToddlerPlayGiver_PlayToys.cs" />
+    <Compile Include="Play\ToddlerPlayGiver_Skydreaming.cs" />
+    <Compile Include="Play\ToddlerPlayGiver_WatchTelevision.cs" />
+    <Compile Include="Play\ToddlerPlayUtility.cs" />
+    <Compile Include="Toddlers_DefOf.cs" />
+    <Compile Include="Toddlers_Settings.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<Toddlers.ToddlerPlayDef>
+		<defName>ToddlerFloordrawing</defName>
+		<jobDef>ToddlerFloordrawing</jobDef>
+		<workerClass>Toddlers.ToddlerPlayGiver_Floordrawing</workerClass>
+	</Toddlers.ToddlerPlayDef>
+	
+	<Toddlers.ToddlerPlayDef>
+		<defName>ToddlerSkydreaming</defName>
+		<jobDef>ToddlerSkydreaming</jobDef>
+		<workerClass>Toddlers.ToddlerPlayGiver_Skydreaming</workerClass>
+	</Toddlers.ToddlerPlayDef>
+	
+	<Toddlers.ToddlerPlayDef>
+		<defName>ToddlerBugwatching</defName>
+		<jobDef>ToddlerBugwatching</jobDef>
+		<workerClass>Toddlers.ToddlerPlayGiver_Bugwatching</workerClass>
+	</Toddlers.ToddlerPlayDef>
+	
+	<Toddlers.ToddlerPlayDef>
+		<defName>ToddlerPlayToys</defName>
+		<jobDef>ToddlerPlayToys</jobDef>
+		<workerClass>Toddlers.ToddlerPlayGiver_PlayToys</workerClass>
+	</Toddlers.ToddlerPlayDef>
+	
+	<Toddlers.ToddlerPlayDef>
+		<defName>ToddlerWatchTelevision</defName>
+		<jobDef>ToddlerWatchTelevision</jobDef>
+		<workerClass>Toddlers.ToddlerPlayGiver_WatchTelevision</workerClass>
+	</Toddlers.ToddlerPlayDef>
+	
+	<Toddlers.ToddlerPlayDef>
+		<defName>ToddlerFiregazing</defName>
+		<jobDef>ToddlerFiregazing</jobDef>
+		<workerClass>Toddlers.ToddlerPlayGiver_Firegazing</workerClass>
+	</Toddlers.ToddlerPlayDef>
+	
+	<Toddlers.ToddlerPlayDef>
+		<defName>ToddlerPlayDecor</defName>
+		<jobDef>ToddlerPlayDecor</jobDef>
+		<workerClass>Toddlers.ToddlerPlayGiver_PlayDecor</workerClass>
+	</Toddlers.ToddlerPlayDef>
+
+</Defs>

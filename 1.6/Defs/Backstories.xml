@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <BackstoryDef>
+    <defName>Toddler</defName>
+    <title>toddler</title>
+    <titleShort>toddler</titleShort>
+    <baseDesc>[PAWN_nameDef] is still a baby. [PAWN_possessive] story has only just begun.</baseDesc>
+    <slot>Childhood</slot>
+    <spawnCategories>
+      <li>Toddler</li>
+    </spawnCategories>
+  </BackstoryDef>
+
+
+</Defs>
