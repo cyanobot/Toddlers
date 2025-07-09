@@ -91,6 +91,7 @@
     <Compile Include="Carrying\1.5\CarryToil_Patch.cs" />
     <None Include="Carrying\FloatMenuOptionProvider_CarryToddler.cs" />
     <Compile Include="Carrying\FloatMenuOptions_AlwaysCarryToddler_Patch.cs" />
+    <Compile Include="Carrying\JobDriver_Carried_Patch.cs" />
     <Compile Include="Crib\FloatMenuProvider_LetOutOfCrib.cs" />
     <Compile Include="Feeding\Harmony\FloatMenuOptionProvider_Ingest_Patch.cs" />
     <Compile Include="MentalStates\IgnoreToddlerMentalStates_Patch.cs" />

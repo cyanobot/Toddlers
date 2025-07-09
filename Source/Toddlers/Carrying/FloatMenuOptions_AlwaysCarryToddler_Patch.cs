@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
@@ -16,6 +17,7 @@ using static Toddlers.ToddlerUtility;
 namespace Toddlers
 {
     [HarmonyPatch]
+    [HarmonyDebug]
     public static class FloatMenuOptions_AlwaysCarryToddler_Patch
     {
         public static MethodInfo m_get_Downed = AccessTools.PropertyGetter(typeof(Pawn), nameof(Pawn.Downed));
@@ -28,22 +30,72 @@ namespace Toddlers
 
             yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryPawn), "GetSingleOptionFor", argTypes);
             yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryPawnToExit), "GetSingleOptionFor", argTypes);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryToShuttle), "GetSingleOptionFor", argTypes);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_CarryToShuttle), "CanBeCarriedToShuttle");
+
+            foreach (Type type in new Type[] { typeof(JobDriver_CarryDownedPawn), typeof(JobDriver_TakeAndEnterPortal), typeof(JobDriver_Kidnap), typeof(JobDriver_CarryToBiosculpterPod) })
+            {
+                MemberInfo[] memberInfos = type.GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly);
+                foreach (MemberInfo member in memberInfos)
+                {
+                    LogUtil.DebugLog($"member: {member}, MemberType: {member.MemberType}");
+                    if (member.MemberType == MemberTypes.Method && member.Name.Contains("MakeNewToils")) yield return member as MethodInfo; 
+                }
+                /*
+                Type[] nestedTypes = type.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+                foreach (Type nestedType in nestedTypes)
+                {
+                    LogUtil.DebugLog("nestedType: " + nestedType
+                            + ", CompilerGeneratedAttributes: " + nestedType.GetCustomAttributes(typeof(CompilerGeneratedAttribute)).ToStringSafeEnumerable()
+                            + $", TypeInfo: {nestedType.GetTypeInfo()}, BaseType: {nestedType.BaseType}, MemberType: {nestedType.MemberType}");
+                    if (!nestedType.Name.Contains("MakeNewToils")) continue;
+                    MethodInfo[] methods = nestedType.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly);
+                    foreach (MethodInfo method in methods)
+                    {
+                        LogUtil.DebugLog("method: " + method);
+                        yield return method;
+                        //    + ", CompilerGeneratedAttributes: " + method.GetCustomAttributes(typeof(CompilerGeneratedAttribute)).ToStringSafeEnumerable()
+                        //    + ", GetParameters: " + method.GetParameters().ToStringSafeEnumerable());
+                        //if (method.Name.Contains("MakeNewToils"))
+                        //{
+                            
+                        //}
+                    }
+                }
+                */
+            }
+
+            /*
+            yield return AccessTools.Method(typeof(JobDriver_CarryDownedPawn), "MakeNewToils");
+            yield return AccessTools.Method(typeof(JobDriver_TakeAndEnterPortal), "MakeNewToils");
+            yield return AccessTools.Method(typeof(JobDriver_Kidnap), "MakeNewToils");
+            yield return AccessTools.Method(typeof(JobDriver_CarryToBiosculpterPod), "MakeNewToils");
+            */
         }
 
         public static bool DownedOrToddler(Pawn pawn)
         {
+            LogUtil.DebugLog($"DownedOrToddler - pawn: {pawn}");
             if (pawn.Downed) return true;
             if (IsToddler(pawn)) return true;
             return false;
         }
 
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        /*
+        public static void Prepare(MethodBase original)
         {
-            foreach(CodeInstruction cur in instructions)
+            LogUtil.DebugLog($"FloatMenuOptions_AlwaysCarryToddler_Patch Prepare - original: {original}" +
+                $", DeclaringType: {original?.DeclaringType}");
+        }
+        */
+
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase __originalMethod)
+        {
+            LogUtil.DebugLog($"FloatMenuOptions_AlwaysCarryToddler_Patch Transpiler starting for: {__originalMethod?.DeclaringType}.{__originalMethod}");
+            foreach (CodeInstruction cur in instructions)
             {
                 if (cur.Calls(m_get_Downed))
                 {
+                    LogUtil.DebugLog($"FloatMenuOptions_AlwaysCarryToddler_Patch Transpiler found insert point in: {__originalMethod?.DeclaringType}.{__originalMethod}");
                     yield return new CodeInstruction(OpCodes.Call, m_DownedOrToddler);
                 }
                 else
