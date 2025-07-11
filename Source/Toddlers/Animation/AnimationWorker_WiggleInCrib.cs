@@ -47,7 +47,7 @@ namespace Toddlers
         public override bool Enabled(AnimationDef def, PawnRenderNode node, AnimationPart part, PawnDrawParms parms)
         {
             if (!base.Enabled(def, node, part, parms)) return false;
-            if (parms.pawn.CurJobDef == Toddlers_DefOf.WiggleInCrib && parms.pawn.jobs.curDriver.CurToilString == "WiggleInCrib") return true;
+            if (parms.pawn.jobs.curDriver.CurToilString == "WiggleInCrib") return true;
 
 
             return false;

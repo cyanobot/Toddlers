@@ -38,10 +38,10 @@ namespace Toddlers
 
         public static FloatMenuOption Postfix(FloatMenuOption __result, FloatMenuContext context, MethodBase __originalMethod)
         {
-            LogUtil.DebugLog($"FloatMenuOptions_ToddlerCannot_SingleOption_Patch - original: {__originalMethod.DeclaringType}" +
-                $", selectedPawn: {context.FirstSelectedPawn}, result: {__result}" +
-                $", IsToddler: {IsToddler(context.FirstSelectedPawn)}"
-                );
+            //LogUtil.DebugLog($"FloatMenuOptions_ToddlerCannot_SingleOption_Patch - original: {__originalMethod.DeclaringType}" +
+            //    $", selectedPawn: {context.FirstSelectedPawn}, result: {__result}" +
+            //    $", IsToddler: {IsToddler(context.FirstSelectedPawn)}"
+            //    );
             if (__result != null && IsToddler(context.FirstSelectedPawn)) return null;
             return __result;
         }

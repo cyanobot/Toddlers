@@ -38,7 +38,7 @@ namespace Toddlers
             return true;
         }
 
-        public override bool CanDoWhileDowned(Pawn pawn)
+        public override bool CanDoFromCrib(Pawn pawn)
         {
             return false;
         }

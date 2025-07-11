@@ -20,7 +20,7 @@ namespace Toddlers
             return base.CanDo(pawn) && (t = this.FindNearbyUseableDecor(pawn)) != null && pawn.CanReserveAndReach(t, PathEndMode.Touch, Danger.None, 1, -1, null, false);
         }
 
-        public override bool CanDoWhileDowned(Pawn pawn)
+        public override bool CanDoFromCrib(Pawn pawn)
         {
             return false;
         }

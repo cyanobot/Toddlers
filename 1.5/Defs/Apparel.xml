@@ -2,11 +2,6 @@
 <Defs>
 
   <ThingDef Abstract="True" Name="BabyApparelMakeableBase" ParentName="ApparelMakeableBase">
-    <recipeMaker>
-	  <recipeUsers>
-		<li MayRequire="sumghai.MousekinRace">Mousekin_WorkbenchTailor</li>
-	  </recipeUsers>
-    </recipeMaker>
     <researchPrerequisites>
 		<li>ComplexClothing</li>
 	</researchPrerequisites>

@@ -36,6 +36,7 @@ namespace Toddlers
 					pawn.jobs.posture = PawnPosture.InBedMask;
 					pawn.Rotation = Rot4.South;
 					job.reportStringOverride = "JobStringWiggling".Translate();
+					LogUtil.DebugLog("Setting wiggle animation");
                     pawn.Drawer.renderer.SetAnimation(Toddlers_AnimationDefOf.WiggleInCrib);
                 });
 				wiggletoil.AddFinishAction(delegate ()

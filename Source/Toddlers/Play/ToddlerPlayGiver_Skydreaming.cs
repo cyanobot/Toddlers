@@ -31,14 +31,14 @@ namespace Toddlers
 			}
 			return JobMaker.MakeJob(this.def.jobDef, c);
 		}
-		public override bool CanDoWhileDowned(Pawn pawn)
+		public override bool CanDoFromCrib(Pawn pawn)
 		{
 			//using TryFindSkygazeCell instead of TryFindSkydreamingSpotOutsideColony
 			//because toddlers should be more inclined to want to stick close to people
-			return base.CanDoWhileDowned(pawn) && !pawn.Position.Roofed(pawn.Map);
+			return base.CanDoFromCrib(pawn) && !pawn.Position.Roofed(pawn.Map);
 		}
 
-		public Job TryGiveJobWhileDowned(Pawn pawn)
+		public Job TryGiveJobFromCrib(Pawn pawn)
         {
 			if (pawn.Position.Roofed(pawn.Map)) return null;
 			if (pawn.InBed()) return JobMaker.MakeJob(this.def.jobDef, pawn.CurrentBed());

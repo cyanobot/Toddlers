@@ -36,11 +36,14 @@ namespace Toddlers
 
 		public static float Waveform(Func<float, float> quarterform, float x)
 		{
+            x = Mathf.Clamp01(x);
+            /*
 			if (x < 0 || x > 1)
             {
                 Log.Error("Toddlers.AnimationUtility.Waveform - input must be between 0 and 1. Received x: " + x);
                 return 0f;
             }
+            */
 
 			if (x <= 0.25f) return quarterform(4f*x);
 			if (x <= 0.5f) return quarterform(4f*(0.5f-x));
@@ -60,7 +63,8 @@ namespace Toddlers
                 || curAnimation == Toddlers_AnimationDefOf.WiggleInCrib)
                 return;
 
-            //DebugLog($"SetLocomotionAnimation - pawn: {pawn}, animation: {animation}");
+            //DebugLog($"SetLocomotionAnimation - pawn: {pawn}, animation: {animation}" +
+            //    $", curAnimation: {curAnimation}");
 
             pawn.Drawer.renderer.SetAnimation(animation);
         }

@@ -2,6 +2,7 @@
 using Verse;
 using Verse.AI.Group;
 
+/*
 namespace Toddlers
 {
     //babies crying or giggling should not interrupt lord jobs like rituals or caravan formation
@@ -28,3 +29,4 @@ namespace Toddlers
 
     
 }
+*/

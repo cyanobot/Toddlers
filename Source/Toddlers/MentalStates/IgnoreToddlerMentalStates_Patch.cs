@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Reflection.Emit;
 using RimWorld.Planet;
 using Verse;
+using RimWorld;
+using Verse.AI.Group;
 
 #if RW_1_5
 #else
@@ -25,6 +27,13 @@ namespace Toddlers
             yield return AccessTools.Method(typeof(CaravanFormingUtility), nameof(CaravanFormingUtility.AllSendablePawns));
             yield return AccessTools.Method(typeof(CaravanFormingUtility), nameof(CaravanFormingUtility.ForceCaravanDepart));
             yield return AccessTools.Method(typeof(CaravanFormingUtility), nameof(CaravanFormingUtility.GetForceDepartWarningMessage));
+            yield return AccessTools.Method(typeof(ForbidUtility), nameof(ForbidUtility.CaresAboutForbidden));
+            yield return AccessTools.Method(typeof(Trigger_MentalState), nameof(Trigger_MentalState.ActivateOn));
+            yield return AccessTools.Method(typeof(Trigger_NoMentalState), nameof(Trigger_NoMentalState.ActivateOn));
+            yield return AccessTools.Method(typeof(GatheringsUtility), nameof(GatheringsUtility.PawnCanStartOrContinueGathering));
+            yield return AccessTools.Method(typeof(RitualRoleAssignments), nameof(RitualRoleAssignments.PawnNotAssignableReason)
+                , new Type[] { typeof(Pawn), typeof(RitualRole), typeof(Precept_Ritual), typeof(RitualRoleAssignments), typeof(TargetInfo), typeof(bool).MakeByRefType() });
+            yield return AccessTools.Method(typeof(CompShuttle), "PawnIsHealthyEnoughForShuttle");
         }
 
         public static bool MentalStateAndNotBaby(Pawn pawn)

@@ -16,10 +16,11 @@ namespace Toddlers
         {
             return base.CanDo(pawn) && this.FindNearbyInteractableTelevision(pawn) != null;
         }
-        public override bool CanDoWhileDowned(Pawn pawn)
+        public override bool CanDoFromCrib(Pawn pawn)
         {
+            //LogUtil.DebugLog("Fired ToddlerPlayGiver_WatchTelevision.CanDoFromCrib");
 
-            return base.CanDoWhileDowned(pawn) && this.FindTelevisionWhileDowned(pawn) != null;
+            return base.CanDoFromCrib(pawn) && this.FindTelevisionFromCrib(pawn) != null;
         }
 
         public override Job TryGiveJob(Pawn pawn)
@@ -38,11 +39,11 @@ namespace Toddlers
             return null;
         }
 
-        public Job TryGiveJobWhileDowned(Pawn pawn)
+        public Job TryGiveJobFromCrib(Pawn pawn)
         {
-            //Log.Message("Fired TryGiveJobWhileDowned");
+            //LogUtil.DebugLog("Fired ToddlerPlayGiver_WatchTelevision.TryGiveJobFromCrib");
 
-            Thing tv = FindTelevisionWhileDowned(pawn);
+            Thing tv = FindTelevisionFromCrib(pawn);
             if (tv == null) return null;
             Job job;
             if (pawn.InBed()) job = JobMaker.MakeJob(this.def.jobDef, tv, pawn.Position, pawn.CurrentBed());
@@ -51,23 +52,25 @@ namespace Toddlers
             return job;
         }
 
-        private Thing FindTelevisionWhileDowned(Pawn pawn)
+        private Thing FindTelevisionFromCrib(Pawn pawn)
         {
             Room room = pawn.GetRoom(RegionType.Set_All);
             if (room != null)
             {
-                //Log.Message("Found room");
+                //LogUtil.DebugLog("Found room");
                 foreach (Thing thing in room.ContainedAndAdjacentThings)
                 {
                     if (ToddlerPlayUtility.TelevisionDefs.Contains(thing.def) && CanInteractWith(pawn, thing))
                     {
-                        //Log.Message("Found television");
+                        //LogUtil.DebugLog("Found television");
 
                         object[] prms = { pawn.Position, thing.Position, pawn.Map, true, thing.def };
                         if ((bool)typeof(WatchBuildingUtility).GetMethod("EverPossibleToWatchFrom", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).Invoke(null, prms))
                         {
+                            //LogUtil.DebugLog("EverPossibleToWatchFrom : true");
                             return thing;
                         }
+                        //LogUtil.DebugLog("EverPossibleToWatchFrom : false");
                     }
                 }
             }

@@ -2,6 +2,7 @@
 using RimWorld;
 using Verse;
 
+/*
 namespace Toddlers
 {
     //crying/giggling toddlers still respect forbiddances
@@ -53,3 +54,4 @@ namespace Toddlers
 
     
 }
+*/

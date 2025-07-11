@@ -21,7 +21,7 @@ namespace Toddlers
                  || !intVec.GetRoom(pawn.Map).PsychologicallyOutdoors);
         }
 
-        public override bool CanDoWhileDowned(Pawn pawn)
+        public override bool CanDoFromCrib(Pawn pawn)
         {
             return false;
         }
@@ -41,7 +41,8 @@ namespace Toddlers
             Predicate<IntVec3> cellValidator = delegate (IntVec3 c) {
                 return !c.GetTerrain(searcher.Map).avoidWander
                     && searcher.SafeTemperatureAtCell(c, searcher.MapHeld)
-                    && !c.IsForbidden(searcher);
+                    && !c.IsForbidden(searcher)
+                    && searcher.CanReserve(c);
                 };
             Predicate<Region> validator = delegate (Region r)
             {
