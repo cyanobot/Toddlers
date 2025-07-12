@@ -126,6 +126,7 @@
     <Compile Include="Play\Harmony\MakeBabyPlayJob_Patch.cs" />
     <Compile Include="Safety\FloatMenuOptionProvider_BringBabyToSafety.cs" />
     <Compile Include="Safety\FloatMenuOptionProvider_BringBabyToSafety_Patch.cs" />
+    <Compile Include="Safety\Harmony\WantsToBeRescued_Patch.cs" />
     <Compile Include="UI\MainTabWindow_Assign_Patch.cs" />
     <Compile Include="UI\MainTabWindow_Schedule_Patch.cs" />
     <Compile Include="MentalStates\CaresAboutForbidden_Patch.cs" />

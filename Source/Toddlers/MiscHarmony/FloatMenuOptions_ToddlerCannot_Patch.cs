@@ -33,7 +33,7 @@ namespace Toddlers
             yield return AccessTools.Method(typeof(FloatMenuOptionProvider_PutOutFireOnPawn), "GetSingleOptionFor", argTypes_Pawn);
             yield return AccessTools.Method(typeof(FloatMenuOptionProvider_RescuePawn), "GetSingleOptionFor", argTypes_Pawn);
             yield return AccessTools.Method(typeof(FloatMenuOptionProvider_ReturnSlaveToBed), "GetSingleOptionFor", argTypes_Pawn);
-            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_Strip), "GetSingleOptionFor", argTypes_Pawn);
+            yield return AccessTools.Method(typeof(FloatMenuOptionProvider_Strip), "GetSingleOptionFor", argTypes_Thing);
         }
 
         public static FloatMenuOption Postfix(FloatMenuOption __result, FloatMenuContext context, MethodBase __originalMethod)

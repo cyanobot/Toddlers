@@ -78,11 +78,8 @@ namespace Toddlers
 			QuestGen.slate.Set("hasParent", var: deadParent);
 			quest.DropPods(map.Parent, list, null, null, null, null, false, useTradeDropSpot: false, joinPlayer: false, makePrisoners: false, null, null, QuestPart.SignalListenMode.OngoingOnly, null, destroyItemsOnCleanup: true, dropAllInSamePod: true);
 
-			if (ToddlerUtility.IsLiveToddler(pawn))
-			{
-				//Log.Message("Calling toddler code");
-				ToddlerLoiter(quest, map.Parent, new Pawn[] { pawn }, pawn.Faction, null);				
-			}
+            //Log.Message("Calling toddler code");
+            ToddlerLoiter(quest, map.Parent, new Pawn[] { pawn }, pawn.Faction, null);
 
 		}
 

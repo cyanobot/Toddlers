@@ -29,7 +29,7 @@ namespace Toddlers
 			//Log.Message("toddler: " + toddler + ", def.race.FenceBlocked: " + toddler.def.race.FenceBlocked + ", roping: " + toddler.roping);
 			if (toddler.SpawnedOrAnyParentSpawned)
 			{
-				this.loc = RCellFinder.RandomWanderDestFor(toddler,root,12,null,Danger.Deadly);
+				this.loc = RCellFinder.RandomWanderDestFor(toddler,root,15,null,Danger.Deadly);
 			}
 			else this.loc = root;
         }
@@ -46,11 +46,38 @@ namespace Toddlers
 
 			return stateGraph;
 		}
+
 		public override void ExposeData()
 		{
 			base.ExposeData();
 			Scribe_Values.Look(ref loc, "loc");
 			Scribe_References.Look(ref toddler, "toddler");
 		}
-	}
+
+        public override void LordJobTick()
+        {
+            if (GenTicks.TicksGame % 512 == 3)
+			{
+				LogUtil.DebugLog($"LordJob_ToddlerLoiter ticking, toddler: {toddler}");
+
+				if (toddler.Faction == Faction.OfPlayer)
+				{
+					//if toddler has been adopted and somehow not already removed from lord, do so now
+					lord.ownedPawns.Remove(toddler);
+					return;
+				}
+
+				//toddlers who age up while abandoned should become wild pawns, I guess
+				if (!toddler.Dead && toddler.DevelopmentalStage > DevelopmentalStage.Baby)
+				{
+					toddler.ChangeKind(PawnKindDefOf.WildMan);
+					toddler.SetFaction(null);
+					toddler.jobs.StopAll();
+
+					lord.ownedPawns.Remove(toddler);
+                }
+
+			}
+        }
+    }
 }
