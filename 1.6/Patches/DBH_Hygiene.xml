@@ -41,6 +41,13 @@
 			</value>
 		</li>
 		
+		<li Class="PatchOperationAdd">
+			<xpath>Defs/WorkGiverDef[defName="washChild"]</xpath>
+			<value>
+				<directOrderable>false</directOrderable>
+			</value>
+		</li>
+		
 	</operations>
 	</match>
 </Operation>

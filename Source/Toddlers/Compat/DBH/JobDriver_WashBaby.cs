@@ -101,7 +101,7 @@ namespace Toddlers
                 {
                     f_contaminated.SetValue(need_Hygiene, false);
                 }
-                if (Water != null && Water.def.modExtensions.Any(dme => dme.GetType().Name == "WaterExt"))
+                if (Water != null && (Water.def.modExtensions?.Any(dme => dme.GetType().Name == "WaterExt") ?? false))
                 {
                     Water.SplitOff(1);
                 }

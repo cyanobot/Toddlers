@@ -302,8 +302,14 @@ namespace Toddlers
                 base.Map.mapDrawer.MapMeshDirty(Bath.Position, MapMeshFlagDefOf.Buildings);
                 Baby.needs.mood.thoughts.memories.RemoveMemoriesOfDef(DefDatabase<ThoughtDef>.GetNamed("SoakingWet"));
             };
+#if RW_1_5
             bathtime.tickAction = delegate
             {
+                int delta = 1;
+#else
+            bathtime.tickIntervalAction = delegate(int delta)
+            {
+#endif
                 Need need_Hygiene = Baby.needs.AllNeeds.Find(n => n.def.defName == "Hygiene");
                 if (need_Hygiene == null) pawn.jobs.EndCurrentJob(JobCondition.Errored);
 
@@ -328,7 +334,7 @@ namespace Toddlers
                 }
 
                 //treat bath as as fun as a toy box
-                float playChange = 0.002f * 1.25f * roomPlayGainFactor;
+                float playChange = delta * 0.0002f * 1.25f * roomPlayGainFactor;
                 Baby.needs.play.Play(playChange);
                 ToddlerPlayUtility.CureLoneliness(Baby);
 

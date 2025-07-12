@@ -92,6 +92,10 @@
     <None Include="Carrying\FloatMenuOptionProvider_CarryToddler.cs" />
     <Compile Include="Carrying\FloatMenuOptions_AlwaysCarryToddler_Patch.cs" />
     <Compile Include="Carrying\JobDriver_Carried_Patch.cs" />
+    <Compile Include="Compat\DBH\Building_AssignableFixture_Patch.cs" />
+    <Compile Include="Compat\DBH\FloatMenuOptionProvider_WashBaby.cs" />
+    <Compile Include="Compat\DBH\FloatMenuOptionProvider_WorkGivers_Patch.cs" />
+    <Compile Include="Compat\DBH\WorkGiver_washChild_Patch.cs" />
     <Compile Include="Crib\FloatMenuProvider_LetOutOfCrib.cs" />
     <Compile Include="Feeding\Harmony\FloatMenuOptionProvider_Ingest_Patch.cs" />
     <Compile Include="MentalStates\IgnoreToddlerMentalStates_Patch.cs" />
@@ -126,7 +130,6 @@
     <Compile Include="Play\Harmony\MakeBabyPlayJob_Patch.cs" />
     <Compile Include="Safety\FloatMenuOptionProvider_BringBabyToSafety.cs" />
     <Compile Include="Safety\FloatMenuOptionProvider_BringBabyToSafety_Patch.cs" />
-    <Compile Include="Safety\Harmony\WantsToBeRescued_Patch.cs" />
     <Compile Include="UI\MainTabWindow_Assign_Patch.cs" />
     <Compile Include="UI\MainTabWindow_Schedule_Patch.cs" />
     <Compile Include="MentalStates\CaresAboutForbidden_Patch.cs" />

@@ -25,7 +25,7 @@ namespace Toddlers
             */
             validFireDefs = Toddlers_DefOf.FiregazingTargets.whitelist;
 
-            LogUtil.DebugLog("validFireDefs: " + validFireDefs);
+            LogUtil.DebugLog("validFireDefs: " + validFireDefs.ToStringSafeEnumerable());
         }
 
         public override bool CanDo(Pawn pawn)

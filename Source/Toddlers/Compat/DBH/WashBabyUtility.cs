@@ -87,7 +87,6 @@ namespace Toddlers
         {
             foreach (Pawn item in pawn.Map.mapPawns.AllPawnsSpawned)
             {
-
                 if (item.needs != null
                     && item.mindState.AutofeedSetting(pawn) == AutofeedMode.Urgent
                     )
