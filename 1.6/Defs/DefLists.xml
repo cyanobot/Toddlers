@@ -23,6 +23,8 @@
 		<li>Apparel_ShieldBelt</li>
 		<li>Apparel_PsychicFoilHelmet</li>
 		<li>Apparel_ClothMask</li>
+		<li>Apparel_VacsuitChildren</li>
+		<li>Apparel_VacsuitHelmet</li>
 	</whitelist>
 </Toddlers.DefListDef>
 

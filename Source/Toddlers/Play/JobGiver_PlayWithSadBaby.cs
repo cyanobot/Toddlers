@@ -10,6 +10,7 @@ using System.Text;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using static Toddlers.ToddlerPlayUtility;
 
 namespace Toddlers
 {
@@ -56,8 +57,8 @@ namespace Toddlers
 					&& adult.CanReserveAndReach(baby, PathEndMode.ClosestTouch, adult.NormalMaxDanger())
 					&& !baby.IsForbidden(adult)
 					&& baby.needs != null && baby.needs.play != null
-					&& baby.needs.play.CurLevelPercentage < 0.3
-					&& ((baby.needs.mood != null && baby.needs.mood.CurLevelPercentage < 0.4)
+					&& (baby.needs.play.CurLevelPercentage < 0.3f || GetLoneliness(baby) > 0.5f)
+					&& ((baby.needs.mood != null && baby.needs.mood.CurLevelPercentage < 0.4f)
 					|| (baby.MentalState != null && baby.MentalStateDef == DefDatabase<MentalStateDef>.GetNamed("Crying"))))
 				{
 					return baby;

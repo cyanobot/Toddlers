@@ -16,7 +16,7 @@ namespace Toddlers
         public const float PlayNeedSatisfiedPerTick = 1.2E-04f;
         public const float LonelinessCuredPerTick = 6E-04f;
         public const int PlayDuration = 2000;
-        public const float BaseLonelinessRate = 0.0015f;
+        public const float BaseLonelinessRate = 0.0008f;
 
         public static List<ThingDef> cachedTelevisionDefs = new List<ThingDef>();
         public static int cachedTelevisionMaxParticipants = -1;
@@ -44,7 +44,14 @@ namespace Toddlers
             Hediff hediff = pawn.health.hediffSet.GetFirstHediffOfDef(Toddlers_DefOf.ToddlerLonely);
             if (hediff == null)
             {
-                hediff = pawn.health.AddHediff(Toddlers_DefOf.ToddlerLonely);
+                if (ToddlerUtility.IsLiveToddler(pawn))
+                {
+                    hediff = pawn.health.AddHediff(Toddlers_DefOf.ToddlerLonely);
+                }
+                else
+                {
+                    return 0f;
+                }
             }
             return hediff.Severity;
         }

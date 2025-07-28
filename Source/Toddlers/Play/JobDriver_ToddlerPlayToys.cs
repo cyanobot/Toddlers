@@ -12,6 +12,11 @@ namespace Toddlers
 {
     class JobDriver_ToddlerPlayToys : JobDriver
     {
+        private const int ToysCount = 5;
+        private const float ToyDistanceFactor = 0.5f;
+        private static readonly FloatRange ToyRandomAngleOffset = new FloatRange(-5f, 5f);
+        private Mote[] motesToMaintain;
+
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
             return this.pawn.Reserve(base.TargetA, this.job, 1, -1, null, errorOnFailed);
@@ -65,10 +70,5 @@ namespace Toddlers
 
             return toil;
         }
-
-        private const int ToysCount = 5;
-        private const float ToyDistanceFactor = 0.5f;
-        private static readonly FloatRange ToyRandomAngleOffset = new FloatRange(-5f, 5f);
-        private Mote[] motesToMaintain;
     }
 }

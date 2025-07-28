@@ -19,7 +19,8 @@ namespace Toddlers
         static bool Prefix(ref bool __result, Need_Play __instance, Pawn ___pawn)
         {
             if (__instance.CurLevelPercentage <= 0.4f) __result = true;
-            else if (IsLiveToddler(___pawn) && GetLoneliness(___pawn) >= 0.4f && __instance.CurLevelPercentage <= 0.8f)
+            else if (GetLoneliness(___pawn) >= 0.8f) __result = true;
+            else if (GetLoneliness(___pawn) >= 0.4f && __instance.CurLevelPercentage <= 0.8f)
                 __result = true;
             else __result = false;
             return false;
