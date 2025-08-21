@@ -66,4 +66,15 @@ namespace Toddlers
         public static ThinkTreeDef HumanlikeToddlerConstant;
     }
 
+    [DefOf]
+    public static class DBHDefOf
+    {
+        [MayRequireAnyOf("Dubwise.DubsBadHygiene,Dubwise.DubsBadHygiene.Lite")]
+        public static NeedDef Hygiene;
+
+        static DBHDefOf()
+        {
+            DefOfHelper.EnsureInitializedInCtor(typeof(DBHDefOf));
+        }
+    }
 }
