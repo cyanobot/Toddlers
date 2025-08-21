@@ -23,5 +23,16 @@ namespace Toddlers
             }
             return false;
         }
+
+        public static void TryMakeMessTick(Pawn feeder, Pawn baby, float filthFactor = 1)
+        {
+            float filthRate = baby.GetStatValue(StatDefOf.FilthRate, cacheStaleAfterTicks : 60)
+                / Math.Max(feeder.health.capacities.GetLevel(PawnCapacityDefOf.Manipulation), 0.1f);
+            filthRate *= filthFactor;
+            if (!(Rand.Value < filthRate * 0.005f))
+                return;
+            if (FilthMaker.TryMakeFilth(feeder.Position, feeder.Map, ThingDefOf.Filth_Trash, baby.LabelIndefinite(), 1))
+                FilthMonitor.Notify_FilthHumanGenerated();
+        }
     }
 }
