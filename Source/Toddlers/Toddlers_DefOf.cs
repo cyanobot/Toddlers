@@ -50,6 +50,7 @@ namespace Toddlers
         //public static ThingDef Apparel_BabyTuque;
         //public static ThingDef Apparel_BabyShadecone;
         public static ThingDef Apparel_BabyTribal;
+        public static ThingDef Toddlers_Filth_Mess;
 
         public static ThoughtDef BabyNoExpectations;
         public static ThoughtDef Toddlers_TraumaticCrash;

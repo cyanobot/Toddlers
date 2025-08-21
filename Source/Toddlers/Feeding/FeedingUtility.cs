@@ -32,7 +32,7 @@ namespace Toddlers
             filthRate *= filthFactor;
             if (!(Rand.Value < filthRate * 0.005f))
                 return;
-            if (FilthMaker.TryMakeFilth(feeder.Position, feeder.Map, ThingDefOf.Filth_Trash, baby.LabelIndefinite(), 1))
+            if (FilthMaker.TryMakeFilth(feeder.Position, feeder.Map, Toddlers_DefOf.Toddlers_Filth_Mess, baby.LabelIndefinite(), 1))
                 FilthMonitor.Notify_FilthHumanGenerated();
             if (Toddlers_Mod.DBHLoaded)
             {
