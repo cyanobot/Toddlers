@@ -15,6 +15,8 @@
 <SettingTooltipCareAboutFloorSleep>Pawns will return babies/toddlers to their cribs if they notice them sleeping on the floor.</SettingTooltipCareAboutFloorSleep>
 <SettingLabelFeedCapableToddlers>Pawns feed toddlers who could feed themselves</SettingLabelFeedCapableToddlers>
 <SettingTooltipFeedCapableToddlers>Pawns will feed toddlers even if they are able to feed themselves.</SettingTooltipFeedCapableToddlers>
+<SettingLabelFeedingMakesMess>Feeding makes mess</SettingLabelFeedingMakesMess>
+<SettingTooltipFeedingMakesMess>Toddlers feeding themselves or being fed makes mess (less in the latter case).</SettingTooltipFeedingMakesMess>
 <SettingLabelBabyTalk>Baby talk for toddlers</SettingLabelBabyTalk>
 <SettingTooltipBabyTalk>Whether toddler thoughts should be translated to "goo goo ba gee".</SettingTooltipBabyTalk>
 

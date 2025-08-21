@@ -16,7 +16,7 @@ namespace Toddlers
             Pawn baby = __instance.Baby;
             // Make less of a mess than when self-feeding, also adjust for this taking longer than self-feeding.
             float filthFactor = 1f / 10;
-            if (ToddlerUtility.IsToddler(baby) && feeder.Map != null)
+            if (Toddlers_Settings.feedingMakesMess && ToddlerUtility.IsToddler(baby) && feeder.Map != null)
                 result.AddPreTickAction(() => FeedingUtility.TryMakeMessTick(feeder, baby, filthFactor));
             return result;
         }
