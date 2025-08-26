@@ -15,6 +15,9 @@ namespace Toddlers
     {
         public static bool Postfix(bool result, Pawn baby)
         {
+            //if baby has fallen asleep, need to stop
+            if (baby.jobs?.curDriver?.asleep ?? false) return true;
+
             //if play isn't full, don't stop playing
             if (!result) return false;
 

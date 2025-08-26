@@ -40,8 +40,9 @@ namespace Toddlers
                     pawn.Drawer.renderer.SetAnimation(Toddlers_AnimationDefOf.WiggleInCrib);
                 });
 				wiggletoil.AddFinishAction(delegate ()
-				{
-					job.reportStringOverride = "JobStringClimbingOutOfCrib".Translate();
+                {
+                    pawn.Drawer.renderer.SetAnimation(null);
+                    job.reportStringOverride = "JobStringClimbingOutOfCrib".Translate();
 				});
 				wiggletoil.handlingFacing = true;
 				yield return wiggletoil;

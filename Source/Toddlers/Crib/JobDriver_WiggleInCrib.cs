@@ -36,7 +36,9 @@ namespace Toddlers
                     pawn.Drawer.renderer.SetAnimation(Toddlers_AnimationDefOf.WiggleInCrib);
             });
             toil.handlingFacing = true;
-            toil.AddFinishAction(() => pawn.Drawer.renderer.SetAnimation(null));                 //pawn.Drawer.renderer.SetAllGraphicsDirty());
+            toil.AddFinishAction(() => {
+                pawn.Drawer.renderer.SetAnimation(null);
+                });                 //pawn.Drawer.renderer.SetAllGraphicsDirty());
             yield return toil;
         }
     }
