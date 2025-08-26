@@ -103,12 +103,12 @@ namespace Toddlers
     
         public static Job GetWashJob(Pawn carer, Pawn baby, bool allowBath=true)
         {
-            //check for bathtub if toddler also wants to play
+            //check for bathtub if toddler also wants to play or in 20% of cases
             
             if (allowBath && ToddlerUtility.IsToddler(baby) && !HealthAIUtility.ShouldSeekMedicalRest(baby))
             {
                 Need_Play needPlay = baby.needs?.play;
-                if (needPlay != null && needPlay.CurLevelPercentage < 0.7f)
+                if ((needPlay != null && needPlay.CurLevelPercentage < 0.7f) || Rand.Value < 0.2f)
                 {
                     Thing bath;
                     if (FindBathOrTub(carer, baby, out bath))
