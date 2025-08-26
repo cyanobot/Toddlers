@@ -37,6 +37,7 @@ namespace Toddlers
         public static MoveMessageSetting moveMessageSetting = MoveMessageSetting.DangerAndUnknown;
 
         public static bool feedCapableToddlers = true;
+        public static bool feedingMakesMess = true;
 
         public static bool canDraftToddlers = false;
 
@@ -72,6 +73,7 @@ namespace Toddlers
             Scribe_Values.Look(ref careAboutFloorSleep, "careAboutFloorSleep", careAboutFloorSleep, true);
             Scribe_Values.Look(ref moveMessageSetting, "moveMessageSetting", moveMessageSetting, true);
             Scribe_Values.Look(ref feedCapableToddlers, "feedCapableToddlers", feedCapableToddlers, true);
+            Scribe_Values.Look(ref feedingMakesMess, "feedingMakesMess", feedingMakesMess, true);
             Scribe_Values.Look(ref canDraftToddlers, "canDraftToddlers", canDraftToddlers, true);
             Scribe_Values.Look(ref playFallFactor_Baby, "playFallFactor_Baby", playFallFactor_Baby, true);
             Scribe_Values.Look(ref playFallFactor_Toddler, "playFallFactor_Toddler", playFallFactor_Toddler, true);
@@ -118,6 +120,8 @@ namespace Toddlers
                tooltip: "[" + "Default".Translate() + ": " + "On".Translate() + "] " + "SettingTooltipCareAboutFloorSleep".Translate());
             l.CheckboxLabeled("SettingLabelFeedCapableToddlers".Translate() + " :", ref feedCapableToddlers,
                tooltip: "[" + "Default".Translate() + ": " + "On".Translate() + "] " + "SettingTooltipFeedCapableToddlers".Translate());
+            l.CheckboxLabeled("SettingLabelFeedingMakesMess".Translate() + " :", ref feedingMakesMess,
+               tooltip: "[" + "Default".Translate() + ": " + "On".Translate() + "] " + "SettingTooltipFeedingMakesMess".Translate());
             l.CheckboxLabeled("SettingLabelBabyTalk".Translate() + " :", ref toddlerBabyTalk, 
                 tooltip: "[" + "Default".Translate() + ": " + "Off".Translate() + "] " + "SettingTooltipBabyTalk".Translate());
 

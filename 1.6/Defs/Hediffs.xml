@@ -69,11 +69,23 @@
 		<li>
 			<label>inept</label>
 			<overrideTooltip>{0} still struggles with picking up and handling simple objects -- like food and clothes.</overrideTooltip>
+			<capMods>
+				<li>
+					<capacity>Manipulation</capacity>
+					<offset>-0.85</offset>
+				</li>
+			</capMods>
 		</li>
 		<li>
 			<label>clumsy</label>
 			<overrideTooltip>{0} is growing more capable. {PAWN_pronoun} can get food -- more or less -- into {PAWN_possessive} mouth and can undress. Putting clothes back on is more of a challenge.</overrideTooltip>
 			<minSeverity>0.3</minSeverity>
+			<capMods>
+				<li>
+					<capacity>Manipulation</capacity>
+					<offset>-0.55</offset>
+				</li>
+			</capMods>
 			<mentalStateGivers>
 				<li>
 					<mentalState>RemoveClothes</mentalState>
@@ -85,6 +97,12 @@
 			<label>confident</label>
 			<overrideTooltip>{0} has mastered most everyday manual tasks, and is eager to show off {PAWN_possessive} new capabilities.</overrideTooltip>
 			<minSeverity>0.6</minSeverity>
+			<capMods>
+				<li>
+					<capacity>Manipulation</capacity>
+					<offset>-0.25</offset>
+				</li>
+			</capMods>
 			<mentalStateGivers>
 				<li>
 					<mentalState>RemoveClothes</mentalState>
