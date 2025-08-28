@@ -255,4 +255,11 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <PackageReference Include="Krafs.Publicizer" Version="*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <Publicize Include="Assembly-CSharp" IncludeCompilerGeneratedMembers="false" />
+  </ItemGroup>
 </Project>
