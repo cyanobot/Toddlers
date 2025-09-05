@@ -76,18 +76,18 @@ namespace Toddlers
             toil.PlaySustainerOrSound(() => SoundDefOf.Interact_CleanFilth);
             toil.defaultCompleteMode = ToilCompleteMode.Delay;
             toil.FailOnDestroyedNullOrForbidden(TargetIndex.A);
-            toil.WithEffect(DefDatabase<EffecterDef>.GetNamed("WashingEffect"), TargetIndex.A);
-            toil.WithProgressBar(TargetIndex.A, () => Baby.needs.AllNeeds.Find(n => n.def.defName== "Hygiene").CurLevel);
-            toil.AddEndCondition(() => (Baby.needs.AllNeeds.Find(n => n.def.defName == "Hygiene").CurLevel < 1f) ? JobCondition.Ongoing : JobCondition.Succeeded);
+            toil.WithEffect(DBHDefOf.WashingEffect, TargetIndex.A);
+            toil.WithProgressBar(TargetIndex.A, () => HygieneNeedFor(Baby).CurLevel);
+            toil.AddEndCondition(() => HygieneNeedFor(Baby).CurLevel < 1f ? JobCondition.Ongoing : JobCondition.Succeeded);
             toil.initAction = delegate
             {
                 //Baby.jobs.EndCurrentJob(JobCondition.InterruptForced, false);
-                Job waitJob = JobMaker.MakeJob(ToddlerBeWashed, toil.actor, 5000);
+                Job waitJob = JobMaker.MakeJob(DBHDefOf.ToddlerBeWashed, toil.actor, 5000);
                 Baby.jobs.StartJob(waitJob, JobCondition.InterruptForced);
             };
             toil.tickAction = delegate
             {
-                Need need_Hygiene = Baby.needs?.AllNeeds.Find(n => n.def.defName == "Hygiene");
+                Need need_Hygiene = Baby.needs?.AllNeeds.Find(n => n.def == DBHDefOf.Hygiene);
                 if (need_Hygiene != null)
                 {
                     need_Hygiene.CurLevel = Mathf.Min(need_Hygiene.CurLevel + 0.002f, 1f);
@@ -96,7 +96,7 @@ namespace Toddlers
             };
             toil.AddFinishAction(delegate
             {
-                Need need_Hygiene = Baby.needs?.AllNeeds.Find(n => n.def.defName == "Hygiene");
+                Need need_Hygiene = Baby.needs?.AllNeeds.Find(n => n.def == DBHDefOf.Hygiene);
                 if (need_Hygiene != null)
                 {
                     f_contaminated.SetValue(need_Hygiene, false);
@@ -105,7 +105,7 @@ namespace Toddlers
                 {
                     Water.SplitOff(1);
                 }
-                if (Baby.CurJobDef == ToddlerBeWashed)
+                if (Baby.CurJobDef == DBHDefOf.ToddlerBeWashed)
                 {
                     Baby.jobs.EndCurrentJob(JobCondition.Succeeded);
                 }

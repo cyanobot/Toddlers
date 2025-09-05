@@ -97,7 +97,10 @@
     <Compile Include="Compat\DBH\FloatMenuOptionProvider_WorkGivers_Patch.cs" />
     <Compile Include="Compat\DBH\WorkGiver_washChild_Patch.cs" />
     <Compile Include="Crib\FloatMenuProvider_LetOutOfCrib.cs" />
+    <Compile Include="Compat\DBH\DBHDefOf.cs" />
     <Compile Include="Feeding\Harmony\FloatMenuOptionProvider_Ingest_Patch.cs" />
+    <Compile Include="Feeding\Harmony\JobDriver_BottleFeedBaby_FeedBabyFoodFromInventory.cs" />
+    <Compile Include="Feeding\Harmony\Toils_Ingest_Patch.cs" />
     <Compile Include="MentalStates\IgnoreToddlerMentalStates_Patch.cs" />
     <Compile Include="MiscHarmony\FloatMenuOptions_ToddlerCannot_Patch.cs" />
     <None Include="Carrying\JobDriver_CarryToddler.cs" />

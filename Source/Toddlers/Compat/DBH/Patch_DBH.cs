@@ -155,12 +155,12 @@ namespace Toddlers
         {
             if (ToddlerUtility.IsLiveToddler(pawn))
             {
-                if (nd.defName == "DBHThirst") return false;
-                if (nd.defName == "Bladder")
+                if (nd == DBHDefOf.DBHThirst) return false;
+                if (nd == DBHDefOf.Bladder)
                 {
                     return babyBladder;
                 }
-                if (nd.defName == "Hygiene")
+                if (nd == DBHDefOf.Hygiene)
                 {
                     babyHygiene = result;
                 }

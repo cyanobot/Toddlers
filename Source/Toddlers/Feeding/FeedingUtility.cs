@@ -32,19 +32,19 @@ namespace Toddlers
             filthRate *= filthFactor;
             if (!(Rand.Value < filthRate * 0.005f))
                 return;
-            if (FilthMaker.TryMakeFilth(feeder.Position, feeder.Map, Toddlers_DefOf.Toddlers_Filth_Mess, baby.LabelIndefinite(), 1))
+            if (FilthMaker.TryMakeFilth(feeder.Position, feeder.Map, Toddlers_DefOf.Toddlers_Filth_BabyFood, baby.LabelIndefinite(), 1))
                 FilthMonitor.Notify_FilthHumanGenerated();
             if (Toddlers_Mod.DBHLoaded)
             {
                 if (Patch_DBH.babyHygiene)
                 {
-                    Need need_Hygiene = baby.needs?.AllNeeds.Find(n => n.def == DBHDefOf.Hygiene);
+                    Need need_Hygiene = WashBabyUtility.HygieneNeedFor(baby);
                     if (need_Hygiene != null)
                         need_Hygiene.CurLevel = Mathf.Max( 0, need_Hygiene.CurLevel - 0.1f );
                 }
                 if (feeder != baby && Rand.Bool) // 50% chance the feeder gets dirty as well.
                 {
-                    Need need_Hygiene = feeder.needs?.AllNeeds.Find(n => n.def == DBHDefOf.Hygiene);
+                    Need need_Hygiene = WashBabyUtility.HygieneNeedFor(feeder);
                     if (need_Hygiene != null)
                         need_Hygiene.CurLevel = Mathf.Max( 0, need_Hygiene.CurLevel - 0.1f );
                 }

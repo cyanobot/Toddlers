@@ -2,11 +2,11 @@
 <Defs>
 
 <ThingDef ParentName="BaseFilth">
-	<defName>Toddlers_Filth_Mess</defName>
-	<label>mess</label>
+	<defName>Toddlers_Filth_BabyFood</defName>
+	<label>food mess</label>
 	<graphicData>
 		<texPath>Things/Filth/Spatter</texPath>
-		<color>(217, 205, 145, 180)</color>
+		<color>(217, 205, 145, 150)</color>
 	</graphicData>
 	<filth>
 		<disappearsInDays>35~40</disappearsInDays>

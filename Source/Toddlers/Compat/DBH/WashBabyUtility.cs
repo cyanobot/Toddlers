@@ -16,42 +16,9 @@ namespace Toddlers
 {
     public static class WashBabyUtility
     {
-        static JobDef washBaby = null;
-        static JobDef batheToddler = null;
-        static JobDef beWashed = null;
-
-        public static JobDef CYB_WashBaby
+        public static Need HygieneNeedFor(Pawn pawn)
         {
-            get
-            {
-                if (washBaby == null)
-                {
-                    washBaby = DefDatabase<JobDef>.GetNamed("CYB_WashBaby");
-                }
-                return washBaby;
-            }
-        }
-        public static JobDef CYB_BatheToddler
-        {
-            get
-            {
-                if (batheToddler == null)
-                {
-                    batheToddler = DefDatabase<JobDef>.GetNamed("CYB_BatheToddler");
-                }
-                return batheToddler;
-            }
-        }
-        public static JobDef ToddlerBeWashed
-        {
-            get
-            {
-                if (beWashed == null)
-                {
-                    beWashed = DefDatabase<JobDef>.GetNamed("ToddlerBeWashed");
-                }
-                return beWashed;
-            }
+            return pawn?.needs?.TryGetNeed(DBHDefOf.Hygiene);
         }
 
         public static bool CanWashNow(Pawn carer, Pawn baby, bool forceReserve = false)
@@ -69,7 +36,7 @@ namespace Toddlers
         {
             if (!ColonistShouldWash(baby)) return false;
 
-            Need need_Hygiene = baby.needs?.AllNeeds.Find(n => n.def.defName == "Hygiene");
+            Need need_Hygiene = HygieneNeedFor(baby);
             if (need_Hygiene == null || need_Hygiene.CurLevel > 0.3f) return false;
 
             return true;
@@ -113,7 +80,7 @@ namespace Toddlers
                     Thing bath;
                     if (FindBathOrTub(carer, baby, out bath))
                     {
-                        Job bathJob = JobMaker.MakeJob(CYB_BatheToddler, baby, bath);
+                        Job bathJob = JobMaker.MakeJob(DBHDefOf.CYB_BatheToddler, baby, bath);
                         bathJob.count = 1;
                         return bathJob;
                     }
@@ -142,7 +109,7 @@ namespace Toddlers
 
             if (targetB.IsValid && targetB.HasThing)
             {
-                return JobMaker.MakeJob(CYB_WashBaby, baby, targetB);
+                return JobMaker.MakeJob(DBHDefOf.CYB_WashBaby, baby, targetB);
             }
 
             //next priority available clean water source
@@ -154,11 +121,11 @@ namespace Toddlers
             }
             if (targetB.HasThing)
             {
-                return JobMaker.MakeJob(CYB_WashBaby, baby, targetB.Thing);
+                return JobMaker.MakeJob(DBHDefOf.CYB_WashBaby, baby, targetB.Thing);
             }
             if (targetB.Cell.IsValid)
             {
-                return JobMaker.MakeJob(CYB_WashBaby, baby, targetB.Cell);
+                return JobMaker.MakeJob(DBHDefOf.CYB_WashBaby, baby, targetB.Cell);
             }
             return null;
         }

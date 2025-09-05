@@ -198,9 +198,9 @@ namespace Toddlers
                         cellForBaby,
                         ThingPlaceMode.Direct, out var _);
 
-                    Job waitJob = JobMaker.MakeJob(ToddlerBeWashed, placeInBath.actor, 10000);
+                    Job waitJob = JobMaker.MakeJob(DBHDefOf.ToddlerBeWashed, placeInBath.actor, 10000);
                     Baby.jobs.StartJob(waitJob, JobCondition.InterruptForced);
-                    Baby.health.hediffSet.AddDirect(HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("Washing"), Baby));
+                    Baby.health.hediffSet.AddDirect(HediffMaker.MakeHediff(DBHDefOf.Washing, Baby));
                     Baby.jobs.posture = PawnPosture.LayingOnGroundFaceUp;
                 };
             }
@@ -215,9 +215,9 @@ namespace Toddlers
                         Bath.Position,
                         ThingPlaceMode.Direct, out var _);
 
-                    Job waitJob = JobMaker.MakeJob(ToddlerBeWashed, placeInBath.actor, 10000);
+                    Job waitJob = JobMaker.MakeJob(DBHDefOf.ToddlerBeWashed, placeInBath.actor, 10000);
                     Baby.jobs.StartJob(waitJob, JobCondition.InterruptForced);
-                    Baby.health.hediffSet.AddDirect(HediffMaker.MakeHediff(DefDatabase<HediffDef>.GetNamed("Washing"), Baby));
+                    Baby.health.hediffSet.AddDirect(HediffMaker.MakeHediff(DBHDefOf.Washing, Baby));
                     Baby.jobs.posture = PawnPosture.LayingOnGroundFaceUp;
                 };
             }
@@ -258,7 +258,7 @@ namespace Toddlers
             if (Bath.GetType() == t_Building_bath)
             {
                 fillBath = ToilMaker.MakeToil("FillBath");
-                fillBath.PlaySustainerOrSound(DefDatabase<SoundDef>.GetNamed("shower_Ambience"));
+                fillBath.PlaySustainerOrSound(DBHDefOf.shower_Ambience);
                 fillBath.defaultDuration = 1000;
                 fillBath.defaultCompleteMode = ToilCompleteMode.Delay;
                 fillBath.initAction = delegate
@@ -287,9 +287,9 @@ namespace Toddlers
             bathtime.defaultDuration = 1000;
             bathtime.PlaySustainerOrSound(() => SoundDefOf.Interact_CleanFilth);
             bathtime.defaultCompleteMode = ToilCompleteMode.Delay;
-            bathtime.WithEffect(DefDatabase<EffecterDef>.GetNamed("WashingEffect"), TargetIndex.A);
+            bathtime.WithEffect(DBHDefOf.WashingEffect, TargetIndex.A);
             bathtime.WithProgressBar(TargetIndex.A, () =>
-                (Baby.needs.AllNeeds.Find(n => n.def.defName == "Hygiene").CurLevel
+                (WashBabyUtility.HygieneNeedFor(Baby).CurLevel
                 + Baby.needs.play.CurLevel
                 ) / 2f);
             bathtime.handlingFacing = true;
@@ -310,7 +310,7 @@ namespace Toddlers
             bathtime.tickIntervalAction = delegate(int delta)
             {
 #endif
-                Need need_Hygiene = Baby.needs.AllNeeds.Find(n => n.def.defName == "Hygiene");
+                Need need_Hygiene = Baby.needs.AllNeeds.Find(n => n.def == DBHDefOf.Hygiene);
                 if (need_Hygiene == null) pawn.jobs.EndCurrentJob(JobCondition.Errored);
 
                 if (Baby.needs.play.CurLevel > 0.99f
@@ -343,14 +343,13 @@ namespace Toddlers
             };
             bathtime.AddFinishAction(delegate
             {
-                HediffDef washingDef = DefDatabase<HediffDef>.GetNamed("Washing");
-                if (Baby.health.hediffSet.HasHediff(washingDef))
+                if (Baby.health.hediffSet.HasHediff(DBHDefOf.Washing))
                 {
-                    Baby.health.RemoveHediff(Baby.health.hediffSet.GetFirstHediffOfDef(washingDef));
+                    Baby.health.RemoveHediff(Baby.health.hediffSet.GetFirstHediffOfDef(DBHDefOf.Washing));
                 }
                 Baby.filth.CarriedFilthListForReading.Clear();
                 
-                if (Baby.CurJobDef == ToddlerBeWashed)
+                if (Baby.CurJobDef == DBHDefOf.ToddlerBeWashed)
                 {
                     Baby.jobs.EndCurrentJob(JobCondition.Succeeded);
                 }
@@ -364,7 +363,7 @@ namespace Toddlers
                 bathtime.AddFinishAction(delegate
                 {
                     f_occupant.SetValue(Bath, null);
-                    Need need_Hygiene = Baby.needs?.AllNeeds.Find(n => n.def.defName == "Hygiene");
+                    Need need_Hygiene = HygieneNeedFor(Baby);
                     if (need_Hygiene != null)
                     {
                         f_contaminated.SetValue(need_Hygiene, false);

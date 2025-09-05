@@ -50,13 +50,17 @@ namespace Toddlers
         //public static ThingDef Apparel_BabyTuque;
         //public static ThingDef Apparel_BabyShadecone;
         public static ThingDef Apparel_BabyTribal;
-        public static ThingDef Toddlers_Filth_Mess;
+        public static ThingDef Toddlers_Filth_BabyFood;
 
         public static ThoughtDef BabyNoExpectations;
         public static ThoughtDef Toddlers_TraumaticCrash;
 
         public static ToddlerPlayDef ToddlerSkydreaming;
         public static ToddlerPlayDef ToddlerWatchTelevision;
+        static Toddlers_DefOf()
+        {
+            DefOfHelper.EnsureInitializedInCtor(typeof(Toddlers_DefOf));
+        }
 
     }
 
@@ -65,17 +69,9 @@ namespace Toddlers
     {
         public static ThinkTreeDef HumanlikeToddler;
         public static ThinkTreeDef HumanlikeToddlerConstant;
-    }
-
-    [DefOf]
-    public static class DBHDefOf
-    {
-        [MayRequireAnyOf("Dubwise.DubsBadHygiene,Dubwise.DubsBadHygiene.Lite")]
-        public static NeedDef Hygiene;
-
-        static DBHDefOf()
+        static Toddlers_ThinkTreeDefOf()
         {
-            DefOfHelper.EnsureInitializedInCtor(typeof(DBHDefOf));
+            DefOfHelper.EnsureInitializedInCtor(typeof(Toddlers_ThinkTreeDefOf));
         }
     }
 }

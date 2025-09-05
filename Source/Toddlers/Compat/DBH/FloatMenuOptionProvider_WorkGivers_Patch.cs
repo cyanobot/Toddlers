@@ -24,7 +24,7 @@ namespace Toddlers
         //don't need the menu option for wash patient if the patient is also a baby
         public static bool Prefix(Pawn pawn, WorkGiverDef workGiver, LocalTargetInfo target, FloatMenuContext context)
         {
-            if (workGiver.defName == "washPatient" && (target.Pawn?.DevelopmentalStage == DevelopmentalStage.Baby)) return false;
+            if (workGiver == DBHDefOf.washPatient && (target.Pawn?.DevelopmentalStage == DevelopmentalStage.Baby)) return false;
             return true;
         }
     }

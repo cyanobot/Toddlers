@@ -45,7 +45,7 @@ namespace Toddlers
             if (pawn.DevelopmentalStage != DevelopmentalStage.Baby) return false;
             //LogUtil.DebugLog("FloatMenuOptionProvider_WashBaby.TargetPawnValid target is baby");
 
-            Need need_Hygiene = pawn.needs?.AllNeeds.Find(n => n.def.defName == "Hygiene");
+            Need need_Hygiene = WashBabyUtility.HygieneNeedFor(pawn);
             //LogUtil.DebugLog($"FloatMenuOptionProvider_WashBaby.TargetPawnValid need_Hygiene: {need_Hygiene}");
             if (need_Hygiene == null) return false;
 
@@ -65,7 +65,7 @@ namespace Toddlers
             //LogUtil.DebugLog($"FloatMenuOptionProvider_WashBaby.GetSingleOptionFor - pawn: {clickedPawn}" +
             //    $", context: {context}");
 
-            Need need_Hygiene = clickedPawn.needs?.AllNeeds.Find(n => n.def.defName == "Hygiene");
+            Need need_Hygiene = WashBabyUtility.HygieneNeedFor(clickedPawn);
             //LogUtil.DebugLog($"FloatMenuOptionProvider_WashBaby.GetSingleOptionFor need_Hygiene: {need_Hygiene}" +
             //    $", + CurLevel: {need_Hygiene.CurLevel}");
             if (need_Hygiene != null && need_Hygiene.CurLevel <= 0.3f)
