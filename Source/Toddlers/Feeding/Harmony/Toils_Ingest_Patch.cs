@@ -12,8 +12,9 @@ namespace Toddlers
     {
         static Toil Postfix(Toil result, Pawn chewer)
         {
-            if (Toddlers_Settings.feedingMakesMess && ToddlerUtility.IsToddler(chewer) && chewer.Map != null)
-                result.AddPreTickAction(() => FeedingUtility.TryMakeMessTick(chewer, chewer));
+            LogUtil.DebugLog($"Toils_Ingest_Patch - chewer: {chewer}, IsToddler: {ToddlerUtility.IsToddler(chewer)}, Map: {chewer.Map}");
+            if (ToddlerUtility.IsToddler(chewer) && chewer.Map != null)
+                result.AddPreTickAction(() => FeedingUtility.TryMakeMess(chewer, chewer));
             return result;
         }
     }

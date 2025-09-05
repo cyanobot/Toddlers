@@ -29,7 +29,7 @@ namespace Toddlers
 			//Log.Message("toddler: " + toddler + ", def.race.FenceBlocked: " + toddler.def.race.FenceBlocked + ", roping: " + toddler.roping);
 			if (toddler.SpawnedOrAnyParentSpawned)
 			{
-				this.loc = RCellFinder.RandomWanderDestFor(toddler,root,15,null,Danger.Deadly);
+				this.loc = RCellFinder.RandomWanderDestFor(toddler,root,12,null,Danger.Deadly);
 			}
 			else this.loc = root;
         }
@@ -60,11 +60,15 @@ namespace Toddlers
 			{
 				LogUtil.DebugLog($"LordJob_ToddlerLoiter ticking, toddler: {toddler}");
 
+				if (lord.ownedPawns.NullOrEmpty()) lord.Destroy();
+
 				if (toddler.Faction == Faction.OfPlayer)
 				{
-					//if toddler has been adopted and somehow not already removed from lord, do so now
-					lord.ownedPawns.Remove(toddler);
-					return;
+                    //if toddler has been adopted and somehow not already removed from lord, do so now
+                    toddler.lord = null;
+                    lord.ownedPawns.Remove(toddler);
+                    lord.Destroy();
+                    return;
 				}
 
 				//toddlers who age up while abandoned should become wild pawns, I guess
@@ -74,7 +78,9 @@ namespace Toddlers
 					toddler.SetFaction(null);
 					toddler.jobs.StopAll();
 
+					toddler.lord = null;
 					lord.ownedPawns.Remove(toddler);
+                    lord.Destroy();
                 }
 
 			}

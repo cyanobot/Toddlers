@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Verse;
 using UnityEngine;
+using Verse;
+using Verse.AI;
 
 namespace Toddlers
 {
     public static class FeedingUtility
     {
+        public const float BASE_MESS_RATE = 0.6f;
 
         public static bool IsToddlerEatingUrgently(Pawn baby)
         {
@@ -25,30 +27,50 @@ namespace Toddlers
             return false;
         }
 
-        public static void TryMakeMessTick(Pawn feeder, Pawn baby, float filthFactor = 1)
+        public static void TryMakeMess(Pawn feeder, Pawn baby, float filthFactor = 1)
         {
-            float filthRate = baby.GetStatValue(StatDefOf.FilthRate, cacheStaleAfterTicks : 60)
-                / Math.Max(feeder.health.capacities.GetLevel(PawnCapacityDefOf.Manipulation), 0.1f);
-            filthRate *= filthFactor;
-            if (!(Rand.Value < filthRate * 0.005f))
-                return;
-            if (FilthMaker.TryMakeFilth(feeder.Position, feeder.Map, Toddlers_DefOf.Toddlers_Filth_BabyFood, baby.LabelIndefinite(), 1))
-                FilthMonitor.Notify_FilthHumanGenerated();
-            if (Toddlers_Mod.DBHLoaded)
+            float filthRate = BASE_MESS_RATE * filthFactor
+            * baby.GetStatValue(StatDefOf.FilthRate, cacheStaleAfterTicks: 60)
+            / Math.Max(feeder.health.capacities.GetLevel(PawnCapacityDefOf.Manipulation), 0.1f);
+
+            LogUtil.DebugLog($"filthRate: {filthRate}");
+
+            if (Rand.Value < filthRate * 0.005f)
             {
-                if (Patch_DBH.babyHygiene)
+                if (Toddlers_Settings.feedingMakesMess
+                    && FilthMaker.TryMakeFilth(feeder.Position, feeder.Map, Toddlers_DefOf.Toddlers_Filth_BabyFood, outFilth: out Filth filth))
                 {
-                    Need need_Hygiene = WashBabyUtility.HygieneNeedFor(baby);
-                    if (need_Hygiene != null)
-                        need_Hygiene.CurLevel = Mathf.Max( 0, need_Hygiene.CurLevel - 0.1f );
+                    FilthMonitor.Notify_FilthHumanGenerated();
+                    if (feeder != baby && !feeder.WorkTypeIsDisabled(WorkTypeDefOf.Cleaning))
+                    {
+                        Job cleanJob = feeder.jobs.jobQueue.FirstOrFallback(qj => qj.job.def == JobDefOf.Clean)?.job;
+                        if (cleanJob == null)
+                        {
+                            cleanJob = JobMaker.MakeJob(JobDefOf.Clean, 120);
+                            feeder.jobs.jobQueue.EnqueueFirst(cleanJob, JobTag.MiscWork);
+                        }
+                        cleanJob.AddQueuedTarget(TargetIndex.A, filth);
+                    }
                 }
-                if (feeder != baby && Rand.Bool) // 50% chance the feeder gets dirty as well.
+
+                if (Toddlers_Mod.DBHLoaded)
                 {
-                    Need need_Hygiene = WashBabyUtility.HygieneNeedFor(feeder);
-                    if (need_Hygiene != null)
-                        need_Hygiene.CurLevel = Mathf.Max( 0, need_Hygiene.CurLevel - 0.1f );
+                    float hygieneFall = filthRate * 0.2f; 
+                    if (feeder != baby)
+                    {
+                        Need need_Hygiene = WashBabyUtility.HygieneNeedFor(feeder);
+                        if (need_Hygiene != null && Rand.Bool)
+                            need_Hygiene.CurLevel = Mathf.Max(0, need_Hygiene.CurLevel - hygieneFall);
+                    }
+                    if (Patch_DBH.babyHygiene)
+                    {
+                        Need need_Hygiene = WashBabyUtility.HygieneNeedFor(baby);
+                        if (need_Hygiene != null)
+                            need_Hygiene.CurLevel = Mathf.Max(0, need_Hygiene.CurLevel - hygieneFall);
+                    }
                 }
             }
-        }
+            
+        } 
     }
 }
