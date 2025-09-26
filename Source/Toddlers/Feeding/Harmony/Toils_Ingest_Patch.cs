@@ -14,7 +14,7 @@ namespace Toddlers
         {
             LogUtil.DebugLog($"Toils_Ingest_Patch - chewer: {chewer}, IsToddler: {ToddlerUtility.IsToddler(chewer)}, Map: {chewer.Map}");
             if (ToddlerUtility.IsToddler(chewer) && chewer.Map != null)
-                result.AddPreTickAction(() => FeedingUtility.TryMakeMess(chewer, chewer));
+                result.AddPreTickAction(() => FeedingUtility.TryMakeMess(chewer, chewer, 2));
             return result;
         }
     }
