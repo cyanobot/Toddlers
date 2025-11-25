@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Toddlers
 {
-    class ToddlerPlayGiver
+    public class ToddlerPlayGiver
 	{
 		public virtual bool CanDo(Pawn pawn)
 		{

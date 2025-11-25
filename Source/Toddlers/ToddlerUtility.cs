@@ -22,8 +22,7 @@ namespace Toddlers
         {
             if (HARLoaded)
             {
-                AlienRace alienRace = HARUtil.GetAlienRaceWrapper(p);
-                if (alienRace != null) return alienRace.toddlerMinAge;
+                return HARCompatBridge.HARToddlerMinAge(p);
             }
             return BASE_MIN_AGE;
 
@@ -33,8 +32,7 @@ namespace Toddlers
         {
             if (HARLoaded)
             {
-                AlienRace alienRace = HARUtil.GetAlienRaceWrapper(p);
-                if (alienRace != null) return alienRace.toddlerEndAge;
+                return HARCompatBridge.HARToddlerEndAge(p);
             }
             return BASE_END_AGE;
         }

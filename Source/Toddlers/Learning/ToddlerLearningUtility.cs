@@ -38,7 +38,7 @@ namespace Toddlers
 
             //if (Toddlers_Mod.HARLoaded && !Patch_HAR.GetAlienRaceWrapper(p).humanlikeGait) return;
 
-            if (HARLoaded && !HARUtil.GetAlienRaceWrapper(p).humanlikeGait) return;
+            if (HARLoaded && !HARCompatBridge.HasHumanlikeGait(p)) return;
 
             Hediff_LearningToWalk hediff_LearningToWalk = (Hediff_LearningToWalk)HediffMaker.MakeHediff(Toddlers_DefOf.LearningToWalk, p);
             hediff_LearningToWalk.Severity = Mathf.Min(1f, percentAge / Toddlers_Settings.learningFactor_Walk);

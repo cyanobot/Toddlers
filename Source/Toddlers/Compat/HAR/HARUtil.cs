@@ -12,6 +12,10 @@ namespace Toddlers
 {
     public static class HARUtil
     {
+        public static List<AlienRace> addedHumanlikeLifestage = new List<AlienRace>();
+        public static List<AlienRace> createdNewLifestage = new List<AlienRace>();
+        public static Dictionary<AlienRace,AlienRaceSkipReason> skipped = new Dictionary<AlienRace,AlienRaceSkipReason>();
+
         public static AlienRace GetAlienRaceWrapper(Pawn pawn)
         {
             string defName = pawn.def.defName;
@@ -50,5 +54,21 @@ namespace Toddlers
             if (partRecord.Label.Contains("arm") || partRecord.def.defName.Contains("Arm") || partRecord.def.defName.Contains("ARM")) return true;
             else return false;
         }
+
+        public static string SkipReasonString(AlienRaceSkipReason reason)
+        {
+            switch(reason)
+            {
+                case AlienRaceSkipReason.AlreadyHasToddler:
+                    return "found pre-generated life stage HumanlikeToddler";
+                case AlienRaceSkipReason.NotHumanlikeLifestages:
+                    return "could not identify baby and child life stages";
+                case AlienRaceSkipReason.GrowsTooFast:
+                    return "no room for at least 1yr toddlerhood";
+                default:
+                    return "unknown reason";
+            }
+        }
+
     }
 }

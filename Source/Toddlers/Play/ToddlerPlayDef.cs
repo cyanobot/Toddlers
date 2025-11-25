@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Toddlers
 {
-    class ToddlerPlayDef : Def
+    public class ToddlerPlayDef : Def
     {
         public JobDef jobDef;
         private ToddlerPlayGiver workerInt;

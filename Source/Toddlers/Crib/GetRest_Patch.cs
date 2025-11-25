@@ -13,7 +13,7 @@ namespace Toddlers
         {
             //Log.Message("GetRest_Patch - job: " + job + ", __instance: " + __instance + ", pawn: " + pawn
             //    + ", targetA: " + job?.targetA + ", targetA.Thing: " + job?.targetA.Thing);
-            if (ToddlerLearningUtility.IsCrawler(pawn) && job.targetA.Thing != null && job.targetA.Thing is Building_Bed)
+            if (ToddlerLearningUtility.IsCrawler(pawn) && job?.targetA.Thing != null && job.targetA.Thing is Building_Bed)
             {
                 //Log.Message("Inside if - IsCrawler: " + IsCrawler(pawn) + ", targetA.Cell: " + job.targetA.Cell + ", pawn.Position: " + pawn.Position
                 //    + ", GetMethod: " + typeof(JobGiver_GetRest).GetMethod("FindGroundSleepSpotFor", BindingFlags.Instance | BindingFlags.NonPublic));

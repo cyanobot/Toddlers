@@ -83,8 +83,9 @@ namespace Toddlers
 
 		}
 
-		//AS VANILLA
-		public override void SendLetter(Quest quest, Pawn pawn)
+        //AS VANILLA
+        [Obsolete]
+        public override void SendLetter(Quest quest, Pawn pawn)
 		{
 			TaggedString title = "LetterLabelRefugeePodCrash".Translate();
 			TaggedString letterText = "RefugeePodCrashBaby".Translate(pawn.Named("PAWN")).AdjustedFor(pawn);

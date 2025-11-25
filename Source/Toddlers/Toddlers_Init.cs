@@ -50,7 +50,7 @@ namespace Toddlers
             */
 
             if (Toddlers_Mod.DBHLoaded) Patch_DBH.GeneratePatches(harmony);
-            if (Toddlers_Mod.HARLoaded) HARCompat.Init();
+            if (Toddlers_Mod.HARLoaded) HARCompatBridge.Init();
             if (Toddlers_Mod.hospitalLoaded) 
             {
                 Type t_Patients_BedFinder_Patch = AccessTools.TypeByName("Hospital.Patches.Patients_BedFinder_Patch");

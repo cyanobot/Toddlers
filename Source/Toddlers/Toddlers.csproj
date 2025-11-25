@@ -20,7 +20,7 @@
     <OutputPath>..\..\1.6\Assemblies\</OutputPath>
     <DefineConstants>TRACE;DEBUG;RW_1_6</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -96,6 +96,9 @@
     <Compile Include="Compat\DBH\FloatMenuOptionProvider_WashBaby.cs" />
     <Compile Include="Compat\DBH\FloatMenuOptionProvider_WorkGivers_Patch.cs" />
     <Compile Include="Compat\DBH\WorkGiver_washChild_Patch.cs" />
+    <None Include="Compat\HAR\AlienRaceSkipReason.cs" />
+    <None Include="Compat\HAR\ExtendedGraphic.cs" />
+    <Compile Include="Compat\HAR\HARCompatBridge.cs" />
     <Compile Include="Crib\FloatMenuProvider_LetOutOfCrib.cs" />
     <Compile Include="Compat\DBH\DBHDefOf.cs" />
     <Compile Include="Feeding\Harmony\FloatMenuOptionProvider_Ingest_Patch.cs" />
@@ -109,10 +112,10 @@
     <Compile Include="Compat\DBH\StatPart_BabyHygiene.cs" />
     <Compile Include="Compat\DBH\WashBabyUtility.cs" />
     <Compile Include="Compat\DBH\WorkGiver_WashBaby.cs" />
-    <Compile Include="Compat\HAR\AlienRace.cs" />
-    <Compile Include="Compat\HAR\HARCompat.cs" />
-    <Compile Include="Compat\HAR\HARTestPatches.cs" />
-    <Compile Include="Compat\HAR\HARUtil.cs" />
+    <None Include="Compat\HAR\AlienRace.cs" />
+    <None Include="Compat\HAR\HARCompat.cs" />
+    <None Include="Compat\HAR\HARTestPatches.cs" />
+    <None Include="Compat\HAR\HARUtil.cs" />
     <Compile Include="Compat\DBH\JobDriver_BatheToddler.cs" />
     <Compile Include="Crib\CribUtility.cs" />
     <Compile Include="DefListDef.cs" />
@@ -263,8 +266,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Lib.Harmony">
+      <Version>2.4.1</Version>
+    </PackageReference>
   </ItemGroup>
-	<ItemGroup>
-		<Publicize Include="Assembly-CSharp" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false"/>
-	</ItemGroup>
+  <ItemGroup>
+    <Publicize Include="Assembly-CSharp" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false" />
+  </ItemGroup>
 </Project>

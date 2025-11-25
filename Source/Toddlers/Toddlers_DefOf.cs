@@ -12,9 +12,8 @@ using System.Threading.Tasks;
 namespace Toddlers
 {
     [DefOf]
-    static class Toddlers_DefOf
+    public static class Toddlers_DefOf
     {
-        public static DefListDef HumanlikeGaitOverride;
         public static DefListDef FiregazingTargets;
         public static DefListDef WearableByBaby;
 
@@ -65,7 +64,7 @@ namespace Toddlers
     }
 
     [DefOf]
-    static class Toddlers_ThinkTreeDefOf
+    public static class Toddlers_ThinkTreeDefOf
     {
         public static ThinkTreeDef HumanlikeToddler;
         public static ThinkTreeDef HumanlikeToddlerConstant;
