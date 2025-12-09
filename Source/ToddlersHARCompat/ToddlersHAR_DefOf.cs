@@ -11,5 +11,6 @@ namespace Toddlers
     public static class ToddlersHAR_DefOf
     {
         public static DefListDef HumanlikeGaitOverride;
+        public static DefListDef AllowToddlerLifeStage;
     }
 }

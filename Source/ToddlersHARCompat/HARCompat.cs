@@ -31,11 +31,17 @@ namespace Toddlers
             {
                 try
                 {
+                    if (ToddlersHAR_DefOf.AllowToddlerLifeStage.blacklist.Contains(race))
+                    {
+                        skipped.Add(race, AlienRaceSkipReason.Blacklisted);
+                        continue;
+                    }
                     AlienRaceToddlerInfo toddlerInfo = new AlienRaceToddlerInfo(race);
                     alienRaceInfo.Add(race, toddlerInfo);
                 }
                 catch (Exception e)
                 {
+                    skipped.Add(race, AlienRaceSkipReason.Errored);
                     Log.Error("[Toddlers] Init for alien race " + race.defName + " threw an error: " + e.Message + ", StackTrace: " + e.StackTrace);
                 }
             }
@@ -84,6 +90,10 @@ namespace Toddlers
                     return "could not identify baby and child life stages";
                 case AlienRaceSkipReason.GrowsTooFast:
                     return "no room for at least 1yr toddlerhood";
+                case AlienRaceSkipReason.Errored:
+                    return "error during processing";
+                case AlienRaceSkipReason.Blacklisted:
+                    return "blacklisted";
                 default:
                     return "unknown reason";
             }

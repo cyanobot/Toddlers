@@ -10,6 +10,8 @@ namespace Toddlers
     {
         AlreadyHasToddler,
         NotHumanlikeLifestages,
-        GrowsTooFast
+        GrowsTooFast,
+        Errored,
+        Blacklisted
     }
 }

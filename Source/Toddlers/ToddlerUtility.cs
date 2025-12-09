@@ -45,7 +45,7 @@ namespace Toddlers
 
         public static bool IsToddler(Pawn p)
         {
-            if (p == null) return false;
+            if (p?.ageTracker == null) return false;
             if (p.ageTracker.CurLifeStage == Toddlers_DefOf.HumanlikeToddler) return true;
             if (HARLoaded)
             {
