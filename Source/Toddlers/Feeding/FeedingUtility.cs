@@ -12,7 +12,7 @@ namespace Toddlers
 {
     public static class FeedingUtility
     {
-        public const float BASE_MESS_RATE = 0.6f;
+        public const float BASE_MESS_RATE = 0.06f;
 
         public static bool IsToddlerEatingUrgently(Pawn baby)
         {

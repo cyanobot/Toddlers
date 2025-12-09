@@ -144,6 +144,7 @@
     <Compile Include="MentalStates\BreakExtremeIsImminent_Patch.cs" />
     <Compile Include="Feeding\Harmony\CarryIngestibleToChewSpot_Patch.cs" />
     <Compile Include="Feeding\Harmony\BestFoodSource_Patch.cs" />
+    <Compile Include="Feeding\Harmony\JobDriver_Ingest_Patch.cs" />
     <Compile Include="Carrying\1.5\CarryDownedPawn_Patch.cs" />
     <Compile Include="Carrying\1.5\ForCarry_Patch.cs" />
     <Compile Include="Crib\GetRest_Patch.cs" />
