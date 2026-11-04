@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	
+	<JobDef>
+		<defName>ToddlerFloordrawing</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerFloordrawing</driverClass>
+		<reportString>floordrawing.</reportString>
+	</JobDef>
+
+	<JobDef>
+		<defName>ToddlerSkydreaming</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerSkydreaming</driverClass>
+		<reportString>skydreaming.</reportString>
+	</JobDef>
+
+	<JobDef>
+		<defName>ToddlerBugwatching</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerBugwatching</driverClass>
+		<reportString>bugwatching.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>ToddlerPlayToys</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerPlayToys</driverClass>
+		<reportString>playing with toys.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>ToddlerWatchTelevision</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerWatchTelevision</driverClass>
+		<reportString>watching television.</reportString>
+		<joyMaxParticipants>8</joyMaxParticipants>
+	</JobDef>
+
+	<JobDef>
+		<defName>ToddlerFiregazing</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerFiregazing</driverClass>
+		<reportString>firegazing.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>ToddlerPlayDecor</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerPlayDecor</driverClass>
+		<reportString>playing with toy.</reportString>
+	</JobDef>
+	
+	<JobDef ParentName="BabyPlay">
+		<defName>PlayCrib</defName>
+		<driverClass>Toddlers.JobDriver_PlayCrib</driverClass>
+	</JobDef>
+	
+	<JobDef>
+		<defName>BePlayedWith</defName>
+		<driverClass>Toddlers.JobDriver_BePlayedWith</driverClass>
+		<reportString>playing with TargetA.</reportString>
+	</JobDef>
+	
+</Defs>

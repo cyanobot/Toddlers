@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<DutyDef>
+<defName>ToddlerLoiter</defName>
+<thinkNode Class="ThinkNode_Priority">
+  <subNodes>
+	<!-- Basic needs -->
+	<li Class="ThinkNode_Tagger">
+		<tagToGive>SatisfyingNeeds</tagToGive>
+		<leaveJoinableLordIfIssuesJob>true</leaveJoinableLordIfIssuesJob>
+		<subNodes>
+			<li Class = "ThinkNode_PrioritySorter">
+				<subNodes>
+					<li Class="Toddlers.ThinkNode_ConditionalToddlerCanFeedSelf">
+						<subNodes>
+							<li Class="JobGiver_GetFood"/>	
+						</subNodes>
+					</li>
+					<li Class="JobGiver_GetRest"/>
+					<!--<li Class="Toddlers.JobGiver_ToddlerPlay"/>-->
+						
+				</subNodes>
+			</li>
+		</subNodes>
+	</li>
+
+	<!-- Wander -->
+	<li Class="JobGiver_WanderNearDutyLocation">
+	  <wanderRadius>3</wanderRadius>
+	</li> 
+  </subNodes>
+</thinkNode>
+</DutyDef>
+
+</Defs>

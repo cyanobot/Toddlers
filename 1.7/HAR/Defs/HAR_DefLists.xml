@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+<!--Whitelists are checked first, before blacklists and before automated logic is applied.
+
+	Whitelisted races are included in the category specified by the DefListDef even if 
+		they would not be accepted by the automated logic.
+	
+	e.g. Moonjelly would fail the humanlike gait tests because they have tentacles
+		instead of legs, but are instead allowed to learn to walk via crawling
+		(because I can imagine a vaguely humanoid jellyfish crawling before it "walks" upright)
+		
+	If a race fails processing because of actual code errors it may still end up
+		not processed even if whitelisted.
+-->
+
+<!--Blacklists are checked after whitelists, but before automated logic.
+
+	Blacklisted races are excluded from the cateogry specified by the DefListDef even if
+		they would pass the automated checks.
+-->
+
+
+<!--Whitelisted races are forced to use the crawling-to-walking pathway.
+	Blacklisted races are forced to not use it.-->
+<Toddlers.DefListDef>
+	<defName>HumanlikeGaitOverride</defName>
+	<whitelist>
+		<li MayRequire="zal.moonjelly">Moonjelly_Race</li>
+	</whitelist>
+	<blacklist>
+		<li MayRequire="ssm9906.TheTTanconRace">Alien_TTancon</li>
+	</blacklist>
+</Toddlers.DefListDef>
+
+
+<!--Blacklisted races will not generate a toddler lifestage even if they
+	would normally qualify.-->
+<!--Adding a whitelist to this DefList will have no effect. Add a toddler lifestage 
+	to the race def directly if you want to add one to a race that doesn't generate one
+	automatically.-->
+<Toddlers.DefListDef>
+	<defName>AllowToddlerLifeStage</defName>
+	<blacklist>
+		<li MayRequire="SutSutMan.MinchoTheMintChocoSlimeHARver">Mincho_ThingDef</li>
+	</blacklist>
+</Toddlers.DefListDef>
+
+</Defs>

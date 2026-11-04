@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<MentalStateDef ParentName="BaseMentalState">
+    <defName>RemoveClothes</defName>
+    <label>removing clothes</label>
+    <requiredCapacities>
+        <li>Manipulation</li>
+    </requiredCapacities>
+    <stateClass>Toddlers.MentalState_RemoveClothes</stateClass>
+	<workerClass>Toddlers.MentalStateWorker_RemoveClothes</workerClass>
+    <category>Misc</category>
+    <blockNormalThoughts>false</blockNormalThoughts>
+    <nameColor>(1, 1, 1)</nameColor>
+	<baseInspectLine>Mental state: shedding clothes!</baseInspectLine>
+    <inCaravanCanDo>false</inCaravanCanDo>
+  </MentalStateDef>
+</Defs>

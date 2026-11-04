@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+<Operation Class="PatchOperationFindMod">
+	<mods>
+		<li>Realistic Human Sounds (Continued)</li>
+	</mods>
+	<match Class="PatchOperationAdd">
+		<xpath>Defs/ThingDef[defName="Human"]/race/lifeStageAges/li[def="HumanlikeToddler"]</xpath>
+		<value>
+			<soundWounded>Pawn_Human_Wounded</soundWounded>
+			<soundDeath>Pawn_Human_Death</soundDeath>
+			<soundCall>Pawn_Human_Wounded</soundCall>
+			<soundAngry>Pawn_Human_Wounded</soundAngry>
+		</value>
+	</match>
+</Operation>
+
+</Patch>

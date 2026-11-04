@@ -60,14 +60,22 @@ namespace Toddlers
 			{
 				LogUtil.DebugLog($"LordJob_ToddlerLoiter ticking, toddler: {toddler}");
 
+#if RW_1_7
+				if (lord.ownedPawns.NullOrEmpty()) lord.Cleanup();
+#else
 				if (lord.ownedPawns.NullOrEmpty()) lord.Destroy();
+#endif
 
 				if (toddler.Faction == Faction.OfPlayer)
 				{
                     //if toddler has been adopted and somehow not already removed from lord, do so now
                     toddler.lord = null;
                     lord.ownedPawns.Remove(toddler);
+#if RW_1_7
+                    lord.Cleanup();
+#else
                     lord.Destroy();
+#endif
                     return;
 				}
 
@@ -80,7 +88,11 @@ namespace Toddlers
 
 					toddler.lord = null;
 					lord.ownedPawns.Remove(toddler);
+#if RW_1_7
+                    lord.Cleanup();
+#else
                     lord.Destroy();
+#endif
                 }
 
 			}

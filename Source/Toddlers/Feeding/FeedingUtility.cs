@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using HarmonyLib;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,13 @@ namespace Toddlers
                 if (Toddlers_Settings.feedingMakesMess
                     && FilthMaker.TryMakeFilth(feeder.Position, feeder.Map, Toddlers_DefOf.Toddlers_Filth_BabyFood, outFilth: out Filth filth))
                 {
+#if RW_1_7
+                    // 1.7: FilthMonitor class became internal - call via reflection.
+                    System.Reflection.MethodInfo notifyFilth = AccessTools.TypeByName("RimWorld.FilthMonitor")?.GetMethod("Notify_FilthHumanGenerated", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                    notifyFilth?.Invoke(null, null);
+#else
                     FilthMonitor.Notify_FilthHumanGenerated();
+#endif
                     if (feeder != baby && !feeder.WorkTypeIsDisabled(WorkTypeDefOf.Cleaning))
                     {
                         Job cleanJob = feeder.jobs.jobQueue.FirstOrFallback(qj => qj.job.def == JobDefOf.Clean)?.job;
