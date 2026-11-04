@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<JobDef>
+		<defName>LeaveCrib</defName>
+		<driverClass>Toddlers.JobDriver_LeaveCrib</driverClass>
+		<reportString>climbing out of crib.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>RestIdleInCrib</defName>
+		<driverClass>Toddlers.JobDriver_RestIdleInCrib</driverClass>
+		<reportString>resting.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>WiggleInCrib</defName>
+		<driverClass>Toddlers.JobDriver_WiggleInCrib</driverClass>
+		<reportString>wiggling.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>LayAngleInCrib</defName>
+		<driverClass>Toddlers.JobDriver_LayAngleInCrib</driverClass>
+		<reportString>lying down.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>BeDressed</defName>
+		<driverClass>Toddlers.JobDriver_BeDressed</driverClass>
+		<reportString>being dressed by TargetA.</reportString>
+	</JobDef>
+	
+	<JobDef>
+		<defName>ToddlerRemoveApparel</defName>
+		<driverClass>Toddlers.JobDriver_ToddlerRemoveApparel</driverClass>
+		<reportString>removing TargetA.</reportString>
+	</JobDef>
+	
+	<DubsBadHygiene.WashingJobDef MayRequireAnyOf="Dubwise.DubsBadHygiene,Dubwise.DubsBadHygiene.Lite">
+		<defName>ToddlerBeWashed</defName>
+		<driverClass>JobDriver_Wait</driverClass>
+		<reportString>being washed.</reportString>
+	</DubsBadHygiene.WashingJobDef>
+	
+</Defs>

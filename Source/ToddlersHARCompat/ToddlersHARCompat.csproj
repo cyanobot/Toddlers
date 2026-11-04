@@ -16,6 +16,11 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- RimWorld reference assembly version follows the build configuration (Krafs.Rimworld.Ref has no stable 1.7 package yet) -->
+    <RimWorldRefVersion Condition="'$(Configuration)' == '1.7'">1.7.4990-unstable</RimWorldRefVersion>
+    <RimWorldRefVersion Condition="'$(Configuration)' != '1.7'">1.6.4566</RimWorldRefVersion>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -33,8 +38,19 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>5</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == '1.7|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\1.7\HAR\Assemblies\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>5</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AlienRace">
+    <Reference Include="AlienRace" Condition="'$(Configuration)' == '1.7'">
+      <HintPath>..\..\..\..\..\..\workshop\content\294100\839005762\1.7\Assemblies\AlienRace.dll</HintPath>
+    </Reference>
+    <Reference Include="AlienRace" Condition="'$(Configuration)' != '1.7'">
       <HintPath>..\..\..\..\..\..\workshop\content\294100\839005762\1.6\Assemblies\AlienRace.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -71,7 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Krafs.Rimworld.Ref">
-      <Version>1.6.4566</Version>
+      <Version>$(RimWorldRefVersion)</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
       <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

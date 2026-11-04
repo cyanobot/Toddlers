@@ -4,7 +4,6 @@ using HarmonyLib;
 using RimWorld;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -168,7 +167,12 @@ namespace Toddlers
                 if (condition is ConditionAge conditionAge
                     && conditionAge.age == lsa_Baby.def)
                 {
-                    newConditions.Add(conditionAge_Toddler);
+                    // Issue #60 defensive guard: never insert a null condition;
+                    // fall back to the original baby-age condition instead.
+                    if (conditionAge_Toddler != null)
+                        newConditions.Add(conditionAge_Toddler);
+                    else
+                        newConditions.Add(condition);
                 }
                 else
                 {
@@ -322,6 +326,16 @@ namespace Toddlers
 
                     toddlerMinAge = lsa.minAge;
                     toddlerEndAge = lsa_Child?.minAge ?? alienRace.race.lifeExpectancy;
+
+                    // Issue #60 fix: when the race already has its own toddler stage,
+                    // conditionAge_Toddler was left null but graphic processing still ran,
+                    // inserting a null Condition into ExtendedConditionGraphic.conditions
+                    // and NRE-ing HAR's IsApplicable() at render time.
+                    if (conditionAge_Toddler == null && lsa_Toddler?.def != null)
+                    {
+                        conditionAge_Toddler = new ConditionAge();
+                        conditionAge_Toddler.age = lsa_Toddler.def;
+                    }
 
                     return;
                 }

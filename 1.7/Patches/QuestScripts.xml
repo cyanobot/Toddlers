@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+<Operation Class="PatchOperationAttributeSet">
+	<xpath>Defs/QuestScriptDef[defName="RefugeePodCrash_Baby"]/root</xpath>
+	<attribute>Class</attribute>
+	<value>Toddlers.QuestNode_Root_RefugeePodCrash_Baby</value>
+</Operation>
+
+</Patch>
